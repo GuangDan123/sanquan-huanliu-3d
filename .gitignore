@@ -1,0 +1,22 @@
+# 临时与本地环境文件（不进入作品提交包）
+.chrome-*/
+.tmp-*
+.verify-out/
+*.log
+
+# 开发过程临时目录（浏览器截图探针/验证产物/Chrome profile 缓存，体积大且可再生）
+.shots*/
+.verify-*/
+.probe-*/
+.workbuddy/
+
+# 本地临时脚本
+_label_test_server.js
+
+# 打包产物
+*.zip
+*.rar
+*.7z
+
+# 作品提交包中不应包含 tools/ 与 docs/ 之外的开发辅助内容；
+# 若要打包提交，建议按 docs/作品说明书.md 第七节的附件清单组织。
