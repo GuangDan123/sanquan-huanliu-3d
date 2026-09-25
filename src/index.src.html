@@ -1,0 +1,3737 @@
+<!--
+  三圈环流3D交互式教学平台 v1.3（源码版）
+  Three-Cell Circulation 3D Interactive Teaching Platform
+  
+  ⚠️ 本文件是"源码"，不是可直接运行的作品本体。
+     它含有两个构建占位符（见文件末尾的"构建标记"注释块），
+     请在项目根目录执行 `node tools/build.mjs`，
+     生成根目录下自包含、可直接双击运行的《三圈环流3D交互式教学平台.html》。
+
+  基于 Three.js (r152) 开发
+  面向中学地理教学的3D交互式教学平台
+  将抽象的三圈环流原理转化为可观察、可操作、可交互的3D动态模型
+
+  许可声明：MIT License
+  Copyright (c) 2026 教学资源开发组
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files, to deal in the Software
+  without restriction, including without limitation the rights to use, copy,
+  modify, merge, publish, distribute, sublicense, and/or sell copies of the
+  Software, subject to the following conditions:
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  运行说明：本作品为纯前端单页应用，无后端依赖；Three.js 运行库与地球贴图
+  均随作品包一同分发，离线环境下双击本文件即可运行。
+-->
+<!-- v20260914-47 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>三圈环流3D交互式教学平台 v1.3.1</title>
+<!-- 内联站点图标：避免浏览器请求 favicon.ico 产生 404 控制台告警 -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='%23206090'/%3E%3Cpath d='M4 16h24M16 3v26' stroke='%235DADE2' stroke-width='1.5' fill='none'/%3E%3Cellipse cx='16' cy='16' rx='13' ry='6' fill='none' stroke='%23FF6B35' stroke-width='2'/%3E%3C/svg%3E">
+<style>
+/* ========== 全局重置与基础样式 ========== */
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg-dark:#0B0C10;--panel-bg:rgba(15,17,25,0.88);--panel-border:rgba(100,120,180,0.25);
+  --accent:#5DADE2;--text:#E8E8EC;--text-dim:#9AA0B0;--btn-bg:rgba(60,80,130,0.5);
+  --btn-hover:rgba(80,110,180,0.7);--hadley:#FF6B35;--ferrel:#FDB813;--polar:#4A90E2;
+  --radius:10px;--shadow:0 4px 24px rgba(0,0,0,0.5);
+}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg-dark);font-family:'Microsoft YaHei','PingFang SC','Helvetica Neue',sans-serif;color:var(--text);font-size:14px;}
+
+/* ========== 加载画面 ========== */
+#loading-screen{position:fixed;inset:0;z-index:9999;background:var(--bg-dark);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 0.6s;}
+#loading-screen.hidden{opacity:0;pointer-events:none;}
+#loading-screen h1{font-size:28px;margin-bottom:8px;letter-spacing:2px;}
+#loading-screen p{color:var(--text-dim);margin-bottom:24px;font-size:15px;}
+.progress-bar{width:320px;height:8px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden;}
+.progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--polar),var(--accent));border-radius:4px;transition:width 0.3s;}
+#loading-percent{margin-top:10px;color:var(--text-dim);font-size:13px;}
+
+/* ========== 欢迎弹窗 ========== */
+#welcome-modal{position:fixed;inset:0;z-index:8000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity 0.4s;}
+#welcome-modal.show{opacity:1;pointer-events:auto;}
+.welcome-card{background:var(--panel-bg);border:1px solid var(--panel-border);border-radius:16px;padding:36px 40px;max-width:520px;width:90%;box-shadow:var(--shadow);text-align:center;}
+.welcome-card h2{font-size:22px;margin-bottom:12px;}
+.welcome-card p{color:var(--text-dim);line-height:1.8;margin-bottom:20px;font-size:14px;}
+.welcome-card .btn-row{display:flex;gap:12px;justify-content:center;}
+
+/* ========== 3D场景容器 ========== */
+#scene-container{position:fixed;inset:0;z-index:1;}
+
+/* ========== 教师控制条 ========== */
+#teacher-bar{position:fixed;top:0;left:0;right:0;z-index:500;background:rgba(10,12,20,0.92);border-bottom:1px solid var(--panel-border);display:flex;align-items:center;padding:6px 16px;gap:12px;transform:translateY(-100%);transition:transform 0.3s;}
+#teacher-bar.show{transform:translateY(0);}
+#teacher-toggle{position:fixed;top:4px;right:16px;z-index:501;background:rgba(60,80,130,0.6);border:1px solid var(--panel-border);color:var(--text);padding:4px 12px;border-radius:0 0 8px 8px;cursor:pointer;font-size:12px;}
+.teacher-group{display:flex;align-items:center;gap:8px;}
+.teacher-group label{font-size:12px;color:var(--text-dim);white-space:nowrap;}
+
+/* ========== 通用按钮 ========== */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 16px;border:1px solid var(--panel-border);background:var(--btn-bg);color:var(--text);border-radius:var(--radius);cursor:pointer;font-size:13px;min-height:44px;transition:background 0.2s,border-color 0.2s;user-select:none;}
+.btn:hover{background:var(--btn-hover);border-color:var(--accent);}
+.btn.active{background:rgba(93,173,226,0.3);border-color:var(--accent);}
+.btn-sm{padding:5px 10px;min-height:36px;font-size:12px;}
+.btn-icon{width:44px;padding:0;}
+
+/* ========== 图例 ========== */
+#legend{position:fixed;top:60px;right:16px;z-index:400;background:var(--panel-bg);border:1px solid var(--panel-border);border-radius:var(--radius);padding:14px 18px;box-shadow:var(--shadow);min-width:160px;cursor:move;user-select:none;}
+#legend h3{font-size:13px;margin-bottom:8px;color:var(--text-dim);border-bottom:1px solid var(--panel-border);padding-bottom:6px;}
+.legend-item{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:13px;cursor:pointer;padding:2px 4px;border-radius:4px;transition:background 0.2s;}
+.legend-item:hover{background:rgba(255,255,255,0.06);}
+.legend-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0;}
+
+/* ========== 知识卡片 ========== */
+#knowledge-card{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:7000;background:rgba(20,24,40,0.95);border:1px solid var(--panel-border);border-radius:16px;padding:28px 32px;max-width:460px;width:90%;box-shadow:var(--shadow);backdrop-filter:blur(10px);opacity:0;pointer-events:none;transition:opacity 0.3s;}
+#knowledge-card.show{opacity:1;pointer-events:auto;}
+#knowledge-card h3{font-size:17px;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+#knowledge-card .card-color{width:16px;height:16px;border-radius:50%;flex-shrink:0;}
+#knowledge-card p{color:var(--text-dim);line-height:1.9;font-size:13.5px;margin-bottom:6px;}
+#knowledge-card .close-btn{position:absolute;top:12px;right:14px;cursor:pointer;font-size:18px;color:var(--text-dim);}
+
+/* ========== 步骤提示 ========== */
+#step-notification{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:6000;background:rgba(20,24,40,0.92);border:1px solid var(--panel-border);border-radius:14px;padding:24px 36px;box-shadow:var(--shadow);backdrop-filter:blur(8px);text-align:center;opacity:0;pointer-events:none;transition:opacity 0.3s;}
+#step-notification.show{opacity:1;pointer-events:auto;}
+#step-notification h3{font-size:18px;margin-bottom:8px;}
+#step-notification p{color:var(--text-dim);margin-bottom:16px;line-height:1.7;font-size:14px;}
+
+/* ========== 控制面板 ========== */
+#control-panel{position:fixed;bottom:0;left:0;right:0;z-index:400;background:var(--panel-bg);border-top:1px solid var(--panel-border);backdrop-filter:blur(8px);padding:10px 16px;display:flex;flex-wrap:wrap;align-items:center;gap:10px;justify-content:center;}
+.ctrl-group{display:flex;align-items:center;gap:6px;padding:0 8px;border-right:1px solid var(--panel-border);}
+.ctrl-group:last-child{border-right:none;}
+.ctrl-group label{font-size:12px;color:var(--text-dim);white-space:nowrap;}
+.ctrl-group input[type=range]{width:90px;accent-color:var(--accent);cursor:pointer;}
+.ctrl-group select{background:var(--btn-bg);border:1px solid var(--panel-border);color:var(--text);padding:4px 8px;border-radius:6px;font-size:12px;cursor:pointer;}
+
+/* ========== 步骤指示 ========== */
+.step-indicator{display:flex;gap:4px;align-items:center;}
+.step-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;border:2px solid var(--panel-border);color:var(--text-dim);transition:all 0.3s;cursor:pointer;}
+.step-dot.active{border-color:var(--accent);color:var(--accent);background:rgba(93,173,226,0.15);}
+.step-dot.done{border-color:rgba(93,173,226,0.5);color:rgba(93,173,226,0.6);}
+
+/* ========== 模式切换 ========== */
+#mode-toggle{position:fixed;top:60px;left:16px;z-index:400;}
+
+/* ========== 左侧常驻知识点面板 ========== */
+#step-panel{position:fixed;top:108px;left:16px;z-index:400;width:272px;max-height:calc(100vh - 220px);background:var(--panel-bg);border:1px solid var(--panel-border);border-radius:var(--radius);box-shadow:var(--shadow);backdrop-filter:blur(8px);display:flex;flex-direction:column;overflow:hidden;}
+.sp-progress{height:3px;background:rgba(255,255,255,0.08);flex-shrink:0;}
+.sp-progress-fill{height:100%;width:33%;background:linear-gradient(90deg,var(--polar),var(--accent));transition:width 0.5s;}
+.sp-head{padding:12px 16px 8px;border-bottom:1px solid var(--panel-border);flex-shrink:0;}
+.sp-tag{display:inline-block;font-size:10px;letter-spacing:1px;border:1px solid var(--accent);color:var(--accent);border-radius:4px;padding:1px 8px;margin-bottom:6px;transition:color 0.3s,border-color 0.3s;}
+.sp-head h3{font-size:15px;}
+.sp-body{padding:10px 16px 14px;overflow-y:auto;}
+.sp-item{display:flex;gap:8px;margin-bottom:9px;font-size:12px;line-height:1.65;}
+.sp-item:last-child{margin-bottom:0;}
+.sp-item-k{flex:0 0 76px;font-weight:bold;}
+.sp-item-v{flex:1;color:var(--text-dim);}
+.sp-item-v b{color:var(--text);}
+#step-panel.sp-flash .sp-body{animation:spFadeIn 0.5s ease;}
+@keyframes spFadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+
+/* ========== 全屏按钮 ========== */
+#fullscreen-btn{position:fixed;bottom:80px;right:16px;z-index:400;}
+
+/* ========== 低性能模式 ========== */
+#perf-toggle{position:fixed;bottom:80px;right:70px;z-index:400;}
+
+/* ========== 第二步：地转偏向力强度标尺（嵌入知识点面板内部） ==========
+   为什么不做成三维标签：三维标签在屏幕上的可用空间随视口尺寸与相机方位变化，
+   高纬度档必然挤成一列甚至移出视口。为什么不做成独立浮层：窄视口下会与知识点面板重叠。
+   嵌入面板内部后，排布由文档流决定，任何视角、任何窗口尺寸都不会重叠或被遮挡。 */
+#deflect-scale{border-top:1px solid var(--panel-border);padding:9px 16px 12px;display:none;}
+#deflect-scale.show{display:block;}
+#deflect-scale h4{font-size:11px;color:var(--text-dim);font-weight:normal;margin-bottom:7px;letter-spacing:0.5px;}
+.ds-row{display:flex;align-items:center;gap:6px;margin-bottom:4px;font-size:11px;color:var(--text);white-space:nowrap;}
+.ds-row:last-child{margin-bottom:0;}
+.ds-lat{flex:0 0 30px;color:var(--text-dim);}
+.ds-bar{flex:1;height:6px;border-radius:3px;background:rgba(255,255,255,0.08);overflow:hidden;}
+.ds-bar i{display:block;height:100%;background:linear-gradient(90deg,#FFC94D,#FFE066);border-radius:3px;}
+.ds-val{flex:0 0 32px;text-align:right;color:#FFE066;font-variant-numeric:tabular-nums;}
+#deflect-scale .ds-note{margin-top:7px;padding-top:6px;border-top:1px solid var(--panel-border);font-size:10px;color:var(--text-dim);line-height:1.5;}
+
+/* ========== CSS2D标签样式 ========== */
+.lat-label{background:rgba(15,17,25,0.8);border:1px solid rgba(100,120,180,0.3);border-radius:6px;padding:3px 8px;font-size:11px;color:#E8E8EC;white-space:nowrap;pointer-events:auto;cursor:pointer;transition:background 0.2s;}
+.lat-label:hover{background:rgba(93,173,226,0.2);}
+.pressure-label{background:rgba(15,17,25,0.85);border:1px solid rgba(255,200,100,0.3);border-radius:6px;padding:3px 10px;font-size:11px;color:#F5D76E;white-space:nowrap;pointer-events:auto;cursor:pointer;transition:background 0.2s;}
+.pressure-label:hover{background:rgba(245,215,110,0.15);}
+.coriolis-label{background:rgba(15,17,25,0.85);border:1px solid rgba(255,224,102,0.4);border-radius:6px;padding:2px 8px;font-size:11px;color:#FFE9A8;white-space:nowrap;pointer-events:none;}
+/* 第一步垂直运动标签（赤道上升/两极下沉）：放大醒目，贴合大气层外缘放置 */
+.vertical-label{background:rgba(15,25,40,0.92);border:2px solid rgba(136,204,255,0.6);border-radius:8px;padding:6px 14px;font-size:15px;font-weight:bold;color:#BFE8FF;white-space:nowrap;pointer-events:none;letter-spacing:1px;box-shadow:0 0 10px rgba(136,204,255,0.35);text-shadow:0 0 6px rgba(136,204,255,0.6);}
+
+/* ========== 响应式 ========== */
+@media(max-width:768px){
+  #control-panel{padding:6px 8px;gap:6px;}
+  .ctrl-group input[type=range]{width:60px;}
+  .btn{padding:6px 10px;min-height:38px;font-size:12px;}
+  #legend{top:50px;right:8px;padding:10px 12px;min-width:130px;}
+  .welcome-card{padding:24px 20px;}
+  #step-panel{display:none;}
+}
+
+/* ========== 演示模式说明浮层 ========== */
+#demo-overlay{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:5500;background:rgba(20,24,40,0.92);border:1px solid var(--accent);border-radius:14px;padding:20px 32px;box-shadow:var(--shadow);text-align:center;opacity:0;pointer-events:none;transition:opacity 0.4s;max-width:440px;}
+#demo-overlay.show{opacity:1;}
+#demo-overlay h3{font-size:18px;color:var(--accent);margin-bottom:8px;}
+#demo-overlay p{color:var(--text-dim);line-height:1.7;font-size:13px;}
+
+/* ========== 课堂实录视频弹窗 ========== */
+#video-modal{position:fixed;inset:0;z-index:8500;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.8);backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity 0.4s;}
+#video-modal.show{opacity:1;pointer-events:auto;}
+.video-card{background:var(--panel-bg);border:1px solid var(--panel-border);border-radius:16px;padding:24px;max-width:640px;width:90%;box-shadow:var(--shadow);text-align:center;}
+.video-card h3{font-size:16px;margin-bottom:12px;}
+.video-card video{width:100%;max-height:360px;border-radius:8px;background:#000;}
+.video-card .video-tip{color:var(--text-dim);font-size:13px;margin:12px 0;}
+.video-card .close-btn{position:absolute;top:12px;right:14px;cursor:pointer;font-size:18px;color:var(--text-dim);}
+
+/* ========== UI 隐藏模式（录制纯净画面） ========== */
+body.ui-hidden #teacher-bar,
+body.ui-hidden #teacher-toggle,
+body.ui-hidden #legend,
+body.ui-hidden #control-panel,
+body.ui-hidden #mode-toggle,
+body.ui-hidden #fullscreen-btn,
+body.ui-hidden #perf-toggle,
+body.ui-hidden #deflect-scale,
+body.ui-hidden #diagram-toggle,
+body.ui-hidden #diagram-panel,
+body.ui-hidden #knowledge-card,
+body.ui-hidden #step-panel,
+body.ui-hidden #step-notification{display:none !important;}
+
+
+#diagram-panel{position:fixed;top:50%;right:0;transform:translateY(-50%);z-index:450;background:var(--panel-bg);border:1px solid var(--panel-border);border-right:none;border-radius:12px 0 0 12px;box-shadow:var(--shadow);width:380px;max-width:90vw;max-height:85vh;display:flex;flex-direction:column;transition:transform 0.3s;backdrop-filter:blur(8px);}
+#diagram-panel.closed{transform:translateY(-50%) translateX(100%);}
+#diagram-toggle{position:fixed;top:50%;right:0;transform:translateY(-50%);z-index:451;background:var(--accent);color:#fff;border:1px solid var(--panel-border);border-right:none;border-radius:8px 0 0 8px;padding:10px 8px;cursor:pointer;font-size:12px;writing-mode:vertical-rl;letter-spacing:2px;box-shadow:var(--shadow);transition:opacity 0.2s;}
+#diagram-toggle.hidden{opacity:0;pointer-events:none;}
+#diagram-panel h3{font-size:14px;padding:12px 16px;border-bottom:1px solid var(--panel-border);display:flex;justify-content:space-between;align-items:center;color:var(--accent);}
+#diagram-panel .close-btn{cursor:pointer;color:var(--text-dim);font-size:18px;}
+#diagram-body{flex:1;overflow-y:auto;padding:12px 16px;}
+#diagram-canvas{display:block;width:100%;height:auto;background:rgba(10,12,20,0.6);border-radius:8px;border:1px solid var(--panel-border);}
+.diagram-labels{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0;padding:8px;background:rgba(15,17,25,0.5);border-radius:8px;border:1px dashed var(--panel-border);}
+.drag-label{padding:5px 10px;background:var(--btn-bg);border:1px solid var(--panel-border);border-radius:6px;font-size:11px;cursor:grab;user-select:none;transition:background 0.15s;}
+.drag-label:hover{background:var(--btn-hover);border-color:var(--accent);}
+.drag-label:active{cursor:grabbing;}
+.drag-label.dragging{opacity:0.4;}
+.drag-label.placed{display:none;}
+.drop-zone{position:absolute;border:2px dashed rgba(93,173,226,0.4);border-radius:4px;transition:background 0.2s,border-color 0.2s;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--text-dim);text-align:center;padding:2px;}
+.drop-zone.over{background:rgba(93,173,226,0.2);border-color:var(--accent);}
+.drop-zone.correct{border-color:#44DD66;border-style:solid;background:rgba(68,221,102,0.15);}
+.drop-zone.incorrect{border-color:#DD4444;border-style:solid;background:rgba(221,68,68,0.15);}
+.drop-zone .mark{font-size:14px;font-weight:bold;}
+.diagram-actions{display:flex;gap:8px;justify-content:center;margin-top:10px;}
+#diagram-hint{font-size:11px;color:var(--text-dim);text-align:center;margin-top:6px;line-height:1.5;}
+
+@media(max-width:768px){
+  #diagram-panel{width:100%;max-width:100vw;border-radius:0;top:auto;bottom:46px;right:0;transform:none;max-height:50vh;}
+  #diagram-panel.closed{transform:translateY(120%);}
+  #diagram-toggle{top:auto;bottom:120px;transform:none;writing-mode:horizontal-tb;padding:6px 10px;}
+}
+
+/* ========== 滚动条 ========== */
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-thumb{background:rgba(93,173,226,0.3);border-radius:2px;}
+</style>
+</head>
+<body>
+
+<!-- 加载画面 -->
+<div id="loading-screen">
+  <h1>三圈环流3D交互式教学平台</h1>
+  <p>正在加载教学资源，请稍候...</p>
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+  <div id="loading-percent">0%</div>
+</div>
+
+<!-- 欢迎弹窗 -->
+<div id="welcome-modal">
+  <div class="welcome-card">
+    <h2>欢迎进入三圈环流学习平台</h2>
+    <p>本平台将帮助你直观理解大气三圈环流的运动规律。<br>系统将以引导模式自动演示，你也可以随时切换为自定义探索模式。<br><br>提示：拖拽旋转地球，滚轮缩放，点击环流圈查看知识点。</p>
+    <div class="btn-row">
+      <button class="btn" id="btn-start-guided" style="background:rgba(93,173,226,0.3);border-color:var(--accent);">开始引导学习</button>
+      <button class="btn" id="btn-start-free">自由探索</button>
+      <!-- 课堂实录入口：录制 assets/video/classroom.mp4 后取消下一行注释即可恢复按钮 -->
+      <!-- <button class="btn" id="btn-classroom-video" style="font-size:12px;">课堂实录</button> -->
+    </div>
+  </div>
+</div>
+
+<!-- 教师控制条切换 -->
+<button id="teacher-toggle" title="教师控制">教师端</button>
+
+<!-- 教师控制条 -->
+<div id="teacher-bar">
+  <div class="teacher-group">
+    <label>教师管控</label>
+  </div>
+  <div class="teacher-group">
+    <button class="btn btn-sm" id="tc-play" title="播放">▶ 播放</button>
+    <button class="btn btn-sm" id="tc-pause" title="暂停">⏸ 暂停</button>
+  </div>
+  <div class="teacher-group">
+    <label>跳转步骤：</label>
+    <select id="tc-step-select">
+      <option value="0">理想单圈环流</option>
+      <option value="1">地转偏向力介入</option>
+      <option value="2">三圈环流与气压带风带</option>
+    </select>
+    <button class="btn btn-sm" id="tc-jump">跳转</button>
+  </div>
+  <div class="teacher-group">
+    <button class="btn btn-sm" id="tc-lock-view">锁定视角</button>
+  </div>
+  <div class="teacher-group">
+    <button class="btn btn-sm" id="tc-demo" title="演示模式：自动执行演示序列">演示模式</button>
+  </div>
+</div>
+
+<!-- 3D场景容器 -->
+<div id="scene-container"></div>
+
+<!-- 图例 -->
+<div id="legend">
+  <h3>图例</h3>
+  <div class="legend-item" data-cell="hadley"><span class="legend-dot" style="background:var(--hadley)"></span>哈德莱环流</div>
+  <div class="legend-item" data-cell="ferrel"><span class="legend-dot" style="background:var(--ferrel)"></span>费雷尔环流</div>
+  <div class="legend-item" data-cell="polar"><span class="legend-dot" style="background:var(--polar)"></span>极地环流</div>
+</div>
+
+<!-- 左侧常驻知识点面板（三步切换时内容同步更新） -->
+<div id="step-panel">
+  <div class="sp-progress"><div class="sp-progress-fill" id="sp-progress"></div></div>
+  <div class="sp-head">
+    <span class="sp-tag" id="sp-tag">STEP 1 / 3</span>
+    <h3 id="sp-title">理想单圈环流</h3>
+  </div>
+  <div class="sp-body" id="sp-body"></div>
+  <!-- 第二步：地转偏向力强度标尺（行由 JS 生成；嵌入面板内，避免浮动遮挡） -->
+  <div id="deflect-scale">
+    <h4>地转偏向力强度（随纬度增强）</h4>
+    <div id="deflect-scale-rows"></div>
+    <div class="ds-note">赤道处偏向力为零；纬度越高，气流偏转越强<br>地球自转：北半球俯视逆时针</div>
+  </div>
+</div>
+
+<!-- 知识卡片 -->
+<div id="knowledge-card">
+  <span class="close-btn" id="kc-close">&times;</span>
+  <h3><span class="card-color" id="kc-color"></span><span id="kc-title"></span></h3>
+  <div id="kc-body"></div>
+</div>
+
+<!-- 步骤提示 -->
+<div id="step-notification">
+  <h3 id="sn-title"></h3>
+  <p id="sn-body"></p>
+  <div style="display:flex;gap:10px;justify-content:center;">
+    <button class="btn" id="sn-continue">继续</button>
+    <button class="btn" id="sn-skip" style="font-size:12px;">跳过引导</button>
+  </div>
+</div>
+
+<!-- 模式切换 -->
+<div id="mode-toggle">
+  <button class="btn btn-sm" id="btn-mode" title="切换模式">引导模式</button>
+  <span id="version-badge" style="margin-left:8px;font-size:11px;color:#7fd4ff;opacity:.85;user-select:none;">v1.3</span>
+</div>
+
+<!-- 全屏 -->
+<button class="btn btn-icon" id="fullscreen-btn" title="全屏">⛶</button>
+
+<!-- 低性能模式 -->
+<button class="btn btn-sm" id="perf-toggle" title="低性能模式">省电</button>
+
+<!-- 图示回归面板触发按钮 -->
+<button id="diagram-toggle" title="图示回归练习">图示回归</button>
+
+<!-- 图示回归面板 -->
+<div id="diagram-panel" class="closed">
+  <h3>
+    <span>图示回归练习</span>
+    <span class="close-btn" id="diagram-close">&times;</span>
+  </h3>
+  <div id="diagram-body">
+    <div style="position:relative;">
+      <canvas id="diagram-canvas" width="348" height="360"></canvas>
+      <!-- 放置区(drop-zone)由 JS 动态创建在 canvas 上方 -->
+      <div id="drop-zones" style="position:absolute;inset:0;"></div>
+    </div>
+    <div class="diagram-labels" id="diagram-labels">
+      <!-- 拖拽标签由 JS 动态生成 -->
+    </div>
+    <div class="diagram-actions">
+      <button class="btn btn-sm" id="diagram-check">检查答案</button>
+      <button class="btn btn-sm" id="diagram-reset">重置</button>
+    </div>
+    <div id="diagram-hint">拖拽下方标签到图中对应位置，点击"检查答案"验证。</div>
+  </div>
+</div>
+
+<!-- 演示模式说明浮层 -->
+<div id="demo-overlay">
+  <h3 id="demo-title"></h3>
+  <p id="demo-desc"></p>
+</div>
+
+<!-- 课堂实录视频弹窗 -->
+<div id="video-modal">
+  <div class="video-card" style="position:relative;">
+    <span class="close-btn" id="video-close">&times;</span>
+    <h3>课堂试用片段</h3>
+    <video id="classroom-video" controls preload="none">
+      <source src="./assets/video/classroom.mp4" type="video/mp4">
+    </video>
+    <div class="video-tip" id="video-tip">正在加载视频...</div>
+  </div>
+</div>
+
+<!-- 控制面板 -->
+<div id="control-panel">
+  <div class="ctrl-group">
+    <label>视角：</label>
+    <button class="btn btn-sm" data-view="top">俯视</button>
+    <button class="btn btn-sm" data-view="side">侧视</button>
+    <button class="btn btn-sm" data-view="front">平视</button>
+    <button class="btn btn-sm" data-view="reset">重置</button>
+  </div>
+  <div class="ctrl-group">
+    <label>步骤：</label>
+    <div class="step-indicator">
+      <div class="step-dot active" data-step="0" title="理想单圈环流">1</div>
+      <div class="step-dot" data-step="1" title="地转偏向力介入">2</div>
+      <div class="step-dot" data-step="2" title="三圈环流与气压带风带">3</div>
+    </div>
+  </div>
+  <div class="ctrl-group">
+    <label>速度：</label>
+    <input type="range" id="speed-slider" min="1" max="20" value="10" step="1">
+    <span id="speed-val" style="font-size:12px;min-width:32px;">1.0x</span>
+  </div>
+  <div class="ctrl-group">
+    <label>显示：</label>
+    <button class="btn btn-sm active" id="tog-grid">网格</button>
+    <button class="btn btn-sm active" id="tog-particles">粒子</button>
+    <button class="btn btn-sm active" id="tog-paths">轨迹</button>
+    <button class="btn btn-sm" id="tog-pressure">气压带</button>
+    <button class="btn btn-sm active" id="tog-labels">标注</button>
+    <button class="btn btn-sm active" id="tog-legend">图例</button>
+  </div>
+  <div class="ctrl-group" id="custom-params" style="display:none;">
+    <label>偏转：</label>
+    <input type="range" id="coriolis-slider" min="0" max="45" value="12" step="1">
+    <span id="coriolis-val" style="font-size:12px;min-width:28px;">12°</span>
+    <label>密度：</label>
+    <select id="density-select"><option value="sparse">稀疏</option><option value="medium" selected>中等</option><option value="dense">密集</option></select>
+    <label>自转：</label>
+    <input type="range" id="rotation-slider" min="0" max="20" value="2" step="1">
+  </div>
+</div>
+
+<!-- ==========================================================================
+     构建标记（由 tools/build.mjs 注入，请勿手工编辑）：
+       1) 内联 Three.js r152 核心 + OrbitControls + CSS2DRenderer
+       2) 内联地球卫星纹理（base64 data URL）
+     目的：产出单个自包含 HTML，使 file:// 双击打开与 http:// 访问都能直接运行。
+     原因：Chrome 禁止 file:// 页面加载 file:// 的 ES 模块
+           （Access to script ... from origin 'null' has been blocked by CORS policy），
+           因此运行库不能以外部脚本/import 形式引用，必须内联。
+     ========================================================================== -->
+
+<script type="module">
+{{THREE_RUNTIME}}
+{{EARTH_TEXTURE}}
+/* 以上两行由 tools/build.mjs 分别替换为：
+   - Three.js r152 核心（含 THREE 命名空间）+ OrbitControls + CSS2DRenderer
+   - 地球卫星纹理（base64 data URL）
+   模块作用域下因此可直接使用：THREE、OrbitControls、CSS2DRenderer、CSS2DObject、EARTH_TEXTURE_B64 */
+
+/* addon 别名：运行库把 OrbitControls / CSS2D* 挂在 THREE 命名空间上，
+   这里取到模块作用域，使下方业务代码可直接 new CSS2DRenderer() / new CSS2DObject(...) */
+const { OrbitControls, CSS2DRenderer, CSS2DObject } = THREE;
+
+/* ========== 配置参数 ========== */
+const CONFIG = {
+  earth: { radius: 5, rotationSpeed: 0.0004, atmosphereRadius: 7.0 },
+  cells: {
+    hadley:  { riseLat: 2.5,  sinkLat: 27.5, color: '#FF4422', upperColor: '#FF4422', surfaceColor: '#FFAA33', name: '哈德莱环流', particleCount: 240 },
+    ferrel:  { riseLat: 57.5, sinkLat: 32.5, color: '#FDB813', upperColor: '#5599DD', surfaceColor: '#FDB813', name: '费雷尔环流', particleCount: 200 },
+    polar:   { riseLat: 62.5, sinkLat: 90,   color: '#4A90E2', upperColor: '#4A90E2', surfaceColor: '#88AAEE', name: '极地环流',   particleCount: 200 }
+  },
+  singleCell: { riseLat: 2.5, sinkLat: 90, color: '#88CCFF', upperColor: '#FFAA33', surfaceColor: '#88CCFF', name: '单圈环流', particleCount: 300, twoTone: true },
+  coriolis: { defaultDeflection: 12 }, // degrees：第二步弯折幅度（峰值偏移约为该值的 0.37 倍，12° 时约 4.4°）
+  particles: { speed: 1.0, baseSize: 0.1, surfaceAlt: 0.35, upperAlt: 1.8 },
+  pathLineOpacity: 0.28,
+  arrowCount: 6,  // arrows per path loop
+  pathLineLongitudes: [0, 120, 240],
+  singleCellLongitudes: [0],
+  threeCellLongitudes: [0],
+  starCount: 3000
+};
+
+/* ========== 全局状态 ========== */
+const STATE = {
+  mode: 'guided',        // 'guided' | 'custom'
+  step: 0,               // 0=理想单圈 1=地转偏向力介入 2=三圈环流+气压带
+  playing: true,
+  speed: 1.0,
+  coriolisDeflection: 12,
+  // 第二步"单圈→三圈"演变进度：0=单圈环流，1=三圈环流成型。
+  // 由 animate() 在第二步中逐帧推进，使偏转力增强的过程表现为环流形态的真实演变。
+  morph: 0,
+  showGrid: true,
+  showParticles: true,
+  showPaths: true,
+  showPressure: false,
+  showLabels: true,
+  showLegend: true,
+  lowPerf: false,
+  viewLocked: false,
+  density: 'medium',
+  earthRotationSpeed: 0.0004,
+  // 动画过渡
+  coriolisTransition: 0,   // 0=无偏转 1=完全偏转
+  singleCellOpacity: 1,
+  threeCellOpacity: 0,
+  stepTransitioning: false,
+  pendingStep: null,        // 过渡期间挂起的跳转请求（过渡结束后立即执行）
+  transitionCoriolis: null, // 过渡中的瞬时偏转量（粒子与管道几何同步），null=非过渡中
+  showDiagram: false       // 图示回归面板是否展开
+};
+
+/* ========== 知识库 ========== */
+const KNOWLEDGE = {
+  hadley: {
+    title: '哈德莱环流（Hadley Cell）',
+    color: '#FF6B35',
+    content: `<p><b>范围：</b>赤道（0°）— 副热带（30°），南北半球对称分布。</p>
+<p><b>形成机理：</b>赤道地区接收太阳辐射最多，空气强烈受热上升，在高层向两极方向流动；至纬度30°附近冷却下沉，在近地面回流赤道，构成闭合环流。</p>
+<p><b>近地面风：</b>受地转偏向力影响，北半球右偏形成东北信风，南半球左偏形成东南信风。</p>
+<p><b>高空风：</b>与近地面方向相反，称为反信风。</p>
+<p><b>影响：</b>赤道上升气流形成赤道低气压带（多雨）；30°下沉气流形成副热带高气压带（干旱）。</p>`
+  },
+  ferrel: {
+    title: '费雷尔环流（Ferrel Cell）',
+    color: '#FDB813',
+    content: `<p><b>范围：</b>副热带（30°）— 副极地（60°），南北半球对称分布。</p>
+<p><b>形成机理：</b>为间接热力环流，并非由地面温差直接驱动，而是受哈德莱环流和极地环流的夹持作用而形成。60°附近暖空气被迫抬升，30°附近空气下沉补充。</p>
+<p><b>近地面风：</b>由副热带高压流向副极地低压，受地转偏向力偏转形成盛行西风带。</p>
+<p><b>特点：</b>环流方向与哈德莱环流、极地环流相反，是三圈中唯一的热力间接环流。</p>`
+  },
+  polar: {
+    title: '极地环流（Polar Cell）',
+    color: '#4A90E2',
+    content: `<p><b>范围：</b>副极地（60°）— 极地（90°），南北半球对称分布。</p>
+<p><b>形成机理：</b>极地地区空气强烈冷却下沉，在近地面流向较低纬度；至60°附近受热抬升，在高层回流极地。</p>
+<p><b>近地面风：</b>极地高压流向副极地低压，受地转偏向力偏转形成极地东风带。</p>
+<p><b>特点：</b>与哈德莱环流同为热力直接驱动，环流圈较小但稳定。</p>`
+  },
+  'pressure-0':   { title: '赤道低气压带', color: '#FF4444', content: '<p>位于赤道附近（0°±5°）。空气受热强烈上升，形成低压区，多对流雨，气候湿热。</p>' },
+  'pressure-30':  { title: '副热带高气压带', color: '#FF9900', content: '<p>位于南北纬30°附近。哈德莱环流高层空气冷却下沉形成高压区，气候干燥少雨，形成沙漠带。</p>' },
+  'pressure-60':  { title: '副极地低气压带', color: '#44AAFF', content: '<p>位于南北纬60°附近。冷暖空气交汇，暖空气被迫抬升形成低压区，多锋面雨，气候温湿。</p>' },
+  'pressure-90':  { title: '极地高气压带', color: '#6688DD', content: '<p>位于南北极点附近。空气强烈冷却下沉形成高压区，气候严寒干燥。</p>' }
+};
+
+const STEP_INFO = [
+  { title: '第一步：理想单圈环流（无偏转）', body: '假设地球不自转：赤道空气受热上升，高空流向极地；极地空气冷却下沉，近地面流回赤道——形成单一闭合的热力环流圈。这是理想化模型，真实地球因自转产生了地转偏向力。' },
+  { title: '第二步：地转偏向力介入', body: '地球自转产生地转偏向力：北半球右偏、南半球左偏，且随纬度增大而增强。高空气流在30°附近偏转堆积下沉，在60°附近冷暖交汇抬升——单一环流带出现弯折节点，酝酿分化为三圈。' },
+  { title: '第三步：三圈环流成型', body: '环流彻底拉开为三个独立环流圈：哈德莱环流（0°~30°）、费雷尔环流（30°~60°）、极地环流（60°~90°），配合地面七个气压带与六个风带，构成完整的三圈环流体系。' }
+];
+
+/* 左侧常驻知识点面板内容（三步详细原理说明，随步骤切换同步更新） */
+const STEP_PANEL = [
+  {
+    tag: 'STEP 1 / 3', title: '理想单圈环流', color: '#88CCFF',
+    points: [
+      ['假设前提', '地球<b>不自转</b>（无地转偏向力）、地表性质均匀'],
+      ['热力驱动', '赤道受热多→空气膨胀<b>上升</b>；极地受热少→空气冷却<b>下沉</b>'],
+      ['高空流动', '赤道高空为高压、极地为低压→气流由赤道<b>流向极地</b>'],
+      ['近地面回流', '极地为高压、赤道为低压→气流由极地<b>流回赤道</b>'],
+      ['结论', '形成单一闭合的<b>热力环流圈</b>（直接环流）——理想化模型']
+    ]
+  },
+  {
+    tag: 'STEP 2 / 3', title: '地转偏向力介入', color: '#FDB813',
+    points: [
+      ['真实地球自转', '产生<b>地转偏向力</b>（科里奥利力）：北半球右偏、南半球左偏'],
+      ['随纬度增强', '偏向力在赤道为零、向两极逐渐增大（注意观察黄色箭头长度变化）'],
+      ['30° 纬度', '高空气流偏转成西风、前进受阻→<b>堆积下沉</b>→副热带高气压带'],
+      ['60° 纬度', '低纬暖空气与极地冷空气<b>交汇</b>→暖空气被迫抬升→副极地低气压带'],
+      ['环流酝酿分化', '单一环流带在 30°、60° 出现弯折节点，即将分裂为三圈']
+    ]
+  },
+  {
+    tag: 'STEP 3 / 3', title: '三圈环流成型', color: '#FF6B35',
+    points: [
+      ['哈德莱环流 0°~30°', '赤道上升→30°下沉，热力<b>直接环流</b>'],
+      ['费雷尔环流 30°~60°', '30°下沉→60°抬升，<b>间接环流</b>（方向与两侧相反）'],
+      ['极地环流 60°~90°', '极地下沉→60°抬升，直接环流'],
+      ['七个气压带', '赤道低压 · 副热带高压 · 副极地低压 · 极地高压（南北对称分布）'],
+      ['六个风带', '信风带 · 盛行西风带 · 极地东风带（近地面风向偏转的结果）']
+    ]
+  }
+];
+
+/* ========== 工具函数 ========== */
+function smoothstep(t) { return t * t * (3 - 2 * t); }
+function lerp(a, b, t) { return a + (b - a) * t; }
+function degToRad(d) { return d * Math.PI / 180; }
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+/* 创建粒子纹理（发光圆点） */
+function createParticleTexture() {
+  const c = document.createElement('canvas'); c.width = 64; c.height = 64;
+  const ctx = c.getContext('2d');
+  const g = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+  g.addColorStop(0, 'rgba(255,255,255,1)');
+  g.addColorStop(0.2, 'rgba(255,255,255,0.9)');
+  g.addColorStop(0.5, 'rgba(255,255,255,0.4)');
+  g.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, 64, 64);
+  return new THREE.CanvasTexture(c);
+}
+
+/* 创建箭头几何体 */
+function createArrowGeometry(size = 1) {
+  const coneGeo = new THREE.ConeGeometry(0.22 * size, 0.52 * size, 8);
+  coneGeo.rotateX(Math.PI / 2);
+  coneGeo.translate(0, 0, 0.26 * size);
+  return coneGeo;
+}
+
+/* ========== 场景初始化 ========== */
+let scene, camera, renderer, labelRenderer, controls;
+let earthGroup, gridGroup, labelGroup, latLabelGroup, windLabelGroup, labelAnchorGroup;
+let earthSurface = null;   // 地球球体网格：色带遮挡判定的两个实体之一（另一个是 7 条色带）
+let singleCellGroup, threeCellGroups = {};
+let pressureLabels = [], latLabels = [], verticalLabels = [], windLabels = [];
+let verticalLabelGroup;   // 垂直运动标签独立组：旋转到屏幕右侧，不受气压带组朝向影响
+let windArrowMeshes = []; // 近地面风带箭头阵列
+let crossSectionRoot;     // 环流剖面根组：单圈/三圈环流带 + 第二步弯折节点，整组按相机方位屏幕锚定
+let coriolisGroup;        // 第二步偏转视觉组（30°/60°弯折节点+偏转力箭头）
+let coriolisNodes = [];   // 节点对象（浮现/收缩动画）
+let coriolisLabels = [];  // 节点CSS2D标签（背面剔除用）
+let starField;
+let clock = new THREE.Clock();
+let particleTexture;
+const cellObjects = {}; // 存储所有环流圈对象
+
+function updateProgress(pct) {
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('loading-percent').textContent = Math.round(pct) + '%';
+}
+
+function initScene() {
+  // 场景
+  scene = new THREE.Scene();
+
+  // 相机
+  camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.set(8, 6, 12);
+
+  // WebGL渲染器
+  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setClearColor(0x0B0C10);
+  document.getElementById('scene-container').appendChild(renderer.domElement);
+
+  // CSS2D标签渲染器
+  labelRenderer = new CSS2DRenderer();
+  labelRenderer.setSize(window.innerWidth, window.innerHeight);
+  labelRenderer.domElement.style.position = 'absolute';
+  labelRenderer.domElement.style.top = '0';
+  labelRenderer.domElement.style.pointerEvents = 'none';
+  document.getElementById('scene-container').appendChild(labelRenderer.domElement);
+
+  // 控制器
+  controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.08;
+  controls.minDistance = 9.5;
+  controls.maxDistance = 35;
+  controls.target.set(0, 0, 0);
+
+  // 灯光
+  const ambientLight = new THREE.AmbientLight(0x404060, 1.2);
+  scene.add(ambientLight);
+  const dirLight = new THREE.DirectionalLight(0xffffff, 1.0);
+  dirLight.position.set(10, 8, 6);
+  scene.add(dirLight);
+  const dirLight2 = new THREE.DirectionalLight(0x8899bb, 0.4);
+  dirLight2.position.set(-8, -4, -6);
+  scene.add(dirLight2);
+
+  particleTexture = createParticleTexture();
+}
+
+/* ========== 星空背景 ========== */
+function createStarField() {
+  const geo = new THREE.BufferGeometry();
+  const positions = new Float32Array(CONFIG.starCount * 3);
+  const sizes = new Float32Array(CONFIG.starCount);
+  for (let i = 0; i < CONFIG.starCount; i++) {
+    const r = 80 + Math.random() * 120;
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.acos(2 * Math.random() - 1);
+    positions[i*3]   = r * Math.sin(phi) * Math.cos(theta);
+    positions[i*3+1] = r * Math.sin(phi) * Math.sin(theta);
+    positions[i*3+2] = r * Math.cos(phi);
+    sizes[i] = 0.3 + Math.random() * 0.7;
+  }
+  geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  geo.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+  const mat = new THREE.PointsMaterial({ color: 0xccddff, size: 0.4, sizeAttenuation: true, transparent: true, opacity: 0.8 });
+  starField = new THREE.Points(geo, mat);
+  scene.add(starField);
+}
+
+/* ========== 地球模型 ========== */
+function createEarth() {
+  earthGroup = new THREE.Group();
+
+  // 程序化地球纹理（不依赖外部文件，file:// 协议下也能正常显示）
+  const texCanvas = document.createElement('canvas');
+  texCanvas.width = 2048; texCanvas.height = 1024;
+  const ctx = texCanvas.getContext('2d');
+
+  // 海洋渐变
+  const oceanGrad = ctx.createLinearGradient(0, 0, 0, 1024);
+  oceanGrad.addColorStop(0, '#1a3a5c');
+  oceanGrad.addColorStop(0.15, '#1e5080');
+  oceanGrad.addColorStop(0.5, '#206090');
+  oceanGrad.addColorStop(0.85, '#1e5080');
+  oceanGrad.addColorStop(1, '#1a3a5c');
+  ctx.fillStyle = oceanGrad;
+  ctx.fillRect(0, 0, 2048, 1024);
+
+  // 大陆绘制辅助函数：用多段椭圆叠加模拟真实大陆轮廓
+  function drawContinent(color, shapes) {
+    ctx.fillStyle = color;
+    shapes.forEach(([cx, cy, rx, ry, rot]) => {
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, rx, ry, (rot || 0) * Math.PI / 180, 0, Math.PI * 2);
+      ctx.fill();
+    });
+  }
+
+  // 北美洲
+  drawContinent('#2d7a3a', [
+    [280, 180, 120, 80, -15], [320, 150, 80, 60, -10], [260, 220, 90, 70, -20],
+    [340, 200, 60, 50, 5], [300, 260, 70, 40, -10]
+  ]);
+  // 南美洲
+  drawContinent('#2a7035', [
+    [380, 420, 50, 80, 10], [370, 500, 45, 70, 5], [390, 580, 40, 60, 15],
+    [375, 650, 30, 40, 10], [385, 380, 55, 40, 0]
+  ]);
+  // 欧洲
+  drawContinent('#3a8a4a', [
+    [960, 180, 60, 40, 5], [1000, 170, 50, 35, -5], [940, 200, 40, 30, 10],
+    [1020, 190, 45, 30, 0]
+  ]);
+  // 非洲
+  drawContinent('#358040', [
+    [1020, 320, 70, 60, 5], [1040, 400, 65, 80, 0], [1030, 490, 55, 70, -5],
+    [1020, 560, 40, 50, 5], [1000, 280, 50, 40, 10]
+  ]);
+  // 亚洲
+  drawContinent('#2e7838', [
+    [1200, 160, 100, 70, 0], [1300, 150, 120, 80, 5], [1400, 170, 100, 60, -5],
+    [1250, 220, 90, 60, 10], [1350, 230, 80, 50, 0], [1450, 200, 70, 50, -10],
+    [1180, 200, 60, 50, 15], [1500, 250, 60, 40, 5]
+  ]);
+  // 澳大利亚
+  drawContinent('#3a8545', [
+    [1520, 520, 70, 50, 5], [1560, 500, 50, 40, -5], [1500, 540, 50, 35, 10]
+  ]);
+  // 南极洲
+  drawContinent('#c8d8e8', [
+    [500, 960, 400, 60, 0], [1000, 970, 500, 55, 0], [1500, 960, 400, 60, 0]
+  ]);
+  // 北极冰盖
+  drawContinent('#d0dde8', [
+    [500, 30, 400, 30, 0], [1000, 25, 500, 25, 0], [1500, 30, 400, 30, 0]
+  ]);
+
+  // 添加一些地形纹理细节（浅色斑点模拟沙漠/高原）
+  ctx.globalAlpha = 0.15;
+  ctx.fillStyle = '#c8a84e';
+  [[1050, 350, 30, 20], [1300, 250, 40, 25], [300, 200, 25, 15]].forEach(([x,y,rx,ry]) => {
+    ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI*2); ctx.fill();
+  });
+  ctx.globalAlpha = 1.0;
+
+  const earthTexture = new THREE.CanvasTexture(texCanvas);
+
+  // 地球球体
+  const earthGeo = new THREE.SphereGeometry(CONFIG.earth.radius, 64, 48);
+  const earthMat = new THREE.MeshPhongMaterial({
+    map: earthTexture,
+    shininess: 15,
+    specular: 0x222244
+  });
+  const earthMesh = new THREE.Mesh(earthGeo, earthMat);
+  // 轻微椭球化：赤道略鼓、两极略扁，与真实地球一致
+  earthMesh.scale.set(1.005, 1.0, 1.005);
+  earthGroup.add(earthMesh);
+
+  // 云层球体（半透明，叠加在地球外层增强真实感）
+  const cloudGeo = new THREE.SphereGeometry(CONFIG.earth.radius * 1.01, 64, 48);
+  const cloudMat = new THREE.MeshPhongMaterial({
+    transparent: true,
+    opacity: 0.42,
+    depthWrite: false,
+    side: THREE.DoubleSide,
+    blending: THREE.NormalBlending
+  });
+  const cloudMesh = new THREE.Mesh(cloudGeo, cloudMat);
+  cloudMesh.scale.set(1.005, 1.0, 1.005); // 与地球椭球化比例一致
+  cloudMesh.visible = false; // 云层纹理加载成功后显示
+  earthGroup.add(cloudMesh);
+
+  // 内层大气辉光
+  const atmosGeo = new THREE.SphereGeometry(CONFIG.earth.atmosphereRadius, 64, 48);
+  const atmosMat = new THREE.MeshPhongMaterial({
+    color: 0x4488cc,
+    transparent: true,
+    opacity: 0.12,
+    side: THREE.FrontSide,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false
+  });
+  const atmosMesh = new THREE.Mesh(atmosGeo, atmosMat);
+  atmosMesh.scale.set(1.06, 1.0, 1.06);
+  earthGroup.add(atmosMesh);
+
+  // 外发光层（跟随大气层放大，作为最外层柔和辉光包裹环流）
+  const glowGeo = new THREE.SphereGeometry(CONFIG.earth.radius * 1.44, 48, 36);
+  const glowMat = new THREE.MeshBasicMaterial({
+    color: 0x6699cc,
+    transparent: true,
+    opacity: 0.14,
+    side: THREE.DoubleSide,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false
+  });
+  const glowMesh = new THREE.Mesh(glowGeo, glowMat);
+  glowMesh.scale.set(1.05, 1.0, 1.05);
+  earthGroup.add(glowMesh);
+
+  // 边缘光晕（模拟大气散射）
+  const rimGeo = new THREE.SphereGeometry(CONFIG.earth.radius * 1.02, 64, 48);
+  const rimMat = new THREE.ShaderMaterial({
+    transparent: true,
+    side: THREE.DoubleSide,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    uniforms: { c: { value: 0.15 }, p: { value: 2.5 }, color: { value: new THREE.Color(0x5599cc) } },
+    vertexShader: `
+      varying vec3 vNormal;
+      void main() {
+        vNormal = normalize(normalMatrix * normal);
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform float c;
+      uniform float p;
+      uniform vec3 color;
+      varying vec3 vNormal;
+      void main() {
+        float intensity = pow(c - dot(vNormal, vec3(0, 0, 1.0)), p);
+        gl_FragColor = vec4(color, intensity * 0.6);
+      }
+    `
+  });
+  const rimMesh = new THREE.Mesh(rimGeo, rimMat);
+  rimMesh.scale.set(1.04, 1.0, 1.04);
+  earthGroup.add(rimMesh);
+
+  scene.add(earthGroup);
+
+  // 加载内嵌高质量地球纹理（base64 data: URL，file:// 协议下不受跨域/污染限制，必然可用）
+  // 程序化Canvas纹理作为初始map和回退方案；base64纹理加载成功后替换为真实卫星纹理
+  if (typeof EARTH_TEXTURE_B64 !== 'undefined') {
+    const earthImg = new Image();
+    earthImg.onload = () => {
+      const tex = new THREE.Texture(earthImg);
+      tex.needsUpdate = true;
+      tex.colorSpace = THREE.SRGBColorSpace; // 确保颜色空间正确
+      tex.anisotropy = renderer.capabilities.getMaxAnisotropy(); // 各向异性过滤，斜视角更清晰
+      earthMat.map = tex;
+      earthMat.needsUpdate = true;
+      console.log('[纹理加载] 内嵌真实卫星纹理已应用');
+    };
+    earthImg.onerror = () => {
+      console.warn('[纹理加载] 内嵌地球纹理解析失败，回退到 assets/textures 卫星贴图。');
+      loadExternalEarthTexture(earthMat);
+    };
+    earthImg.src = EARTH_TEXTURE_B64; // data: URL 同源，WebGL上传无跨域问题
+  } else {
+    console.warn('[纹理加载] 未找到内嵌纹理数据(assets/textures/earth_tex.js)，回退到 assets/textures 卫星贴图。');
+    loadExternalEarthTexture(earthMat);
+  }
+}
+
+/* 回退方案：使用 assets/textures 下的真实卫星贴图（随作品包一同分发，file:// 下可用） */
+function loadExternalEarthTexture(earthMat) {
+  const texLoader = new THREE.TextureLoader();
+  const applyTex = (tex) => {
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    earthMat.map = tex;
+    earthMat.needsUpdate = true;
+    console.log('[纹理加载] 已应用 assets/textures/earth_atmos_2048.jpg 卫星贴图');
+  };
+  texLoader.load(
+    'assets/textures/earth_atmos_2048.jpg',
+    applyTex,
+    undefined,
+    () => { console.warn('[纹理加载] 卫星贴图缺失，保持程序化纹理（作品仍可正常运行）。'); }
+  );
+}
+
+/* 根据当前步骤更新大气颜色（当前无需额外处理） */
+function updateAtmosphereColor(step) {
+  // 可在此扩展其他大气效果
+}
+
+/* ========== 经纬网格 ========== */
+function createGrid() {
+  gridGroup = new THREE.Group();
+  const R = CONFIG.earth.radius + 0.02;
+
+  // 纬度圈
+  const latitudes = [0, 30, 60, 90, -30, -60, -90];
+  const latColors = [0xffcc00, 0xff8844, 0x66aaff, 0xaaaaaa, 0xff8844, 0x66aaff, 0xaaaaaa];
+  const latWidths = [2, 1.5, 1.5, 1, 1.5, 1.5, 1];
+
+  latitudes.forEach((lat, idx) => {
+    const phi = degToRad(90 - lat);
+    const r = R * Math.sin(phi);
+    const y = R * Math.cos(phi);
+    const pts = [];
+    for (let i = 0; i <= 128; i++) {
+      const theta = (i / 128) * Math.PI * 2;
+      pts.push(new THREE.Vector3(r * Math.cos(theta), y, r * Math.sin(theta)));
+    }
+    const geo = new THREE.BufferGeometry().setFromPoints(pts);
+    const mat = new THREE.LineBasicMaterial({
+      color: latColors[idx],
+      transparent: true,
+      opacity: lat === 0 ? 0.6 : 0.35,
+      linewidth: latWidths[idx]
+    });
+    gridGroup.add(new THREE.Line(geo, mat));
+  });
+
+  // 经线（每30度）
+  for (let lon = 0; lon < 360; lon += 30) {
+    const pts = [];
+    for (let i = 0; i <= 128; i++) {
+      const phi = (i / 128) * Math.PI;
+      const theta = degToRad(lon);
+      pts.push(new THREE.Vector3(
+        R * Math.sin(phi) * Math.cos(theta),
+        R * Math.cos(phi),
+        R * Math.sin(phi) * Math.sin(theta)
+      ));
+    }
+    const geo = new THREE.BufferGeometry().setFromPoints(pts);
+    const mat = new THREE.LineBasicMaterial({ color: 0x334466, transparent: true, opacity: 0.15 });
+    gridGroup.add(new THREE.Line(geo, mat));
+  }
+
+  scene.add(gridGroup);
+}
+
+/* ========== 环流圈路径计算 ========== */
+function getCellPosition(t, riseLat, sinkLat, baseLonDeg, hemisphere, coriolisDeg) {
+  /* t: 0~1 沿环路的相位
+     riseLat/sinkLat: 上升/下沉纬度（北半球为正角度）
+     baseLonDeg: 基准经度
+     hemisphere: +1 北半球, -1 南半球
+     coriolisDeg: 偏转幅度（度）
+     返回 THREE.Vector3 */
+
+  const R = CONFIG.earth.radius;
+  const surfaceAlt = CONFIG.particles.surfaceAlt;
+  const upperAlt = CONFIG.particles.upperAlt;
+
+  const latRange = sinkLat - riseLat; // positive for Hadley (0→30), negative for Ferrel (60→30)
+  const segT = t * 4;
+  const seg = Math.floor(segT) % 4;
+  const s = smoothstep(segT - seg);
+
+  let lat, alt, coriolisShift;
+
+  switch (seg) {
+    case 0: // 近地面：从sinkLat向riseLat，高度保持平直
+      lat = sinkLat + (riseLat - sinkLat) * s;
+      alt = surfaceAlt;
+      coriolisShift = -coriolisDeg * Math.sin(s * Math.PI) * hemisphere * Math.sign(riseLat - sinkLat);
+      break;
+    case 1: // 上升：在riseLat
+      lat = riseLat;
+      alt = surfaceAlt + (upperAlt - surfaceAlt) * s;
+      coriolisShift = -coriolisDeg * hemisphere * Math.sign(riseLat - sinkLat) * (1 - s) * 0.5;
+      break;
+    case 2: // 高空：从riseLat向sinkLat，高度保持平直
+      lat = riseLat + (sinkLat - riseLat) * s;
+      alt = upperAlt;
+      coriolisShift = coriolisDeg * Math.sin(s * Math.PI) * hemisphere * Math.sign(sinkLat - riseLat);
+      break;
+    case 3: // 下沉：在sinkLat
+      lat = sinkLat;
+      alt = upperAlt - (upperAlt - surfaceAlt) * s;
+      coriolisShift = coriolisDeg * hemisphere * Math.sign(sinkLat - riseLat) * (1 - s) * 0.5;
+      break;
+  }
+
+  // 南半球：反转纬度
+  const actualLat = lat * hemisphere;
+  const actualLon = baseLonDeg + coriolisShift;
+
+  const phi = degToRad(90 - actualLat);
+  const theta = degToRad(actualLon);
+  const r = R + alt;
+
+  return new THREE.Vector3(
+    r * Math.sin(phi) * Math.cos(theta),
+    r * Math.cos(phi),
+    r * Math.sin(phi) * Math.sin(theta)
+  );
+}
+
+/* 单圈环流经圈路径
+   纬度：赤道附近上升 → 高空向极地流动 → 极地下沉 → 近地面回流，闭合椭圆环
+
+   coriolisDeg > 0 时（第二步启用）叠加地转偏向力引起的纬向（经度）偏移：
+     · 偏向力在赤道为零、向两极逐渐增大 → 偏移量按 |sin(lat)| 加权
+     · 只在水平气流段产生偏移（上升/下沉段保持竖直）→ 由水平权重 sin²θ 控制
+     · 偏向方向 = 气流前进方向的右侧（北半球右偏 / 南半球左偏）
+       在 lon=0 的经圈上，指向极地方向的单位向量为 dP/dlat = (cosφ, -sinφ, 0)，
+       由 "前向 × 极地方向" 推得：经度偏移 ∝ +∂lat/∂t·sin²θ·hemisphere
+       高空向极地流动（∂lat/∂t>0）→ 东偏；近地面向赤道流动（∂lat/∂t<0）→ 西偏，
+       两条水平气流因此向相反方向偏，在 30°、60° 附近折出节点，
+       即左侧面板所述"单一环流带出现弯折节点，酝酿分化为三圈"。
+*/
+function getSingleDropPosition(t, baseLonDeg, hemisphere, coriolisDeg, riseLat = 2.5, sinkLat = 90) {
+  const R = CONFIG.earth.radius;
+  const surfaceAlt = CONFIG.particles.surfaceAlt;
+  const upperAlt = CONFIG.particles.upperAlt;
+
+  const angle = t * Math.PI * 2;
+
+  // 纬度：上升点(riseLat) → 极地(sinkLat*h) → 上升点，沿同一经圈
+  const lat = (riseLat + (sinkLat - riseLat) * 0.5 * (1 - Math.cos(angle))) * hemisphere;
+
+  // 高度：去程(上半圆)在高空，回程(下半圆)在低空，形成闭合椭圆环
+  const altMid = (surfaceAlt + upperAlt) / 2;
+  const altRange = (upperAlt - surfaceAlt) / 2;
+  const alt = altMid + altRange * Math.sin(angle);
+
+  // ── 地转偏向力引起的经度偏移 ──
+  // 气流方向：cos(angle) > 0 → 高空向极地流动（时间占比 0~0.25 与 0.75~1）
+  //           cos(angle) < 0 → 近地面向赤道流动
+  // 水平权重 sin²(angle)：在上升点(t=0.25)与下沉点(t=0.75)为 0，保证竖直段不被平移
+  // 纬度权重 sin|lat|：赤道为 0、极点最大，对应"偏向力在赤道为零、向两极逐渐增大"
+  // 偏移量有界（|shift| ≤ coriolisDeg），不会因纬度变化率过大而失控
+  const horizontalWeight = Math.sin(angle) * Math.sin(angle);
+  const latWeight = Math.sin(Math.abs(degToRad(lat)));
+  const coriolisShift = coriolisDeg * latWeight * horizontalWeight * Math.cos(angle) * hemisphere;
+
+  const phi = degToRad(90 - lat);
+  const theta = degToRad(baseLonDeg + coriolisShift);
+  const r = R + alt;
+
+  return new THREE.Vector3(
+    r * Math.sin(phi) * Math.cos(theta),
+    r * Math.cos(phi),
+    r * Math.sin(phi) * Math.sin(theta)
+  );
+}
+
+/* 三圈环流经圈路径（每圈为光滑椭圆环，无S扭曲）
+   riseLat: 上升纬度, sinkLat: 下沉纬度
+   流向：下沉处(sinkLat)近地面→上升处(riseLat)→高空→下沉处
+*/
+function getThreeCellDropPosition(t, riseLat, sinkLat, baseLonDeg, hemisphere, coriolisDeg) {
+  const R = CONFIG.earth.radius;
+  const surfaceAlt = CONFIG.particles.surfaceAlt;
+  const upperAlt = CONFIG.particles.upperAlt;
+
+  const angle = t * Math.PI * 2;
+
+  // 椭圆参数：纬度cos变化，高度sin变化（90°相位差），形成向外圆润鼓出的椭圆弧线
+  const midLat = (riseLat + sinkLat) / 2;
+  const latRange = (sinkLat - riseLat) / 2;  // Hadley正, Ferrel负, Polar正
+  const midAlt = (surfaceAlt + upperAlt) / 2;
+  const altRange = (upperAlt - surfaceAlt) / 2;
+
+  // 椭圆路径（向外鼓出），气流方向：sinkLat下沉→(地面)→riseLat上升→(高空)→sinkLat
+  // t=0:   (sinkLat, mid)     下沉点（高空→地面，下沉）
+  // t=0.25:(midLat,  surface) 地面流向上升点
+  // t=0.5: (riseLat, mid)     上升点（地面→高空，上升）
+  // t=0.75:(midLat,  upper)   高空流向下沉点
+  // 用 +cos让t=0在sinkLat，用 -sin让t=0时alt下降（下沉）
+  const lat = midLat + latRange * Math.cos(angle);
+  const alt = midAlt - altRange * Math.sin(angle);
+
+  // 经度严格不变，俯视为经圈直线
+  const actualLat = lat * hemisphere;
+  const actualLon = baseLonDeg;
+  const phi = degToRad(90 - actualLat);
+  const theta = degToRad(actualLon);
+  const r = R + alt;
+
+  return new THREE.Vector3(
+    r * Math.sin(phi) * Math.cos(theta),
+    r * Math.cos(phi),
+    r * Math.sin(phi) * Math.sin(theta)
+  );
+}
+
+/* ========== 环流圈路径曲线 ========== */
+class CirculationPathCurve extends THREE.Curve {
+  constructor(riseLat, sinkLat, baseLon, hemisphere, coriolisDeg, customPath = null) {
+    super();
+    this.riseLat = riseLat;
+    this.sinkLat = sinkLat;
+    this.baseLon = baseLon;
+    this.hemisphere = hemisphere;
+    this.coriolisDeg = coriolisDeg;
+    this.customPath = customPath;
+  }
+  getPoint(t, optionalTarget = new THREE.Vector3()) {
+    if (this.customPath === 'singleDrop') {
+      return getSingleDropPosition(t, this.baseLon, this.hemisphere, this.coriolisDeg, this.riseLat, this.sinkLat);
+    }
+    if (this.customPath === 'threeCellDrop') {
+      return getThreeCellDropPosition(t, this.riseLat, this.sinkLat, this.baseLon, this.hemisphere, this.coriolisDeg);
+    }
+    return getCellPosition(t, this.riseLat, this.sinkLat, this.baseLon, this.hemisphere, this.coriolisDeg);
+  }
+}
+
+/* ========== 环流圈类 ========== */
+class CirculationCell {
+  static _tmpColor = new THREE.Color(); // 箭头渐变色复用临时对象，避免每帧GC
+
+  constructor(config, hemisphere) {
+    this.riseLat = config.riseLat;
+    this.sinkLat = config.sinkLat;
+    this.color = new THREE.Color(config.color);
+    this.colorHex = config.color;
+    this.upperColor = config.upperColor || config.color;
+    this.surfaceColor = config.surfaceColor || config.color;
+    this.name = config.name;
+    this.cellKey = config.cellKey || this.name;
+    this.customPath = config.customPath || null;
+    this.hemisphere = hemisphere;
+    this.particleCount = config.particleCount;
+    // 单圈环流双色模式：高空段橙色、近地面段蓝色（南北半球一致）
+    this.twoTone = !!config.twoTone;
+    this._cBase = new THREE.Color(config.color);
+    this._cUpper = new THREE.Color(this.upperColor);
+    this._cSurface = new THREE.Color(this.surfaceColor);
+    // 三段渐变（第二步：地转偏向力介入时，单圈环流带按纬度分段渐色，预示分化为三圈）
+    this.gradient = config.gradient || 0;
+    this._cHadley = new THREE.Color(CONFIG.cells.hadley.color);
+    this._cFerrel = new THREE.Color(CONFIG.cells.ferrel.color);
+    this._cPolar = new THREE.Color(CONFIG.cells.polar.color);
+    this._segLUT = this._buildSegLUT();
+
+    this.group = new THREE.Group();
+    this.phases = [];
+    this.baseLons = [];
+    this.particles = null;
+    this.tubes = [];          // 管状环流带
+    this.innerGlows = [];     // 内部发光核心线
+    this.arrows = [];         // 方向箭头
+    this.tubeRadius = this._getTubeRadius();
+
+    this._create();
+  }
+
+  _getTubeRadius() {
+    // 根据环流圈纬度跨度决定管径
+    const span = Math.abs(this.sinkLat - this.riseLat);
+    if (span >= 80) return 0.55;   // 单圈
+    if (span >= 25) return 0.42;   // 哈德莱/费雷尔
+    return 0.30;                    // 极地
+  }
+
+  _create() {
+    const count = STATE.lowPerf ? Math.max(60, Math.floor(this.particleCount * 0.4)) : this.particleCount;
+    this.particleCount = count;
+
+    let longitudes;
+    if (this.customPath === 'singleDrop') {
+      longitudes = CONFIG.singleCellLongitudes;
+    } else if (this.customPath === 'threeCellDrop') {
+      longitudes = CONFIG.threeCellLongitudes;
+    } else {
+      longitudes = CONFIG.pathLineLongitudes;
+    }
+
+    // 管状环流带（主视觉效果）
+    // 初始按无偏转(0)构建；各步骤所需的弯折形态统一由 _updatePositions(coriolis) 重建
+    longitudes.forEach(lon => this._createTube(lon, 0));
+
+    // 内部发光核心线
+    longitudes.forEach(lon => this._createInnerGlow(lon, 0));
+
+    // 方向箭头
+    longitudes.forEach(lon => this._createArrows(lon));
+
+    // 管内流动粒子（增强动态感）
+    const positions = new Float32Array(count * 3);
+    const colors = new Float32Array(count * 3);
+    for (let i = 0; i < count; i++) {
+      this.phases.push(Math.random());
+      if (this.customPath === 'singleDrop') {
+        this.baseLons.push(CONFIG.singleCellLongitudes[i % CONFIG.singleCellLongitudes.length]);
+      } else if (this.customPath === 'threeCellDrop') {
+        this.baseLons.push(CONFIG.threeCellLongitudes[i % CONFIG.threeCellLongitudes.length]);
+      } else {
+        this.baseLons.push(Math.random() * 360);
+      }
+      colors[i*3]   = this.color.r;
+      colors[i*3+1] = this.color.g;
+      colors[i*3+2] = this.color.b;
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+    const mat = new THREE.PointsMaterial({
+      size: CONFIG.particles.baseSize * 2.2,
+      map: particleTexture,
+      vertexColors: true,
+      transparent: true,
+      opacity: 0.9,
+      sizeAttenuation: true,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    });
+    this.particles = new THREE.Points(geo, mat);
+    this.group.add(this.particles);
+
+    this._updatePositions(0);
+  }
+
+  _createTube(baseLon, coriolis = 0) {
+    // 必须使用传入的 coriolis：各步骤的弯折形态由调用方决定，读全局 STATE 会导致第一步也被弯折
+    const curve = new CirculationPathCurve(this.riseLat, this.sinkLat, baseLon, this.hemisphere, coriolis, this.customPath);
+    const geo = new THREE.TubeGeometry(curve, 96, this.tubeRadius, 10, true);
+    // 流动条纹着色器：沿管周方向(u)产生移动明暗条纹，直观表现气流方向
+    // uTime 递增 → 条纹沿 +u 方向移动 → 对应气流 phase 增大方向（下沉→地面→上升→高空→下沉）
+    const mat = new THREE.ShaderMaterial({
+      transparent: true,
+      side: THREE.DoubleSide,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      uniforms: {
+        uColor:      { value: new THREE.Color(this.colorHex) },
+        uUpperColor: { value: new THREE.Color(this.upperColor) },
+        uSurfaceColor: { value: new THREE.Color(this.surfaceColor) },
+        uTwoTone:    { value: this.twoTone ? 1.0 : 0.0 },
+        uGradient:   { value: this.gradient },
+        uHadleyColor: { value: new THREE.Color(CONFIG.cells.hadley.color) },
+        uFerrelColor: { value: new THREE.Color(CONFIG.cells.ferrel.color) },
+        uPolarColor:  { value: new THREE.Color(CONFIG.cells.polar.color) },
+        uTime:       { value: 0 },
+        uFlowSpeed:  { value: 0.6 },
+        uStripeFreq: { value: 12.0 },
+        uOpacity:    { value: 0.32 },
+        uLowPerf:    { value: STATE.lowPerf ? 0.0 : 1.0 }
+      },
+      vertexShader: `
+        varying vec2 vUv;
+        void main() {
+          vUv = uv;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+        uniform vec3  uColor;
+        uniform vec3  uUpperColor;
+        uniform vec3  uSurfaceColor;
+        uniform float uTwoTone;
+        uniform float uGradient;
+        uniform vec3  uHadleyColor;
+        uniform vec3  uFerrelColor;
+        uniform vec3  uPolarColor;
+        uniform float uTime;
+        uniform float uFlowSpeed;
+        uniform float uStripeFreq;
+        uniform float uOpacity;
+        uniform float uLowPerf;
+        varying vec2 vUv;
+        void main() {
+          // 基础颜色
+          vec3 baseColor = uColor;
+          // 单圈双色模式：沿路径参数sin判断高度（单圈alt=mid+range*sin，sin>0为高空）
+          if (uTwoTone > 0.5) {
+            float h = sin(vUv.x * 6.2831853);
+            float w = smoothstep(-0.12, 0.12, h); // 0=近地面(蓝) 1=高空(橙)，过赤道/极地处平滑过渡
+            baseColor = mix(uSurfaceColor, uUpperColor, w);
+          }
+          // 三段渐变（第二步）：按纬度分段渐色，体现单圈环流酝酿分化为三圈
+          // vUv.x∈[0,0.5]对应纬度2.5°→90°，[0.5,1]回程；分段点30°≈0.314、60°≈0.657
+          if (uGradient > 0.001) {
+            float halfT = vUv.x < 0.5 ? vUv.x * 2.0 : (1.0 - vUv.x) * 2.0;
+            float w1 = 1.0 - smoothstep(0.28, 0.36, halfT);
+            float w3 = smoothstep(0.62, 0.70, halfT);
+            float w2 = max(0.0, 1.0 - w1 - w3);
+            vec3 segColor = uHadleyColor * w1 + uFerrelColor * w2 + uPolarColor * w3;
+            baseColor = mix(baseColor, segColor, uGradient);
+          }
+          // 流动条纹：沿管周方向(u.x)移动的明暗带
+          float stripe = 1.0;
+          if (uLowPerf > 0.5) {
+            // sin周期条纹，uTime驱动相位偏移产生流动感
+            float phase = vUv.x * uStripeFreq - uTime * uFlowSpeed;
+            stripe = 0.55 + 0.45 * (0.5 + 0.5 * sin(phase * 6.2831853));
+          }
+          vec3 finalColor = baseColor * stripe;
+          gl_FragColor = vec4(finalColor, uOpacity * stripe);
+        }
+      `
+    });
+    const tube = new THREE.Mesh(geo, mat);
+    this.tubes.push({ mesh: tube, baseLon });
+    this.group.add(tube);
+  }
+
+  // 三段渐变颜色查找表：halfT∈[0,1]对应纬度2.5°→90°，与管道shader公式一致
+  _buildSegLUT() {
+    const N = 65, lut = new Array(N);
+    const sm = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
+    for (let i = 0; i < N; i++) {
+      const h = i / (N - 1);
+      const w1 = 1 - sm(0.28, 0.36, h);
+      const w3 = sm(0.62, 0.70, h);
+      const w2 = Math.max(0, 1 - w1 - w3);
+      lut[i] = new THREE.Color(
+        this._cHadley.r * w1 + this._cFerrel.r * w2 + this._cPolar.r * w3,
+        this._cHadley.g * w1 + this._cFerrel.g * w2 + this._cPolar.g * w3,
+        this._cHadley.b * w1 + this._cFerrel.b * w2 + this._cPolar.b * w3
+      );
+    }
+    return lut;
+  }
+
+  // 路径参数phase→归一化纬度halfT（单圈路径：t=0赤道端、t=0.5极地端）
+  _phaseToHalfT(phase) {
+    return phase < 0.5 ? phase * 2 : (1 - phase) * 2;
+  }
+
+  _getArrowColor(phase) {
+    const sinVal = Math.sin(phase * Math.PI * 2);
+    // 单圈：起始色为双色（高空橙黄/近地面浅蓝），随gradient向三段段色平滑渐变
+    if (this.customPath === 'singleDrop') {
+      const c0 = this.twoTone ? (sinVal > 0 ? this._cUpper : this._cSurface) : this._cBase;
+      if (this.gradient > 0.001) {
+        const seg = this._segLUT[Math.round(this._phaseToHalfT(phase) * 64)];
+        return CirculationCell._tmpColor.copy(c0).lerp(seg, this.gradient);
+      }
+      return c0;
+    }
+    // 三圈：alt = midAlt - altRange * sin → sin>0为近地面(surfaceColor)，sin<0为高空(upperColor)
+    // t=0(sinkLat下沉点)~0.5(riseLat上升点): 地面段→surfaceColor
+    // t=0.5(riseLat上升点)~1(sinkLat下沉点): 高空段→upperColor
+    return sinVal > 0 ? this.surfaceColor : this.upperColor;
+  }
+
+  _setParticleColors() {
+    // 单圈：起始色为双色（高空橙黄/近地面浅蓝），随gradient向三段段色平滑渐变；三圈保持基础色
+    if (!this.particles) return;
+    const colors = this.particles.geometry.attributes.color.array;
+    const grad = this.gradient;
+    for (let i = 0; i < this.particleCount; i++) {
+      let r = this._cBase.r, g = this._cBase.g, b = this._cBase.b;
+      if (this.customPath === 'singleDrop') {
+        const c0 = this.twoTone
+          ? (Math.sin(this.phases[i] * Math.PI * 2) > 0 ? this._cUpper : this._cSurface)
+          : this._cBase;
+        if (grad > 0.001) {
+          const seg = this._segLUT[Math.round(this._phaseToHalfT(this.phases[i]) * 64)];
+          r = c0.r + (seg.r - c0.r) * grad;
+          g = c0.g + (seg.g - c0.g) * grad;
+          b = c0.b + (seg.b - c0.b) * grad;
+        } else {
+          r = c0.r; g = c0.g; b = c0.b;
+        }
+      }
+      colors[i*3]   = r;
+      colors[i*3+1] = g;
+      colors[i*3+2] = b;
+    }
+    this.particles.geometry.attributes.color.needsUpdate = true;
+  }
+
+  _createInnerGlow(baseLon, coriolis = 0) {
+    const curve = new CirculationPathCurve(this.riseLat, this.sinkLat, baseLon, this.hemisphere, coriolis, this.customPath);
+    const geo = new THREE.TubeGeometry(curve, 96, this.tubeRadius * 0.35, 8, true);
+    const mat = new THREE.MeshBasicMaterial({
+      color: this.colorHex,
+      transparent: true,
+      opacity: 0.55,
+      side: THREE.DoubleSide,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    });
+    // 单圈顶点色：起始色为双色（高空橙黄/近地面浅蓝，按路径参数高度），随gradient向三段段色平滑过渡
+    if (this.twoTone || (this.gradient > 0.001 && this.customPath === 'singleDrop')) {
+      const uvAttr = geo.attributes.uv;
+      const colors = new Float32Array(uvAttr.count * 3);
+      const grad = this.gradient;
+      for (let i = 0; i < uvAttr.count; i++) {
+        const u = uvAttr.getX(i);
+        // 单圈alt = mid + range*sin → sin>0为高空
+        const c0 = this.twoTone
+          ? (Math.sin(u * Math.PI * 2) > 0 ? this._cUpper : this._cSurface)
+          : this._cBase;
+        if (grad > 0.001 && this.customPath === 'singleDrop') {
+          const seg = this._segLUT[Math.round(this._phaseToHalfT(u) * 64)];
+          colors[i*3]   = c0.r + (seg.r - c0.r) * grad;
+          colors[i*3+1] = c0.g + (seg.g - c0.g) * grad;
+          colors[i*3+2] = c0.b + (seg.b - c0.b) * grad;
+        } else {
+          colors[i*3] = c0.r; colors[i*3+1] = c0.g; colors[i*3+2] = c0.b;
+        }
+      }
+      geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+      mat.vertexColors = true;
+      mat.color.set(0xffffff); // 顶点色模式下材质基色置白，避免颜色相乘变暗
+    }
+    const mesh = new THREE.Mesh(geo, mat);
+    this.innerGlows.push({ mesh, baseLon });
+    this.group.add(mesh);
+  }
+
+  _updateInnerGlowColors() {
+    this.innerGlows.forEach(({ mesh }) => {
+      const uvAttr = mesh.geometry.attributes.uv;
+      if (!uvAttr) return;
+      let colorAttr = mesh.geometry.attributes.color;
+      if (!colorAttr) {
+        colorAttr = new THREE.BufferAttribute(new Float32Array(uvAttr.count * 3), 3);
+        mesh.geometry.setAttribute('color', colorAttr);
+        mesh.material.vertexColors = true;
+        mesh.material.color.set(0xffffff);
+      }
+      const colors = colorAttr.array;
+      for (let i = 0; i < uvAttr.count; i++) {
+        const u = uvAttr.getX(i);
+        const h = Math.sin(u * Math.PI * 2);
+        const c0 = this.twoTone ? (h > 0 ? this._cUpper : this._cSurface) : this._cBase;
+        const seg = this._segLUT[Math.round(this._phaseToHalfT(u) * 64)];
+        const mix = this.customPath === 'singleDrop' ? this.gradient : 0;
+        colors[i * 3] = c0.r + (seg.r - c0.r) * mix;
+        colors[i * 3 + 1] = c0.g + (seg.g - c0.g) * mix;
+        colors[i * 3 + 2] = c0.b + (seg.b - c0.b) * mix;
+      }
+      colorAttr.needsUpdate = true;
+    });
+  }
+
+  // 设置三段渐变强度（0=双色 1=完全三段渐色）
+  // rebuildGlow=true时重建内部发光线顶点色（小几何，双色↔三段过渡动画每帧传入true实现平滑渐变）
+  setGradient(v, rebuildGlow = false) {
+    this.gradient = v;
+    this.tubes.forEach(t => {
+      const u = t.mesh?.material?.uniforms;
+      if (u && u.uGradient) u.uGradient.value = v;
+    });
+    if (rebuildGlow) this._updateInnerGlowColors();
+    this._setParticleColors();
+  }
+
+  _createArrows(baseLon) {
+    const size = this.tubeRadius * 1.6;
+    const arrowGeo = createArrowGeometry(size);
+    const count = STATE.lowPerf ? 4 : 8;
+    for (let i = 0; i < count; i++) {
+      const phase = i / count;
+      const arrowColor = this._getArrowColor(phase);
+      // 主箭头（按高度着色 + 自发光）
+      // 注：此前的"白色边框箭头"（size×1.15、BackSide、op 0.18）已按用户要求移除——
+      // 48 个半透明白锥沿经圈连成"北极→赤道→南极"的鬼影箭头链，在第三步中
+      // 被误认为残留的大箭头（实测渲染贡献 7401px，屏幕足迹纵贯 y=18~981）。
+      const arrowMat = new THREE.MeshPhongMaterial({
+        color: arrowColor,
+        emissive: arrowColor,
+        emissiveIntensity: 0.35,
+        transparent: true,
+        opacity: 0.95
+      });
+      const arrowGroup = new THREE.Group();
+      arrowGroup.add(new THREE.Mesh(arrowGeo, arrowMat));
+      this.arrows.push({ mesh: arrowGroup, baseLon, phase });
+      this.group.add(arrowGroup);
+    }
+  }
+
+  _getPosition(t, coriolis) {
+    if (this.customPath === 'singleDrop') {
+      return getSingleDropPosition(t, this.baseLons.length ? this.baseLons[0] : 0, this.hemisphere, coriolis, this.riseLat, this.sinkLat);
+    }
+    if (this.customPath === 'threeCellDrop') {
+      return getThreeCellDropPosition(t, this.riseLat, this.sinkLat, this.baseLons.length ? this.baseLons[0] : 0, this.hemisphere, coriolis);
+    }
+    return getCellPosition(t, this.riseLat, this.sinkLat, this.baseLons.length ? this.baseLons[0] : 0, this.hemisphere, coriolis);
+  }
+
+  _updatePositions(coriolis) {
+    const getPos = (t, baseLon) => {
+      if (this.customPath === 'singleDrop') {
+        return getSingleDropPosition(t, baseLon, this.hemisphere, coriolis, this.riseLat, this.sinkLat);
+      }
+      if (this.customPath === 'threeCellDrop') {
+        return getThreeCellDropPosition(t, this.riseLat, this.sinkLat, baseLon, this.hemisphere, coriolis);
+      }
+      return getCellPosition(t, this.riseLat, this.sinkLat, baseLon, this.hemisphere, coriolis);
+    };
+
+    // 重建管状几何体（因形状随偏转改变）
+    this.tubes.forEach(t => {
+      this.group.remove(t.mesh);
+      t.mesh.geometry.dispose();
+      t.mesh.material.dispose();
+    });
+    let longitudes;
+    if (this.customPath === 'singleDrop') {
+      longitudes = CONFIG.singleCellLongitudes;
+    } else if (this.customPath === 'threeCellDrop') {
+      longitudes = CONFIG.threeCellLongitudes;
+    } else {
+      longitudes = CONFIG.pathLineLongitudes;
+    }
+
+    this.tubes = [];
+    longitudes.forEach(lon => this._createTube(lon, coriolis));
+
+    // 更新内部发光核心线（需要重建TubeGeometry）
+    this.innerGlows.forEach(g => {
+      this.group.remove(g.mesh);
+      g.mesh.geometry.dispose();
+      g.mesh.material.dispose();
+    });
+    this.innerGlows = [];
+    longitudes.forEach(lon => this._createInnerGlow(lon, coriolis));
+
+    // 更新箭头（朝向沿phase增大方向，即气流流动方向：下沉→地面→上升→高空→下沉）
+    this.arrows.forEach(a => {
+      const pos = getPos(a.phase, a.baseLon);
+      a.mesh.position.copy(pos);
+      const posPrev = getPos((a.phase - 0.015 + 1) % 1, a.baseLon);
+      const dir = pos.clone().sub(posPrev).normalize();
+      const quat = new THREE.Quaternion();
+      quat.setFromUnitVectors(new THREE.Vector3(0, 0, 1), dir);
+      a.mesh.quaternion.copy(quat);
+    });
+
+    // 更新粒子
+    if (this.particles) {
+      const positions = this.particles.geometry.attributes.position.array;
+      for (let i = 0; i < this.particleCount; i++) {
+        const pos = getPos(this.phases[i], this.baseLons[i]);
+        positions[i*3]   = pos.x;
+        positions[i*3+1] = pos.y;
+        positions[i*3+2] = pos.z;
+      }
+      this.particles.geometry.attributes.position.needsUpdate = true;
+      this._setParticleColors();
+    }
+  }
+
+  update(dt, speed, coriolis) {
+    if (!STATE.playing) return;
+    // 累加流动时间，驱动管道条纹着色器（与粒子/箭头同步暂停）
+    // 低性能模式下降低更新频率：隔帧更新
+    this._flowTimeAccum = (this._flowTimeAccum || 0) + dt * speed;
+    const flowUpdateInterval = STATE.lowPerf ? 2 : 1; // 低性能模式每2帧更新一次
+    this._flowFrameCount = (this._flowFrameCount || 0) + 1;
+    if (this._flowFrameCount % flowUpdateInterval === 0) {
+      this.tubes.forEach(t => {
+        if (t.mesh.material.uniforms) {
+          t.mesh.material.uniforms.uTime.value = this._flowTimeAccum;
+          t.mesh.material.uniforms.uLowPerf.value = STATE.lowPerf ? 0.0 : 1.0;
+        }
+      });
+    }
+    for (let i = 0; i < this.particleCount; i++) {
+      this.phases[i] = (this.phases[i] + dt * speed * 0.06) % 1.0;
+    }
+
+    const getPos = (t, baseLon) => {
+      if (this.customPath === 'singleDrop') {
+        return getSingleDropPosition(t, baseLon, this.hemisphere, coriolis, this.riseLat, this.sinkLat);
+      }
+      if (this.customPath === 'threeCellDrop') {
+        return getThreeCellDropPosition(t, this.riseLat, this.sinkLat, baseLon, this.hemisphere, coriolis);
+      }
+      return getCellPosition(t, this.riseLat, this.sinkLat, baseLon, this.hemisphere, coriolis);
+    };
+
+    // 仅更新粒子和箭头位置，避免每帧重建管状几何体
+    if (this.particles) {
+      const positions = this.particles.geometry.attributes.position.array;
+      for (let i = 0; i < this.particleCount; i++) {
+        const pos = getPos(this.phases[i], this.baseLons[i]);
+        positions[i*3]   = pos.x;
+        positions[i*3+1] = pos.y;
+        positions[i*3+2] = pos.z;
+      }
+      this.particles.geometry.attributes.position.needsUpdate = true;
+      this._setParticleColors(); // 粒子沿路径流动时高度变化，同步刷新上/下层颜色
+    }
+
+    this.arrows.forEach(a => {
+      a.phase = (a.phase + dt * speed * 0.06) % 1.0;
+      const pos = getPos(a.phase, a.baseLon);
+      a.mesh.position.copy(pos);
+      const posNext = getPos((a.phase + 0.015) % 1, a.baseLon);
+      const dir = posNext.clone().sub(pos).normalize();
+      const quat = new THREE.Quaternion();
+      quat.setFromUnitVectors(new THREE.Vector3(0, 0, 1), dir);
+      a.mesh.quaternion.copy(quat);
+      // 根据新位置高度更新箭头颜色
+      const arrowColor = this._getArrowColor(a.phase);
+      const arrowMesh = a.mesh.children[0];
+      if (arrowMesh && arrowMesh.material) {
+        arrowMesh.material.color.set(arrowColor);
+        arrowMesh.material.emissive.set(arrowColor);
+      }
+    });
+  }
+
+  setVisible(v) {
+    this.group.visible = v;
+  }
+
+  setOpacity(op) {
+    this._opacity = op;
+    const visible = op > 0.001;
+    this.group.visible = visible;
+    this.arrows.forEach(a => { a.mesh.visible = visible; });
+    const safeSet = (mat, val) => {
+      try { if (mat && typeof mat.opacity === 'number') mat.opacity = val; } catch (e) {}
+    };
+    safeSet(this.particles?.material, op * 0.9);
+    this.tubes.forEach(t => {
+      const mat = t.mesh?.material;
+      safeSet(mat, op * 0.32);
+      // 管道为ShaderMaterial，opacity属性无效，需同步更新uOpacity uniform
+      if (mat && mat.uniforms && mat.uniforms.uOpacity) mat.uniforms.uOpacity.value = op * 0.32;
+    });
+    this.innerGlows.forEach(g => safeSet(g.mesh?.material, op * 0.55));
+    this.arrows.forEach(a => {
+      if (!a.mesh || !a.mesh.children) return;
+      a.mesh.children.forEach((child) => safeSet(child?.material, op * 0.95));
+    });
+  }
+
+  rebuildPaths() {
+    this._updatePositions(STATE.coriolisDeflection);
+  }
+}
+
+/* ========== 创建所有环流圈 ========== */
+function createCirculationCells() {
+  // 环流剖面根组：整组每帧按相机方位旋转（updateCrossSectionFacing）→ 环流圈始终停在地球屏幕左侧。
+  // 单圈带、三圈带、第二步弯折节点都挂在这里，保证它们朝向一致、不会错位。
+  crossSectionRoot = new THREE.Group();
+  scene.add(crossSectionRoot);
+
+  // 单圈环流（步骤0）
+  singleCellGroup = new THREE.Group();
+  const singleNH = new CirculationCell({
+    ...CONFIG.singleCell, cellKey: 'single', customPath: 'singleDrop'
+  }, 1);
+  const singleSH = new CirculationCell({
+    ...CONFIG.singleCell, cellKey: 'single', customPath: 'singleDrop'
+  }, -1);
+  singleCellGroup.add(singleNH.group);
+  singleCellGroup.add(singleSH.group);
+  cellObjects['singleNH'] = singleNH;
+  cellObjects['singleSH'] = singleSH;
+  crossSectionRoot.add(singleCellGroup);
+
+  // 三圈环流（步骤1+）
+  threeCellGroups.hadley = new THREE.Group();
+  threeCellGroups.ferrel = new THREE.Group();
+  threeCellGroups.polar  = new THREE.Group();
+
+  ['hadley', 'ferrel', 'polar'].forEach(key => {
+    const cfg = CONFIG.cells[key];
+    const nh = new CirculationCell({ ...cfg, cellKey: key, customPath: 'threeCellDrop' }, 1);
+    const sh = new CirculationCell({ ...cfg, cellKey: key, customPath: 'threeCellDrop' }, -1);
+    threeCellGroups[key].add(nh.group);
+    threeCellGroups[key].add(sh.group);
+    cellObjects[key + 'NH'] = nh;
+    cellObjects[key + 'SH'] = sh;
+    crossSectionRoot.add(threeCellGroups[key]);
+  });
+
+  // 初始状态：只显示单圈
+  setStepVisual(0);
+  updateCrossSectionFacing();   // 首帧即停在屏幕左侧（不必等 animate 第一帧）
+}
+
+/* ========== 第二步偏转视觉：30°/60° 弯折节点与偏转力箭头 ========== */
+// 数值求"弯折后实际路径"上的纬度极值点，使节点精确落在环流带上
+// （此前按无偏转解析式硬算 alt，弯折后节点会偏离带子约 1.4° 纬度）
+function findExtremaByLat(baseLon, hemisphere, coriolisDeg, want = 'max') {
+  const flat = getSingleDropPosition(0, baseLon, hemisphere, 0);
+  const sign = Math.sign(flat.y) || 1;
+  let bestT = 0, best = -Infinity;
+  const N = 2000;
+  for (let i = 0; i <= N; i++) {
+    const t = i / N;
+    const p = getSingleDropPosition(t, baseLon, hemisphere, coriolisDeg);
+    const lat = Math.asin(clamp(p.y / p.length(), -1, 1)) * 180 / Math.PI * sign;
+    if (lat > best) { best = lat; bestT = t; }
+  }
+  return { t: bestT, lat: best, pos: getSingleDropPosition(bestT, baseLon, hemisphere, coriolisDeg) };
+}
+
+function createCoriolisVisuals() {
+  coriolisGroup = new THREE.Group();
+  const baseLon = CONFIG.singleCellLongitudes[0];
+
+  // 北极点（环流带在此下沉）与 30° 附近的弯折点（环流带在此开始堆积下沉）
+  const nodeDefs = [];
+  [1, -1].forEach(h => {
+    const pole = findExtremaByLat(baseLon, h, STATE.coriolisDeflection, 'max');
+    nodeDefs.push({ pos: pole.pos, type: 'sink', latLabel: h > 0 ? 90 : -90, hemi: h });
+    // 30° 弯折点：在纬度 0~极地 区间内取纬度≈30° 的路径点
+    const target = 30;
+    let bestT = 0, bestErr = Infinity;
+    for (let i = 0; i <= 2000; i++) {
+      const t = i / 2000;
+      const p = getSingleDropPosition(t, baseLon, h, STATE.coriolisDeflection);
+      const lat = Math.asin(clamp(p.y / p.length(), -1, 1)) * 180 / Math.PI * h;
+      const err = Math.abs(lat - target);
+      if (err < bestErr) { bestErr = err; bestT = t; }
+    }
+    const bendPos = getSingleDropPosition(bestT, baseLon, h, STATE.coriolisDeflection);
+    nodeDefs.push({ pos: bendPos, type: 'bend', latLabel: (h > 0 ? 30 : -30), hemi: h });
+  });
+
+  nodeDefs.forEach(def => {
+    const isSink = def.type === 'sink';
+    const pos = def.pos.clone();
+    const radial = pos.clone().normalize();
+
+    const g = new THREE.Group();
+    g.position.copy(pos);
+
+    // 发光节点球 + 外圈光晕
+    const coreColor = isSink ? 0xFFAA33 : 0x66DDFF;
+    const core = new THREE.Mesh(
+      new THREE.SphereGeometry(0.13, 16, 12),
+      new THREE.MeshBasicMaterial({ color: coreColor })
+    );
+    const halo = new THREE.Mesh(
+      new THREE.SphereGeometry(0.24, 16, 12),
+      new THREE.MeshBasicMaterial({ color: coreColor, transparent: true, opacity: 0.28, blending: THREE.AdditiveBlending, depthWrite: false })
+    );
+    g.add(core, halo);
+
+    if (!isSink) {
+      const vertDir = radial.clone().multiplyScalar(-1);
+      const vertArrow = new THREE.Mesh(
+        createArrowGeometry(0.9),
+        new THREE.MeshBasicMaterial({ color: coreColor })
+      );
+      vertArrow.position.copy(vertDir.clone().multiplyScalar(0.42));
+      vertArrow.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), vertDir);
+      g.add(vertArrow);
+    }
+
+    // 节点标签（仅第二步显示，animate循环做背面剔除）
+    const el = document.createElement('div');
+    el.className = 'coriolis-label';
+    const latStr = Math.abs(def.latLabel) + '°' + (def.latLabel > 0 ? 'N' : 'S');
+    el.textContent = isSink ? latStr + ' 气流堆积下沉' : latStr + ' 气流偏转弯折';
+    const labelObj = new CSS2DObject(el);
+    // 偏转标签：沿径向放到大气层附近（大气层外缘 7.0），不再贴着环流带节点
+    const labelR = CONFIG.earth.atmosphereRadius;
+    labelObj.position.copy(radial.clone().multiplyScalar(Math.max(labelR - pos.length(), 0.3)));
+    labelObj.userData.baseVisible = false;
+    g.add(labelObj);
+    coriolisLabels.push({ obj: labelObj });
+
+    coriolisGroup.add(g);
+    coriolisNodes.push({ group: g, lat: def.latLabel, type: def.type });
+  });
+
+  coriolisGroup.visible = false;
+  // 与环流带同挂剖面根组：弯折节点必须跟着环流带一起屏幕锚定，否则会与带子错位
+  (crossSectionRoot || scene).add(coriolisGroup);
+}
+
+/* 第二步的地转偏向力内容（仅第二步显示）
+   分工：
+     · 强度数值与"随纬度增强"的规律 → 知识点面板内的标尺 #deflect-scale（文字形式，不会重叠）
+     · 三维场景 → 只保留"北极自转方向"指示（真正有指示作用的标注）
+   早期版本在大气层外排过一排"强度条"，但那些只是长度递增的箭头、并不指向任何对象，
+   既没有指示作用又与环流圈挤在一起，已去除。 */
+const deflectionIndicators = [];
+
+// 标尺面板数据（纬度 → 强度百分比），由 createDeflectionIndicators 填充
+let deflectScaleData = [];
+
+/* 渲染左下角"地转偏向力强度"标尺。做成屏幕固定面板而非三维标签：
+   三维标签的可用屏幕空间随视口尺寸与相机方位变化，高纬度档会挤成一列或移出视口；
+   固定面板的排布由 CSS 保证，任何视角、任何窗口尺寸都不会重叠。 */
+function buildDeflectScale() {
+  const host = document.getElementById('deflect-scale-rows');
+  if (!host) return;
+  host.innerHTML = deflectScaleData.map(d =>
+    `<div class="ds-row"><span class="ds-lat">${d.lat}°</span>` +
+    `<span class="ds-bar"><i style="width:${Math.max(d.pct, 2)}%"></i></span>` +
+    `<span class="ds-val">${d.pct}%</span></div>`
+  ).join('');
+}
+/* 标签布局：三组各就各位
+   · 纬度标签（左列）：屏幕左侧弧，x = +LABEL_R_LAT·cos(lat)（位置保持不变）
+   · 气压带标签（中列）：**锚在模型的条状带上** —— 见下方 beltAnchorPos()
+   · 风带标签（右列）：**锚在球面上**（windAnchorPos），经度每帧跟随相机方位 */
+const LABEL_R_LAT = CONFIG.earth.radius + 0.6;           // 5.6：纬度标尺弧半径（同时也是高度基准）
+const LABEL_R_VERTICAL = CONFIG.earth.atmosphereRadius;  // 垂直运动标签：贴合大气层外缘(7.0)
+
+/* 气压带色带半径：必须与 createPressureBelts() 用的半径一致，否则标签会浮在色带内外。 */
+const PRESSURE_BELT_R = CONFIG.earth.radius + 0.2;       // 5.2
+
+/* 色带纬度顺序：必须与 createPressureBelts() 里 beltData 的追加顺序严格一致。
+   beltVisibility()/beltHitAt() 靠这张表把"第 i 条色带"映射回它的中心纬度。 */
+const PRESSURE_BELT_LATS = [0, 30, -30, 60, -60, 85, -85];
+
+/* 标签高度：按纬度标尺半径展开。必须与左侧纬度标签同公式，否则标签会被放大到错误纬度上。 */
+const labelY = (lat) => LABEL_R_LAT * Math.sin(degToRad(lat));
+
+/* 两极纬度标签的额外外推量（仅 |lat|≥80 生效）。
+   标尺弧在极点处 cos(±90°)=0 → 两极标签恰好落在弧的顶点/底点，也就是**屏幕竖直中轴**上；
+   而"极地高气压带"标签的锚点同样落在竖直中轴上（色带环的近侧点必在相机方位面内），
+   侧视/平视（相机恰在赤道面）时两者屏幕 y 只差 3~5px 而标签高 23px → 必然相叠。
+   把两极的纬度标签沿半径再外推 0.4，既分开两者，也不破坏"纬度越高越靠上下两端"的读法。 */
+const LABEL_R_POLE_EXTRA = 0.4;
+const latLabelRadius = (lat) => (Math.abs(lat) >= 80 ? LABEL_R_LAT + LABEL_R_POLE_EXTRA : LABEL_R_LAT);
+
+/* 气压带标签锚点：色带环（半径 PRESSURE_BELT_R、纬度 lat）上的一点。
+   标签层的朝向由 syncLabelAnchorTransform() 每帧设为"平面正对相机"（方位+俯仰），
+   因此 dLon=0 时锚点投影在屏幕竖直中轴上（色带在球面正前方的位置），
+   dLon 是该点沿纬圈向东/西的偏移（仅用于把整列标签向屏幕左侧错开，仍严格落在环上）。 */
+function beltAnchorPos(lat, dLon = 0) {
+  const phi = degToRad(lat), t = degToRad(dLon);
+  const r = PRESSURE_BELT_R;
+  return new THREE.Vector3(
+    r * Math.cos(phi) * Math.sin(t),
+    r * Math.sin(phi),
+    -r * Math.cos(phi) * Math.cos(t)
+  );
+}
+
+/* 风带标签锚点半径：与纬度标尺同为 5.6。
+   若只高出球面 0.1（5.1），正常视角下锚点恰在地球轮廓切线附近，
+   背面剔除会把"贴着轮廓边缘"的标签误判为被地球挡住（实测东南信风带一度消失）；
+   抬到 5.6 让锚点越过切线，仅当标签真正转入地球背面时才隐藏。 */
+const WIND_LABEL_R = CONFIG.earth.radius + 0.1;
+function windAnchorPos(lat, dLon = -24) {
+  const phi = degToRad(lat), t = degToRad(dLon);
+  return new THREE.Vector3(
+    WIND_LABEL_R * Math.cos(phi) * Math.sin(t),
+    WIND_LABEL_R * Math.sin(phi),
+    -WIND_LABEL_R * Math.cos(phi) * Math.cos(t)
+  );
+}
+
+/* 气压带标签的"贴带"判定：从相机过锚点的那一个像素，第一个命中的实体必须就是这条色带。
+   不成立就隐藏标签 —— 宁可暂时不显示，也不让标签悬在没有色带的地方
+   （典型案例：侧视/平视时整个极冠藏在地球背面，只有天边一丝）。
+   等价的两个必要条件：
+     ① 锚点没被地球球体挡住：相机→锚点线段离球心最近的点必须在地球半径之外；
+     ② 锚点之前射线没有先切到**别的**色带：所有色带都在同一个半径 5.2 的球面上，
+        射线与该球面共有两个交点，一个就是锚点自己（s=1），另一个 s2<1 时在锚点之前；
+        若那个交点的纬度落在别的色带的纬度区间里，说明那条色带挡在前面。 */
+function beltAnchorCovered(P, ownIdx) {
+  const C = camera.position;
+  const center = beltAnchorCovered._center || (beltAnchorCovered._center = new THREE.Vector3());
+  if (earthGroup) earthGroup.getWorldPosition(center); else center.set(0, 0, 0);
+  const dx = P.x - C.x, dy = P.y - C.y, dz = P.z - C.z;
+  const dd = dx * dx + dy * dy + dz * dz;
+  if (dd < 1e-6) return false;
+
+  // ① 地球遮挡
+  const t = clamp(-((C.x - center.x) * dx + (C.y - center.y) * dy + (C.z - center.z) * dz) / dd, 0, 1);
+  const qx = C.x + dx * t - center.x, qy = C.y + dy * t - center.y, qz = C.z + dz * t - center.z;
+  const rEarth2 = CONFIG.earth.radius * CONFIG.earth.radius;
+  if (qx * qx + qy * qy + qz * qz < rEarth2) return true;
+
+  // ② 别的色带遮挡（s=1 是锚点本身，另一交点 s2 = (|C-center|²-R²)/|d|²）
+  const R2 = PRESSURE_BELT_R * PRESSURE_BELT_R;
+  const camRelX = C.x - center.x;
+  const camRelY = C.y - center.y;
+  const camRelZ = C.z - center.z;
+  const s2 = (camRelX * camRelX + camRelY * camRelY + camRelZ * camRelZ - R2) / dd;
+  if (s2 < 1 && s2 > 0) {
+    const lat = Math.asin(clamp((C.y + dy * s2 - center.y) / PRESSURE_BELT_R, -1, 1)) * 180 / Math.PI;
+    for (let i = 0; i < pressureBeltZones.length; i++) {
+      if (i === ownIdx) continue;
+      const z = pressureBeltZones[i];
+      if (lat >= z[0] - 0.05 && lat <= z[1] + 0.05) return true;
+    }
+  }
+  return false;
+}
+
+/* 气压带与风带标签统一放在以地球中心为原点的屏幕标签层。
+   朝向只跟随相机的水平方位角（绕 Y 旋转），**不继承地球自转**
+   （earthGroup.rotation.y 的自转被刻意排除在外）—— 地球自转时，
+   标签列保持在屏幕左/中/右不动；上下拖动改变俯仰时，锚点随各自
+   纬度圈改变屏幕位置，背面的标签由 animate 里的遮挡判定隐藏。 */
+function syncLabelAnchorTransform() {
+  if (!labelAnchorGroup || !earthGroup || !camera) return;
+  const center = syncLabelAnchorTransform._center ||
+    (syncLabelAnchorTransform._center = new THREE.Vector3());
+  earthGroup.getWorldPosition(center);
+  labelAnchorGroup.position.copy(center);
+  labelAnchorGroup.rotation.set(
+    earthGroup.rotation.x,
+    -Math.atan2(camera.position.z, camera.position.x) - Math.PI / 2,
+    earthGroup.rotation.z
+  );
+}
+
+function updateLabelGroupFacing() {
+  if (!labelGroup || !camera) return;
+  const az = Math.atan2(camera.position.z, camera.position.x);
+  // 垂直运动标签组（第一步内容）：单独用 -az+π/2 置于屏幕右侧
+  if (verticalLabelGroup) {
+    verticalLabelGroup.rotation.y = -az + Math.PI / 2;
+  }
+}
+
+/* 环流剖面（单圈/三圈环流带 + 第二步弯折节点）的屏幕锚定：
+   剖面本身画在"世界经度 0"的经圈上（+X 侧）。默认相机方位 atan2(12,8)≈56.3° 下，
+   +X 侧投影到屏幕**右侧**，于是重启后环流圈落在画面右边、与左侧纬度标尺分居两端。
+   现改成每帧跟随相机方位旋转，使剖面始终停在地球的**屏幕左侧**（与三列标签同一套屏幕锚定逻辑）。
+   偏移量取默认相机方位本身：剖面新经度 = 相机方位 + 56.3°，与原先的观感完全一致，只是左右对调。 */
+const CELLS_SCREEN_OFFSET = Math.atan2(12, 8);   // ≈56.31°：默认相机方位（镜像基准）
+function updateCrossSectionFacing() {
+  if (!crossSectionRoot || !camera) return;
+  const az = Math.atan2(camera.position.z, camera.position.x);
+  crossSectionRoot.rotation.y = -(az + CELLS_SCREEN_OFFSET);
+}
+
+function createDeflectionIndicators(parent) {
+  const R = CONFIG.earth.radius;
+  // 强度信息的表达分工：
+  //   · 数值与"随纬度增强"的规律 → 由知识点面板内的标尺 #deflect-scale 承担（文字，不会重叠）
+  //   · 三维场景 → 只保留"北极自转方向"这一个真正有指示作用的标注
+  // 原先在大气层外排的那一排"强度条"只是长度递增的箭头、并不指向任何东西，
+  // 既没有指示作用又会与环流圈挤在一起，故已去除。
+  const lats = [0, 15, 30, 45, 60];
+
+  // 标尺面板的行内容（纬度 → 强度百分比），供 buildDeflectScale() 渲染
+  deflectScaleData = lats.map(lat => ({ lat, pct: Math.round(Math.sin(degToRad(lat)) * 100) }));
+
+  // 北极自转方向指示：俯视北极为逆时针（自西向东）。
+  // 半径取 R+1.0：极点正上方在屏幕上的余量很小，再往上会顶出视口顶端看不见。
+  const poleR = R + 1.0;
+  const rotPts = [];
+  for (let i = 0; i <= 40; i++) {
+    const a = (i / 40) * Math.PI * 1.5;
+    rotPts.push(new THREE.Vector3(Math.cos(a) * 1.35, 0, Math.sin(a) * 1.35));
+  }
+  const rotLine = new THREE.Line(
+    new THREE.BufferGeometry().setFromPoints(rotPts),
+    new THREE.LineBasicMaterial({ color: 0x8FD3FF, transparent: true, opacity: 0.85 })
+  );
+  const rotHead = new THREE.Mesh(
+    createArrowGeometry(0.7),
+    new THREE.MeshBasicMaterial({ color: 0x8FD3FF })
+  );
+  const endA = Math.PI * 1.5;
+  const endDir = new THREE.Vector3(-Math.sin(endA), 0, Math.cos(endA));
+  rotHead.position.set(Math.cos(endA) * 1.35, 0, Math.sin(endA) * 1.35);
+  rotHead.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), endDir);
+
+  const rotGroup = new THREE.Group();
+  rotGroup.add(rotLine, rotHead);
+  rotGroup.position.set(0, poleR, 0);
+  rotGroup.visible = false;
+  // 必须挂到场景根：若挂在 coriolisGroup 下，会被 setNodeScale()（弯折节点的弹性浮现动画）
+  // 缩放，位置随之被拖到地球内部而看不见。
+  deflectionIndicators.push(rotGroup);   // 纳入统一显隐
+}
+
+/* 第二步专属内容显隐：三维里的自转方向指示 + 面板内的强度标尺。
+   初始必须显式隐藏：createDeflectionIndicators 在 init 中晚于 setStepVisual(0) 执行，
+   若不初始化，自转指示会在第一步（不自转模型）中错误地显示出来。 */
+function showDeflectionIndicators(visible) {
+  deflectionIndicators.forEach(o => { o.visible = visible; });
+  const panel = document.getElementById('deflect-scale');
+  if (panel) panel.classList.toggle('show', !!visible);
+}
+showDeflectionIndicators(false);
+
+/* 纬度标签弧定位（+X 一侧，由 updateLabelGroupFacing 整体转到屏幕左侧）。
+   垂直运动标签仍在用它；气压带标签用 beltAnchorPos()、风带标签用 windAnchorPos()（见各自注释）。 */
+function rightSidePos(lat, radius) {
+  const phi = degToRad(90 - lat);
+  return new THREE.Vector3(radius * Math.sin(phi), radius * Math.cos(phi), 0);
+}
+
+function createLabels() {
+  labelGroup = new THREE.Group();
+  latLabelGroup = new THREE.Group();   // 纬度标签单独成组，便于分置到地球左侧
+  windLabelGroup = new THREE.Group();  // 风带标签独立组，置于最右列
+  verticalLabelGroup = new THREE.Group(); // 垂直运动标签单独成组，置于屏幕右侧
+
+  const labelData = [
+    { lat: 0,  text: '0° 赤道',   cls: 'lat-label', key: 'pressure-0' },
+    { lat: 30, text: '30°N',       cls: 'lat-label', key: 'pressure-30' },
+    { lat: -30,text: '30°S',       cls: 'lat-label', key: 'pressure-30' },
+    { lat: 60, text: '60°N',       cls: 'lat-label', key: 'pressure-60' },
+    { lat: -60,text: '60°S',       cls: 'lat-label', key: 'pressure-60' },
+    { lat: 90, text: '90°N 北极',  cls: 'lat-label', key: 'pressure-90' },
+    { lat: -90,text: '90°S 南极',  cls: 'lat-label', key: 'pressure-90' }
+  ];
+
+  /* 气压带标签：锚点落在各自色带环上（dLon = 沿纬圈的经度偏移，仍严格在环上）。
+     所有标签统一叠加同一 PRESSURE_LABEL_DLON：把标签从"色带正前方（屏幕正中）"
+     沿纬圈向**屏幕左侧**滑动一段（用户要求气压带标签整体左移一点），七档队形保持一致。
+     偏的只是锚点在环上的经度，锚点半径恒为 5.2、仍严格落在自己那条色带上。
+     正 dLon = 屏幕左（local +X），已由实测确认。
+     唯一特例：-30°/-60° 两档的锚点在本带内沿纬度微调（anchorLat=-28 / -59，
+     均在带体范围 ±2.5° 之内，锚点仍在自己色带上）。默认俯仰视角下南半球被垂直压缩，
+     -30°/-60° 标签中心仅差约 20px；此前靠 -30° 额外横移 20° 让位，但那会破坏
+     "七档统一队形"（用户指出）。实测（相机 (8,6,12)）：-30° 档锚点北移 1° 标签上移
+     约 2.7px、-60° 档锚点北移 1° 标签下移约 1.1px（底部透视反向），故两档各向本带
+     北缘微调即可把纵向间距从 20px 拉开到约 26px，横向偏移与其他档完全一致。
+     极档（±85°）纬圈极小，滑动量天然可忽略。 */
+  const PRESSURE_LABEL_DLON = 16;
+  const pressureData = [
+    { lat: 0,   text: '赤道低气压带 ↑',     cls: 'pressure-label', key: 'pressure-0' },
+    { lat: 30,  text: '副热带高气压带 ↓',    cls: 'pressure-label', key: 'pressure-30' },
+    { lat: -30, anchorLat: -28, text: '副热带高气压带 ↓',    cls: 'pressure-label', key: 'pressure-30' },
+    { lat: 60,  text: '副极地低气压带 ↑',    cls: 'pressure-label', key: 'pressure-60' },
+    { lat: -60, anchorLat: -59, text: '副极地低气压带 ↑',    cls: 'pressure-label', key: 'pressure-60' },
+    { lat: 85,  text: '极地高气压带 ↓',      cls: 'pressure-label', key: 'pressure-90' },
+    { lat: -85, text: '极地高气压带 ↓',      cls: 'pressure-label', key: 'pressure-90' }
+  ];
+
+  // 纬度标签：屏幕左侧弧（x = +半径·cos(lat)，高度与 bandPos 同公式 → 作为高度基准）
+  labelData.forEach(d => {
+    const el = document.createElement('div');
+    el.className = d.cls;
+    el.textContent = d.text;
+    el.addEventListener('click', () => showKnowledge(d.key));
+    const obj = new CSS2DObject(el);
+    const R = latLabelRadius(d.lat);
+    obj.position.set(R * Math.cos(degToRad(d.lat)), R * Math.sin(degToRad(d.lat)), 0);
+    obj.userData.baseVisible = true; // 纬度标签默认可见
+    latLabelGroup.add(obj);
+    latLabels.push({ obj, data: d });
+  });
+
+  // 气压带标签：锚点直接落在**色带环**上（beltAnchorPos）→ 与模型位置严格对齐。
+  // 一个纬度一条带，7 个标签分别贴在各自条状带的球面近侧；
+  // 统一叠加 PRESSURE_LABEL_DLON 使整列沿纬圈向屏幕左侧滑动（见 pressureData 上方注释）。
+  pressureData.forEach(d => {
+    const el = document.createElement('div');
+    el.className = d.cls;
+    el.textContent = d.text;
+    el.addEventListener('click', () => showKnowledge(d.key));
+    const obj = new CSS2DObject(el);
+    obj.position.copy(beltAnchorPos(d.anchorLat ?? d.lat, (d.dLon || 0) + PRESSURE_LABEL_DLON));
+    obj.visible = false;
+    obj.userData.baseVisible = false; // 气压带标签初始隐藏，第三步显示
+    obj.userData.beltIndex = pressureLabels.length;   // 对应 pressureBeltMeshes 里的序号，供贴带遮挡判定用
+    labelGroup.add(obj);
+    pressureLabels.push({ obj, data: d });
+  });
+
+  const verticalData = [
+    { lat: 0, text: '赤道上升 ↑' },
+    { lat: 90, text: '北极下沉 ↓' },
+    { lat: -90, text: '南极下沉 ↓' }
+  ];
+
+  verticalData.forEach(d => {
+    const el = document.createElement('div');
+    el.className = 'vertical-label';
+    el.textContent = d.text;
+    const obj = new CSS2DObject(el);
+    obj.position.copy(rightSidePos(d.lat, LABEL_R_VERTICAL));
+    if (d.lat === 0) obj.position.set(-LABEL_R_VERTICAL - 0.95, 0, 0);
+    obj.visible = false;
+    obj.userData.baseVisible = STATE.step === 0 && STATE.showLabels;
+    verticalLabelGroup.add(obj);
+    verticalLabels.push({ obj, data: d });
+  });
+
+  // 风带箭头阵列（替代单标签样式，沿纬线均匀排布连续箭头）
+  createWindArrows();
+
+  // 朝向由 syncLabelAnchorTransform()/updateLabelGroupFacing() 每帧按相机方位更新：
+  //   纬度组 → 屏幕左、气压带组 → 屏幕中、风带标签 → 屏幕右。
+  //   标签层挂在场景根（不进 earthGroup）→ 不随地球自转移动；
+  //   上下拖动时锚点随纬度圈改变屏幕位置，转入地球背面的标签自动隐藏（见 animate）。
+  // 初始给一个兜底值（此时相机可能尚未就绪；-π/2 等价于方位角 az=0）
+  labelGroup.rotation.y = 0;
+  latLabelGroup.rotation.y = 0;
+  verticalLabelGroup.rotation.y = Math.PI / 2;
+
+  labelAnchorGroup = new THREE.Group();
+  labelAnchorGroup.add(labelGroup, windLabelGroup, latLabelGroup);
+  scene.add(labelAnchorGroup);
+  // 垂直运动标签独立组加入场景（屏幕右侧）
+  scene.add(verticalLabelGroup);
+  syncLabelAnchorTransform();
+}
+
+/* ========== 近地面风带箭头阵列 ========== */
+// 创建贴合球面的扁平斜向弯箭头（沿真实风向：经度+纬度同时变化）
+function createFlatArrowOnSphere(latStart, lonStart, latEnd, lonEnd, R) {
+  const shaftW = 0.06;   // 箭杆半宽
+  const headW  = 0.20;   // 箭头根部半宽
+  const headStart = 0.65; // 箭头起始位置(0~1)
+
+  // 箭头轮廓：[沿长度t, 垂直宽度w]
+  const outline = [
+    [0,         -shaftW],
+    [headStart, -shaftW],
+    [headStart, -headW],
+    [1,         0],
+    [headStart,  headW],
+    [headStart,  shaftW],
+    [0,          shaftW]
+  ];
+
+  // 球面坐标转换（theta取负，让经度方向匹配地理东向：从北极看为逆时针）
+  function spherePos(lat, lon) {
+    const phi = degToRad(90 - lat);
+    const theta = -degToRad(lon);
+    return new THREE.Vector3(
+      R * Math.sin(phi) * Math.cos(theta),
+      R * Math.cos(phi),
+      R * Math.sin(phi) * Math.sin(theta)
+    );
+  }
+
+  // 计算箭头中心点在t位置的球面坐标（经纬度线性插值）
+  function centerAt(t) {
+    const lat = latStart + (latEnd - latStart) * t;
+    const lon = lonStart + (lonEnd - lonStart) * t;
+    return spherePos(lat, lon);
+  }
+
+  // 计算t位置的切线方向（沿箭头走向），用于求垂直宽度方向
+  const eps = 0.001;
+  function tangentAt(t) {
+    const p1 = centerAt(Math.max(0, t - eps));
+    const p2 = centerAt(Math.min(1, t + eps));
+    return p2.sub(p1).normalize();
+  }
+
+  const pts = [];
+  for (const [t, w] of outline) {
+    const center = centerAt(t);
+    const tangent = tangentAt(t);
+    const normal = center.clone().normalize();
+    // 垂直于切线、在球面切平面内的方向（用于箭头加宽）
+    const perp = new THREE.Vector3().crossVectors(normal, tangent).normalize();
+    pts.push(center.clone().add(perp.clone().multiplyScalar(w)));
+  }
+
+  // 扇形三角化
+  const positions = [];
+  for (const p of pts) positions.push(p.x, p.y, p.z);
+  const indices = [];
+  for (let i = 1; i < pts.length - 1; i++) indices.push(0, i, i + 1);
+
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+  geo.setIndex(indices);
+  geo.computeVertexNormals();
+  return geo;
+}
+
+function createWindArrows() {
+  // 风带定义：lat=中心纬度, dir_lon=经度方向(+1东/-1西), dir_lat=纬度方向(+1北/-1南)
+  // 箭头指向风吹去的方向（风向名称是风来的方向）
+  // 东北信风→吹向西南, 东南信风→吹向西北, 盛行西风(北)→吹向东北, 盛行西风(南)→吹向东南
+  // 极地东风(北)→吹向西南, 极地东风(南)→吹向西北
+  const windBelts = [
+    { lat: 15,  dir_lon: -1, dir_lat: -1, color: 0xFF8800, name: '东北信风带' },
+    { lat: -15, dir_lon: -1, dir_lat:  1, color: 0xFF8800, name: '东南信风带' },
+    { lat: 45,  dir_lon:  1, dir_lat:  1, color: 0xFF8800, name: '盛行西风带' },
+    { lat: -45, dir_lon:  1, dir_lat: -1, color: 0xFF8800, name: '盛行西风带' },
+    { lat: 75,  dir_lon: -1, dir_lat: -1, color: 0xFF8800, name: '极地东风带' },
+    { lat: -75, dir_lon: -1, dir_lat:  1, color: 0xFF8800, name: '极地东风带' }
+  ];
+
+  const R = CONFIG.earth.radius + 0.1; // 贴近地面
+  const arrowCount = 8;   // 每条风带沿纬线均匀排布的箭头数
+  const lonSpan = 26;     // 每个箭头沿经度方向的跨度(度)
+  const latSpan = 10;     // 每个箭头沿纬度方向的跨度(度)，形成斜度
+
+  windBelts.forEach(belt => {
+    const mat = new THREE.MeshPhongMaterial({
+      color: belt.color,
+      transparent: true,
+      opacity: 0.9,
+      emissive: belt.color,
+      emissiveIntensity: 0.5,
+      side: THREE.DoubleSide,
+      depthWrite: false
+    });
+
+    for (let i = 0; i < arrowCount; i++) {
+      const lonCenter = (360 / arrowCount) * i;
+      // 箭头尾部→头部 = 风来的方向→风去的方向
+      const lonStart = lonCenter - (lonSpan / 2) * belt.dir_lon;
+      const lonEnd   = lonCenter + (lonSpan / 2) * belt.dir_lon;
+      const latStart = belt.lat - (latSpan / 2) * belt.dir_lat;
+      const latEnd   = belt.lat + (latSpan / 2) * belt.dir_lat;
+
+      const geo = createFlatArrowOnSphere(latStart, lonStart, latEnd, lonEnd, R);
+      const mesh = new THREE.Mesh(geo, mat);
+      mesh.visible = false;
+      // 风带箭头固定在地球模型上：挂到 earthGroup，随地球自转一起转动
+      // （转到背面时被地球球体深度遮挡，自然隐藏 —— 与"画在地球仪表面"的行为一致）
+      earthGroup.add(mesh);
+      windArrowMeshes.push(mesh);
+    }
+
+    // 在风带对应位置添加名称标签（挂在场景级标签层，不随地球自转，见 windLabelGroup）
+    const windKey = Math.abs(belt.lat) <= 30 ? 'hadley' : (Math.abs(belt.lat) <= 60 ? 'ferrel' : 'polar');
+    const el = document.createElement('div');
+    el.className = 'pressure-label';
+    el.style.borderColor = 'rgba(100,200,255,0.5)';
+    el.style.color = '#88DDFF';
+    el.style.fontSize = '13px';
+    el.textContent = belt.name;
+    el.addEventListener('click', () => showKnowledge(windKey));
+    const obj = new CSS2DObject(el);
+    // 风带标签锚定在标签层的局部球面坐标：只随相机方位转到屏幕右侧，不随地球自转
+    obj.userData.windLat = belt.lat;
+    obj.userData.windAnchor = windAnchorPos(belt.lat, -24);
+    obj.position.copy(obj.userData.windAnchor);
+    obj.visible = false;
+    obj.userData.baseVisible = false; // 风带标签初始隐藏，第三步显示
+    windLabelGroup.add(obj);
+    windLabels.push({ obj, data: { key: 'wind' } });
+  });
+}
+
+/* ========== 气压带环带可视化 ========== */
+let pressureBeltMeshes = [];
+let pressureBeltZones = [];   // 与 pressureBeltMeshes 一一对应：[latMin, latMax]，供贴带遮挡判定用
+let pressureBeltGroup;
+function createPressureBelts() {
+  pressureBeltGroup = new THREE.Group();
+  scene.add(pressureBeltGroup);
+  // 气压带定义：lat=中心纬度, latHalfWidth=半宽(度), color=色带颜色
+  // 赤道低压浅红、副热带高压浅黄、副极地低压浅蓝、极地高压浅紫
+  // 半宽收窄到贴合标准纬度带范围
+  // 赤道低压: 南北纬5°之间(半宽5°)
+  // 副热带高压: 对齐南北纬30°，宽度5°内(半宽2.5°)
+  // 副极地低压: 对齐南北纬60°，宽度5°内(半宽2.5°)
+  // 极地高压: 对齐极地85°
+  const beltData = [
+    { lat: 0,   latHalfWidth: 2.5, color: 0xFF6B6B, name: '赤道低气压带' },
+    { lat: 30,  latHalfWidth: 2.5, color: 0xFFD93D, name: '副热带高气压带' },
+    { lat: -30, latHalfWidth: 2.5, color: 0xFFD93D, name: '副热带高气压带' },
+    { lat: 60,  latHalfWidth: 2.5, color: 0x6BC5E8, name: '副极地低气压带' },
+    { lat: -60, latHalfWidth: 2.5, color: 0x6BC5E8, name: '副极地低气压带' },
+    { lat: 85,  latHalfWidth: 4,   color: 0xA8A0D8, name: '极地高气压带' },
+    { lat: -85, latHalfWidth: 4,   color: 0xA8A0D8, name: '极地高气压带' }
+  ];
+
+  const R = PRESSURE_BELT_R; // 略大于地球半径，保证前后部分深度关系正确（气压带标签锚点同用该半径）
+  const segments = 128;
+
+  beltData.forEach(d => {
+    // 用球面带构建贴合球面的色带（覆盖 latHalfWidth*2 的纬度范围）
+    const latMin = d.lat - d.latHalfWidth;
+    const latMax = d.lat + d.latHalfWidth;
+    const phiMin = degToRad(90 - latMax);
+    const phiMax = degToRad(90 - latMin);
+
+    const positions = [];
+    const indices = [];
+    for (let i = 0; i <= segments; i++) {
+      const t = i / segments;
+      const theta = t * Math.PI * 2;
+      // 上下两条边
+      for (const phi of [phiMin, phiMax]) {
+        positions.push(
+          R * Math.sin(phi) * Math.cos(theta),
+          R * Math.cos(phi),
+          R * Math.sin(phi) * Math.sin(theta)
+        );
+      }
+    }
+    for (let i = 0; i < segments; i++) {
+      const a = i * 2, b = i * 2 + 1, c = (i + 1) * 2, dd = (i + 1) * 2 + 1;
+      indices.push(a, b, c, b, dd, c);
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    geo.setIndex(indices);
+    geo.computeVertexNormals();
+
+    const mat = new THREE.MeshPhongMaterial({
+      color: d.color,
+      transparent: true,
+      opacity: 0.92,
+      side: THREE.DoubleSide,
+      depthWrite: false,
+      depthTest: true,
+      emissive: d.color,
+      emissiveIntensity: 0.5
+    });
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.visible = false;
+    pressureBeltGroup.add(mesh);
+    pressureBeltMeshes.push(mesh);
+    pressureBeltZones.push([latMin, latMax]);
+  });
+}
+
+/* ========== 知识卡片 ========== */
+function showKnowledge(key) {
+  if (!key) return;
+  const info = KNOWLEDGE[key];
+  if (!info) return;
+  document.getElementById('kc-color').style.background = info.color;
+  document.getElementById('kc-title').textContent = info.title;
+  document.getElementById('kc-body').innerHTML = info.content;
+  document.getElementById('knowledge-card').classList.add('show');
+  // 图示回归联动：面板打开时高亮对应区域
+  if (STATE.showDiagram) highlightDiagramZone(key);
+}
+
+function hideKnowledge() {
+  document.getElementById('knowledge-card').classList.remove('show');
+}
+
+/* ========== 左侧常驻知识点面板更新 ========== */
+function updateStepPanel(step) {
+  const data = STEP_PANEL[step];
+  if (!data) return;
+  const tag = document.getElementById('sp-tag');
+  tag.textContent = data.tag;
+  tag.style.color = data.color;
+  tag.style.borderColor = data.color;
+  document.getElementById('sp-title').textContent = data.title;
+  document.getElementById('sp-body').innerHTML = data.points.map(p =>
+    `<div class="sp-item"><span class="sp-item-k" style="color:${data.color}">${p[0]}</span><span class="sp-item-v">${p[1]}</span></div>`
+  ).join('');
+  document.getElementById('sp-progress').style.width = ((step + 1) / STEP_PANEL.length * 100) + '%';
+  // 内容切换闪烁提示（强制重排以重新触发动画）
+  const panel = document.getElementById('step-panel');
+  panel.classList.remove('sp-flash');
+  void panel.offsetWidth;
+  panel.classList.add('sp-flash');
+}
+
+/* ========== 步骤与过渡 ========== */
+
+/* 第二步核心动态：单圈环流向三圈环流演变。
+   STATE.morph 0→1 期间：
+     · 单圈环流带随偏转量增大而弯折，随后淡出
+     · 三个环流圈同时淡入——费雷尔环流出现在 30°~60° 之间，
+       其方向与两侧相反，正是"单圈环流被偏向力'折'成三圈"的结果
+   视觉上表现为：一条环流带随偏向力增强逐渐分化为三个独立的环流圈。
+
+   浮现节奏：中纬费雷尔环流上升更慢（幂次更大），
+   观感上"两侧先成形、中纬被夹出来"，与费雷尔环流的成因一致。 */
+const MORPH_STYLE = {
+  // power 越大浮现越晚；gain 用于压低中间阶段的可见度（终态仍为满透明度）
+  hadley: { power: 1.4, gain: 1.00, floor: 0.92 },
+  polar:  { power: 1.4, gain: 1.00, floor: 0.92 },
+  ferrel: { power: 2.6, gain: 0.85, floor: 0.80 }
+};
+
+let _lastSingleGradient = -1;
+function applyThreeCellMorph(m) {
+  const t = clamp(m, 0, 1);
+  const e = smoothstep(t);
+
+  // 单圈环流带：随演变淡出
+  ['singleNH', 'singleSH'].forEach(k => {
+    const c = cellObjects[k];
+    if (!c) return;
+    c.setOpacity(1 - e);
+    const grad = clamp(e * 1.15, 0, 1);
+    if (Math.abs(grad - _lastSingleGradient) > 0.01) {
+      c.setGradient(grad, true);   // 同时体现"按纬度带渐变为三段色"
+      _lastSingleGradient = grad;
+    }
+  });
+
+  // 三圈环流：随演变淡入；e=1 时三者均达到 1（满透明度）
+  ['hadley', 'ferrel', 'polar'].forEach(key => {
+    const st = MORPH_STYLE[key];
+    // 归一化：e→1 时 op 必须回到 1（gain<1 只压低中间阶段，不压低终态）
+    const inv = (1 - Math.pow(1 - e, st.power)) / st.gain;
+    const op = clamp(inv, 0, 1);
+    cellObjects[key + 'NH'].setOpacity(op);
+    cellObjects[key + 'SH'].setOpacity(op);
+  });
+
+  STATE.coriolisTransition = e;
+}
+
+function setStepVisual(step) {
+  // 第一步：无偏转；第二步：偏转介入并演变为三圈；第三步：三圈稳定态
+  const coriolis = step >= 1 ? STATE.coriolisDeflection : 0;
+
+  if (step === 0) {
+    // 第一步：理想单圈环流（地球不自转 → 无偏转、无任何偏向力标注）
+    singleCellGroup.visible = true;
+    Object.values(threeCellGroups).forEach(g => g.visible = false);
+    STATE.morph = 0;
+    _lastSingleGradient = -1;
+    ['singleNH', 'singleSH'].forEach(k => {
+      cellObjects[k]._updatePositions(0);
+      cellObjects[k].setOpacity(1);
+      cellObjects[k].setGradient(0, true);
+    });
+    ['hadley', 'ferrel', 'polar'].forEach(key => {
+      cellObjects[key + 'NH'].setOpacity(0);
+      cellObjects[key + 'SH'].setOpacity(0);
+      cellObjects[key + 'NH']._updatePositions(0);
+      cellObjects[key + 'SH']._updatePositions(0);
+    });
+    STATE.coriolisTransition = 0;
+  } else {
+    // 第二/第三步：单圈环流已按设定偏转量弯折，三个环流圈按 STATE.morph 淡入
+    singleCellGroup.visible = true;
+    Object.values(threeCellGroups).forEach(g => g.visible = true);
+    ['singleNH', 'singleSH'].forEach(k => cellObjects[k]._updatePositions(coriolis));
+    ['hadley', 'ferrel', 'polar'].forEach(key => {
+      cellObjects[key + 'NH']._updatePositions(coriolis);
+      cellObjects[key + 'SH']._updatePositions(coriolis);
+    });
+    if (step === 2) STATE.morph = 1;   // 第三步为终态
+    _lastSingleGradient = -1;
+    applyThreeCellMorph(STATE.morph);
+  }
+
+  // 弯折节点与偏向力强度指示：仅第二步显示（第一步为"不自转"模型，第三步由气压带风带承接）
+  if (coriolisGroup) {
+    coriolisGroup.visible = (step === 1);
+    coriolisNodes.forEach(n => n.group.scale.setScalar(1));
+    coriolisLabels.forEach(cl => { cl.obj.userData.baseVisible = (step === 1); });
+  }
+  showDeflectionIndicators(step === 1);
+
+  const showVertical = step === 0 && STATE.showLabels;
+  latLabels.forEach(l => { l.obj.userData.baseVisible = STATE.showLabels; });
+  verticalLabels.forEach(vl => { vl.obj.userData.baseVisible = showVertical; });
+
+  // 气压带标签与环带
+  const showP = STATE.showPressure && step >= 2;
+  pressureLabels.forEach(pl => {
+    pl.obj.userData.baseVisible = showP;
+    if (!showP) pl.obj.visible = false;
+  });
+  windLabels.forEach(wl => {
+    wl.obj.userData.baseVisible = showP;
+    if (!showP) wl.obj.visible = false;
+  });
+  pressureBeltMeshes.forEach(m => { m.visible = showP; });
+  windArrowMeshes.forEach(a => { a.visible = showP; });
+
+  // 更新步骤指示器
+  document.querySelectorAll('.step-dot').forEach(d => {
+    const s = parseInt(d.dataset.step);
+    d.classList.toggle('active', s === step);
+    d.classList.toggle('done', s < step);
+  });
+}
+
+function transitionToStep(newStep) {
+  // 过渡期间的新请求先挂起，当前过渡结束后立即执行（快速点击不丢失）
+  if (STATE.stepTransitioning) { STATE.pendingStep = newStep; return; }
+  if (newStep === STATE.step) return;
+  STATE.stepTransitioning = true;
+  const prevStep = STATE.step;
+  STATE.step = newStep;
+  hideStepNotification(); // 切换步骤时先收起上一步的引导弹窗，避免遮挡画面
+  updateAtmosphereColor(newStep);
+  updateStepPanel(newStep); // 左侧知识点面板内容立即同步，不随过渡消失
+
+  // 收尾：对齐到目标状态的最终视觉；仅第一步保留引导弹窗，第二、三步直接进入动态演示
+  const finish = () => {
+    setStepVisual(newStep);
+    STATE.stepTransitioning = false;
+    STATE.transitionCoriolis = null;
+    if (STATE.mode === 'guided' && newStep === 0) showStepNotification(0);
+    // 执行过渡期间挂起的跳转请求
+    const pending = STATE.pendingStep;
+    STATE.pendingStep = null;
+    if (pending != null && pending !== newStep) transitionToStep(pending);
+  };
+
+  // 时间驱动过渡（与帧率无关），smoothstep缓入缓出；onComplete在动画完成、收尾前调用
+  const runAnim = (dur, apply, onComplete) => {
+    const t0 = performance.now();
+    const anim = (now) => {
+      let raw = 0;
+      try {
+        raw = clamp((now - t0) / dur, 0, 1);
+        apply(smoothstep(raw), raw);
+        if (raw < 1) { requestAnimationFrame(anim); return; }
+        if (onComplete) onComplete();
+      } catch (e) { console.warn('步骤过渡异常', e); }
+      finish();
+    };
+    requestAnimationFrame(anim);
+  };
+
+  // 偏转节点弹性浮现（easeOutBack，轻微回弹后稳定）
+  const easeOutBack = (x) => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2); };
+  const setNodeScale = (s) => coriolisNodes.forEach(n => n.group.scale.setScalar(Math.max(0.001, s)));
+
+  if (newStep === 0) {
+    // → 第一步：理想单圈环流（上橙黄/下浅蓝双色，无偏转）
+    if (prevStep === 1) {
+      // 第二步→第一步：三段渐变退回双色，偏转节点收缩消失
+      runAnim(1100, (p) => {
+        ['singleNH', 'singleSH'].forEach(k => cellObjects[k].setGradient(1 - p, true));
+        setNodeScale(1 - p * 1.6);
+        coriolisLabels.forEach(cl => { cl.obj.userData.baseVisible = p < 0.35; });
+      });
+    } else if (prevStep === 2) {
+      // 第三步→第一步：三圈与单圈交替淡出，回到不自转的双色平面模型
+      singleCellGroup.visible = true;
+      ['singleNH', 'singleSH'].forEach(k => cellObjects[k].setGradient(0, true));
+      STATE.transitionCoriolis = STATE.coriolisDeflection; // 淡出期间粒子与管道形态保持一致
+      STATE.showPressure = false;
+      document.getElementById('tog-pressure').classList.remove('active');
+      pressureLabels.forEach(pl => { pl.obj.userData.baseVisible = false; pl.obj.visible = false; });
+      windLabels.forEach(wl => { wl.obj.userData.baseVisible = false; wl.obj.visible = false; });
+      pressureBeltMeshes.forEach(m => { m.visible = false; });
+      windArrowMeshes.forEach(a => { a.visible = false; });
+      runAnim(1100, (p) => {
+        ['singleNH', 'singleSH'].forEach(k => cellObjects[k].setOpacity(p));
+        ['hadley', 'ferrel', 'polar'].forEach(key => {
+          cellObjects[key + 'NH'].setOpacity(1 - p);
+          cellObjects[key + 'SH'].setOpacity(1 - p);
+        });
+      }, () => { STATE.morph = 0; });
+    } else {
+      finish();
+    }
+  } else if (newStep === 1) {
+    // → 第二步：地转偏向力介入 —— 单圈环流带弯折，并开始演变为三圈环流
+    singleCellGroup.visible = true;
+    Object.values(threeCellGroups).forEach(g => g.visible = true);
+    // 关闭气压带（从第三步回退时）
+    STATE.showPressure = false;
+    document.getElementById('tog-pressure').classList.remove('active');
+    pressureLabels.forEach(pl => { pl.obj.userData.baseVisible = false; });
+    windLabels.forEach(wl => { wl.obj.userData.baseVisible = false; });
+    pressureBeltMeshes.forEach(m => { m.visible = false; });
+    windArrowMeshes.forEach(a => { a.visible = false; });
+
+    // 节点从零缩放准备浮现
+    if (coriolisGroup) {
+      coriolisGroup.visible = true;
+      setNodeScale(0.001);
+      coriolisLabels.forEach(cl => { cl.obj.userData.baseVisible = true; });
+    }
+    // 偏转从 0 逐步增大到设定值：环流带先"折"出弯折节点。
+    // 三圈演变不在此处完成 —— 收尾后由 animate() 以约 3 秒的节奏慢慢推进，
+    // 让学生先看清"单圈环流被折弯"，再看到它逐渐分化成三圈。
+    const fromCoriolis = (prevStep === 2) ? STATE.coriolisDeflection : 0;
+    STATE.transitionCoriolis = fromCoriolis;
+    ['singleNH', 'singleSH'].forEach(k => cellObjects[k]._updatePositions(fromCoriolis));
+
+    STATE.morph = 0;
+    _lastSingleGradient = -1;
+    applyThreeCellMorph(0);
+
+    runAnim(1300, (p, raw) => {
+      const e = smoothstep(clamp(raw, 0, 1));
+      // 偏转量随过渡递增，弯折形态与颜色变化同步呈现
+      const c = fromCoriolis + (STATE.coriolisDeflection - fromCoriolis) * e;
+      STATE.transitionCoriolis = c;
+      ['singleNH', 'singleSH'].forEach(k => cellObjects[k]._updatePositions(c));
+      // 颜色按纬度带渐变为三段色（此时仍是单圈环流，尚未分化）
+      const grad = clamp(e * 0.7, 0, 1);
+      if (Math.abs(grad - _lastSingleGradient) > 0.02) {
+        ['singleNH', 'singleSH'].forEach(k => cellObjects[k].setGradient(grad, true));
+        _lastSingleGradient = grad;
+      }
+      // 节点弹性浮现（略先于颜色渐变完成，节奏更有层次）
+      setNodeScale(easeOutBack(clamp(raw * 1.25, 0, 1)));
+    });
+  } else if (newStep === 2) {
+    // → 第三步：三圈环流定型（沿第二步的演变继续收尾到终态）
+    singleCellGroup.visible = true;
+    Object.values(threeCellGroups).forEach(g => g.visible = true);
+    if (coriolisGroup) coriolisGroup.visible = (prevStep === 1);
+    const fromMorph = STATE.morph;
+    runAnim(1100, (p) => {
+      // 偏转量收束到设定值
+      STATE.transitionCoriolis = STATE.coriolisDeflection;
+      const c = STATE.coriolisDeflection;
+      // 渐变单圈淡出；偏转节点收缩消失（仅从第二步进入时）
+      if (prevStep === 1) {
+        setNodeScale(1 - p * 1.6);
+        coriolisLabels.forEach(cl => { cl.obj.userData.baseVisible = p < 0.35; });
+      }
+      // 形态演变收尾 + 三圈随偏转展开
+      ['hadley', 'ferrel', 'polar'].forEach(key => {
+        cellObjects[key + 'NH']._updatePositions(c);
+        cellObjects[key + 'SH']._updatePositions(c);
+      });
+      const m = fromMorph + (1 - fromMorph) * p;
+      STATE.morph = m;
+      applyThreeCellMorph(m);
+    }, () => {
+      // 气压带风带（第三步内容，收尾前开启以便setStepVisual生效）
+      STATE.showPressure = true;
+      document.getElementById('tog-pressure').classList.add('active');
+    });
+  }
+}
+
+/* ========== 运行状态只读诊断（供自动化验收/调试读取模块内状态；无副作用） ========== */
+function getDiagnostics() {
+  // 采样粒子位置，用于判断气流是否真的在推进
+  const sample = (key) => {
+    const c = cellObjects[key];
+    const pos = c && c.particles && c.particles.visible ? c.particles.geometry.attributes.position.array : null;
+    return pos ? [pos[0], pos[1], pos[2]] : null;
+  };
+  const groups = {
+    singleNH: !!singleCellGroup?.visible,
+    hadleyNH: !!threeCellGroups?.hadley?.visible,
+    ferrelNH: !!threeCellGroups?.ferrel?.visible,
+    polarNH: !!threeCellGroups?.polar?.visible
+  };
+  return {
+    step: STATE.step,
+    mode: STATE.mode,
+    playing: STATE.playing,
+    speed: STATE.speed,
+    coriolisDeflection: STATE.coriolisDeflection,
+    transitioning: STATE.stepTransitioning,
+    modalShown: document.getElementById('step-notification').classList.contains('show'),
+    showPressure: STATE.showPressure,
+    cellCount: Object.keys(cellObjects).length,
+    visibleGroups: Object.keys(groups).filter(k => groups[k]),
+    sampleSingle: sample('singleNH'),
+    sampleHadley: sample('hadleyNH'),
+    sampleFerrel: sample('ferrelNH'),
+    samplePolar: sample('polarNH')
+  };
+}
+// 暴露给控制台/自动化脚本使用（模块作用域下的对象默认无法从外部访问）
+try {
+  window.__threeCellDebug = {
+    STATE, cellObjects, getDiagnostics,
+    getSingleDropPosition, getThreeCellDropPosition,
+    get coriolisGroup() { return coriolisGroup; },
+    get coriolisNodes() { return coriolisNodes; },
+    get coriolisLabels() { return coriolisLabels; },
+    get deflectionIndicators() { return deflectionIndicators; },
+    // 各类标签（供自动化脚本量测位置）
+    get latLabels() { return latLabels; },
+    get pressureLabels() { return pressureLabels; },
+    get windLabels() { return windLabels; },
+    get verticalLabels() { return verticalLabels; },
+    // 纬度标签当前的 z 分量（用于校验标签分置两侧、不互相遮挡）
+    get latLabelZ() { return latLabels.map(l => +l.obj.position.z.toFixed(2)); },
+    get camera() { return camera; },
+    get earthGroup() { return earthGroup; },   // 供自动化脚本验证"标签不随地球自转移动"
+    get crossSectionRoot() { return crossSectionRoot; },   // 环流剖面根组（校验其朝向/屏幕左右）
+    setView,                                               // 便于自动化脚本切换视角后复测
+    get earthRadius() { return CONFIG.earth.radius; },
+    get atmosphereRadius() { return CONFIG.earth.atmosphereRadius; },
+    get pressureBeltR() { return PRESSURE_BELT_R; },   // 色带环半径：锚点应恒等于它
+    makeVector3: function (x, y, z) { return new THREE.Vector3(x, y, z); },
+    /* 气压带色带的"真实可见性"（射线检测，非几何近似）：
+       对每条色带的顶点从相机打射线，只有当第一个命中对象就是这条色带时才算可见，
+       返回各色带可见部分的屏幕 y 区间 —— 用于验证"标签确实贴在色带的可见段上"。
+       注意排除大气层/辉光/边缘光晕：它们包住整个场景，会挡在所有射线最前面。 */
+    beltVisibility: function () {
+      const rc = new THREE.Raycaster();
+      const targets = [];
+      scene.traverse(o => {
+        if (!o.isMesh || !o.visible) return;
+        const m = o.material;
+        if (!m || m.blending === THREE.AdditiveBlending || m.isShaderMaterial) return;
+        targets.push(o);
+      });
+      const v = new THREE.Vector3(), ndc = new THREE.Vector2();
+      return pressureBeltMeshes.map((mesh, i) => {
+        const attr = mesh.geometry.getAttribute('position');
+        const step = Math.max(1, Math.floor(attr.count / 200));
+        let vis = 0, total = 0, minY = Infinity, maxY = -Infinity, minX = Infinity, maxX = -Infinity;
+        const pts = [];
+        for (let k = 0; k < attr.count; k += step) {
+          v.fromBufferAttribute(attr, k).project(camera);
+          if (v.z > 1) continue;
+          total++;
+          ndc.set(v.x, v.y);
+          rc.setFromCamera(ndc, camera);
+          const hit = rc.intersectObjects(targets, false)[0];
+          if (!hit || hit.object !== mesh) continue;
+          const sx = (v.x + 1) / 2 * window.innerWidth, sy = (1 - v.y) / 2 * window.innerHeight;
+          vis++;
+          pts.push([+sx.toFixed(1), +sy.toFixed(1)]);
+          minY = Math.min(minY, sy); maxY = Math.max(maxY, sy);
+          minX = Math.min(minX, sx); maxX = Math.max(maxX, sx);
+        }
+        return {
+          index: i, lat: PRESSURE_BELT_LATS[i], sampled: total, visible: vis,
+          yRange: vis ? [+minY.toFixed(1), +maxY.toFixed(1)] : null,
+          xRange: vis ? [+minX.toFixed(1), +maxX.toFixed(1)] : null,
+          pts
+        };
+      });
+    },
+    /* "这个屏幕像素落在哪条色带上"——判定"标签是否真的贴在色带上"的**唯一精确判据**。
+       从相机过该屏幕点打一条射线，取第一个命中的实体网格（同样排除大气层/辉光/着色器材质）。
+       返回 belt = 色带序号（-1 表示命中别的物体或没打中），lat = 该色带中心纬度。
+       与 beltVisibility() 的"抽样顶点"不同，这是逐像素精确判定，不受几何抽样疏密影响。 */
+    beltHitAt: function (sx, sy) {
+      const rc = new THREE.Raycaster();
+      const targets = [];
+      scene.traverse(o => {
+        if (!o.isMesh || !o.visible) return;
+        const m = o.material;
+        if (!m || m.blending === THREE.AdditiveBlending || m.isShaderMaterial) return;
+        targets.push(o);
+      });
+      const ndc = new THREE.Vector2(sx / window.innerWidth * 2 - 1, -(sy / window.innerHeight) * 2 + 1);
+      rc.setFromCamera(ndc, camera);
+      const hit = rc.intersectObjects(targets, false)[0];
+      if (!hit) return { belt: -1, lat: null, what: 'none', dist: null };
+      const i = pressureBeltMeshes.indexOf(hit.object);
+      return {
+        belt: i, lat: i >= 0 ? PRESSURE_BELT_LATS[i] : null,
+        what: i >= 0 ? ('belt:' + PRESSURE_BELT_LATS[i] + '°') : (hit.object.name || hit.object.type),
+        dist: +hit.distance.toFixed(2)
+      };
+    },
+    /* 诊断用：把某像素上"从前到后"的命中列表全打印出来（含未命名网格的颜色/材质），
+       用于查清"某像素第一个命中的到底是哪个物体"（大气层/网格/地球/色带）。 */
+    rayReport: function (sx, sy, n = 6) {
+      const rc = new THREE.Raycaster();
+      const targets = [];
+      scene.traverse(o => {
+        if (!o.isMesh || !o.visible) return;
+        const m = o.material;
+        if (!m || m.blending === THREE.AdditiveBlending || m.isShaderMaterial) return;
+        targets.push(o);
+      });
+      const ndc = new THREE.Vector2(sx / window.innerWidth * 2 - 1, -(sy / window.innerHeight) * 2 + 1);
+      rc.setFromCamera(ndc, camera);
+      return rc.intersectObjects(targets, false).slice(0, n).map(h => {
+        const i = pressureBeltMeshes.indexOf(h.object);
+        const m = h.object.material;
+        return {
+          what: i >= 0 ? ('belt:' + PRESSURE_BELT_LATS[i] + '°') : (h.object.name || '(未命名)'),
+          geo: h.object.geometry.type, mat: m.type,
+          color: m.color ? '#' + m.color.getHexString() : null,
+          op: m.opacity, dist: +h.distance.toFixed(2), r: +h.point.length().toFixed(3)
+        };
+      });
+    },
+    /* 气压带标签的"锚点真相"：世界坐标、离球心距离 r、以及它投影到屏幕的中心点。
+       r 恒等于色带半径 5.2 → 直接证明"标签锚在模型的条状带上"（而非浮在屏面某处）。
+       sx/sy 是投影中心（CSS2D 把元素按 translate(-50%,-50%) 居中在该点上），
+       因此对隐藏中的标签也能算出"它本该出现的像素位置"，供射线复核其是否真的该隐藏。 */
+    pressureLabelScreen: function () {
+      const v = new THREE.Vector3();
+      return pressureLabels.map(pl => {
+        pl.obj.getWorldPosition(v);
+        const r = v.length();
+        const p = v.clone().project(camera);
+        return {
+          lat: pl.data.lat, text: pl.obj.element.textContent.trim(),
+          baseVisible: !!pl.obj.userData.baseVisible, visible: !!pl.obj.visible,
+          r: +r.toFixed(3),
+          wx: +v.x.toFixed(2), wy: +v.y.toFixed(2), wz: +v.z.toFixed(2),
+          sx: +((p.x + 1) / 2 * window.innerWidth).toFixed(1),
+          sy: +((1 - p.y) / 2 * window.innerHeight).toFixed(1)
+        };
+      });
+    },
+    // 标签世界坐标（用于校验标签落在视轮廓外侧、不遮挡地球与环流圈）
+    get labelWorldPositions() {
+      const out = [];
+      const v = new THREE.Vector3();
+      const kinds = [
+        ['lat', latLabels],
+        ['pressure', pressureLabels],
+        ['vertical', verticalLabels]
+      ];
+      // 偏向力强度标签（位于 deflectionIndicators 中的 CSS2DObject）
+      kinds.push(['deflect', deflectionIndicators.filter(o => o && o.element).map(obj => ({ obj }))]);
+      kinds.forEach(([kind, arr]) => {
+        arr.forEach(l => {
+          l.obj.getWorldPosition(v);
+          out.push({ kind, text: (l.obj.element?.textContent || '').slice(0, 14), x: +v.x.toFixed(3), y: +v.y.toFixed(3), z: +v.z.toFixed(3) });
+        });
+      });
+      return out;
+    }
+  };
+} catch (e) { /* 忽略 */ }
+
+/* ========== 引导模式通知（仅第一步使用：第二、三步直接进入动态演示，不弹模态框） ========== */
+function showStepNotification(step) {
+  const info = STEP_INFO[step];
+  if (!info) return;
+  document.getElementById('sn-title').textContent = info.title;
+  document.getElementById('sn-body').textContent = info.body;
+  document.getElementById('step-notification').classList.add('show');
+  STATE.playing = false; // 停在弹窗上等待学生阅读，点"继续"后恢复
+}
+
+function hideStepNotification() {
+  const el = document.getElementById('step-notification');
+  if (!el) return;
+  const wasOpen = el.classList.contains('show');
+  el.classList.remove('show');
+  if (wasOpen) STATE.playing = true; // 弹窗关闭即恢复气流流动（第二、三步不再自动暂停）
+}
+
+/* ========== 视角控制 ========== */
+function setView(view) {
+  if (STATE.viewLocked) return;
+  const dur = 800;
+  const start = { x: camera.position.x, y: camera.position.y, z: camera.position.z };
+  let target;
+  switch (view) {
+    case 'top':    target = { x: 0, y: 18, z: 0.01 }; break;
+    case 'side':   target = { x: 16, y: 0, z: 0 }; break;
+    case 'front':  target = { x: 0, y: 0, z: 16 }; break;
+    case 'reset':  target = { x: 8, y: 6, z: 12 }; break;
+    default: return;
+  }
+  const startTime = performance.now();
+  function anim(time) {
+    const t = clamp((time - startTime) / dur, 0, 1);
+    const e = smoothstep(t);
+    camera.position.set(
+      lerp(start.x, target.x, e),
+      lerp(start.y, target.y, e),
+      lerp(start.z, target.z, e)
+    );
+    camera.lookAt(0, 0, 0);
+    controls.update();
+    if (t < 1) requestAnimationFrame(anim);
+  }
+  requestAnimationFrame(anim);
+}
+
+/* ========== 图示回归模块 ========== */
+// 二维剖面图数据：drop-zone 位置（百分比坐标）与对应答案 key
+const DIAGRAM_ZONES = [
+  // 气压带（赤道、副热带N/S、副极地N/S、极地N/S）
+  { id: 'p0',   x: 0.50, y: 0.55, w: 0.20, h: 0.06, answer: 'pressure-0',  label: '赤道' },
+  { id: 'p30N', x: 0.50, y: 0.38, w: 0.20, h: 0.06, answer: 'pressure-30', label: '30°N' },
+  { id: 'p30S', x: 0.50, y: 0.72, w: 0.20, h: 0.06, answer: 'pressure-30', label: '30°S' },
+  { id: 'p60N', x: 0.50, y: 0.24, w: 0.20, h: 0.06, answer: 'pressure-60', label: '60°N' },
+  { id: 'p60S', x: 0.50, y: 0.86, w: 0.20, h: 0.06, answer: 'pressure-60', label: '60°S' },
+  { id: 'p90N', x: 0.50, y: 0.14, w: 0.16, h: 0.06, answer: 'pressure-90', label: '90°N' },
+  { id: 'p90S', x: 0.50, y: 0.96, w: 0.16, h: 0.06, answer: 'pressure-90', label: '90°S' },
+  // 风带（东北信风、东南信风、盛行西风N/S、极地东风N/S）
+  { id: 'w15N',  x: 0.22, y: 0.45, w: 0.18, h: 0.05, answer: 'wind-ne', label: '15°N' },
+  { id: 'w15S',  x: 0.22, y: 0.65, w: 0.18, h: 0.05, answer: 'wind-se', label: '15°S' },
+  { id: 'w45N',  x: 0.22, y: 0.30, w: 0.18, h: 0.05, answer: 'wind-wN', label: '45°N' },
+  { id: 'w45S',  x: 0.22, y: 0.80, w: 0.18, h: 0.05, answer: 'wind-wS', label: '45°S' },
+  { id: 'w75N',  x: 0.22, y: 0.18, w: 0.18, h: 0.05, answer: 'wind-eN', label: '75°N' },
+  { id: 'w75S',  x: 0.22, y: 0.92, w: 0.18, h: 0.05, answer: 'wind-eS', label: '75°S' }
+];
+
+// 拖拽标签池（随机打乱顺序展示）
+const DIAGRAM_LABELS = [
+  { key: 'pressure-0',  text: '赤道低气压带' },
+  { key: 'pressure-30', text: '副热带高气压带' },
+  { key: 'pressure-60', text: '副极地低气压带' },
+  { key: 'pressure-90', text: '极地高气压带' },
+  { key: 'wind-ne',     text: '东北信风带' },
+  { key: 'wind-se',     text: '东南信风带' },
+  { key: 'wind-wN',     text: '盛行西风带(N)' },
+  { key: 'wind-wS',     text: '盛行西风带(S)' },
+  { key: 'wind-eN',     text: '极地东风带(N)' },
+  { key: 'wind-eS',     text: '极地东风带(S)' }
+];
+
+// key → 对应的环流圈/气压带知识点 key（用于联动 showKnowledge）
+const ZONE_TO_KNOWLEDGE = {
+  'pressure-0': 'pressure-0', 'pressure-30': 'pressure-30',
+  'pressure-60': 'pressure-60', 'pressure-90': 'pressure-90',
+  'wind-ne': 'hadley', 'wind-se': 'hadley',
+  'wind-wN': 'ferrel', 'wind-wS': 'ferrel',
+  'wind-eN': 'polar',  'wind-eS': 'polar'
+};
+
+let diagramHighlightId = null; // 当前高亮的 zone id
+let diagramHighlightTimer = null;
+
+// 用 Canvas 2D 绘制二维剖面图
+function drawDiagram() {
+  const canvas = document.getElementById('diagram-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  // 背景渐变
+  const bgGrad = ctx.createLinearGradient(0, 0, 0, H);
+  bgGrad.addColorStop(0, '#0B0C10');
+  bgGrad.addColorStop(1, '#141826');
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, W, H);
+
+  // 地球圆弧轮廓（右半圆侧视）
+  const cx = W * 0.50, cy = H * 0.50, R = W * 0.46;
+  ctx.strokeStyle = 'rgba(93,173,226,0.5)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.arc(cx, cy, R, 0, Math.PI * 2);
+  ctx.stroke();
+  // 地球内部淡色填充
+  ctx.fillStyle = 'rgba(30,50,80,0.25)';
+  ctx.fill();
+
+  // 纬度参考线（赤道、±30、±60、±90）
+  const latLines = [
+    { lat: 0,  label: '0°',  color: 'rgba(255,204,0,0.4)' },
+    { lat: 30, label: '30°', color: 'rgba(255,136,68,0.35)' },
+    { lat:-30, label: '-30°',color: 'rgba(255,136,68,0.35)' },
+    { lat: 60, label: '60°', color: 'rgba(102,170,255,0.35)' },
+    { lat:-60, label: '-60°',color: 'rgba(102,170,255,0.35)' },
+    { lat: 85, label: '90°N',color: 'rgba(170,170,170,0.3)' },
+    { lat:-85, label: '90°S',color: 'rgba(170,170,170,0.3)' }
+  ];
+  latLines.forEach(d => {
+    const y = cy - (d.lat / 90) * R * 0.92;
+    ctx.strokeStyle = d.color;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(cx - R, y);
+    ctx.lineTo(cx + R, y);
+    ctx.stroke();
+    ctx.fillStyle = d.color.replace(/[\d.]+\)/, '0.8)');
+    ctx.font = '9px Microsoft YaHei';
+    ctx.textAlign = 'right';
+    ctx.fillText(d.label, cx - R + 28, y - 2);
+  });
+
+  // 三圈环流剖面（右半侧，从赤道向极地）
+  // 每圈画为椭圆弧：上升点→高空→下沉点→地面→上升点
+  function drawCell(riseLat, sinkLat, color, hemi) {
+    const sign = hemi; // +1 北半球, -1 南半球
+    const riseY = cy - (riseLat * sign / 90) * R * 0.92;
+    const sinkY = cy - (sinkLat * sign / 90) * R * 0.92;
+    const groundX = cx;
+    const upperX = cx + R * 0.35;
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.8;
+    ctx.globalAlpha = 0.85;
+    // 椭圆弧：从 sinkY(groundX) 到 riseY(groundX) 向右鼓出
+    ctx.beginPath();
+    ctx.ellipse(groundX, (riseY + sinkY) / 2, (upperX - groundX), Math.abs(sinkY - riseY) / 2, 0, -Math.PI/2, Math.PI/2);
+    ctx.stroke();
+    // 箭头：上升箭头
+    drawArrow(ctx, groundX, riseY, groundX, riseY - 10, color);
+    // 下沉箭头
+    drawArrow(ctx, groundX, sinkY, groundX, sinkY + 10 * sign, color);
+    ctx.globalAlpha = 1;
+  }
+  // 北半球三圈
+  drawCell(2.5, 27.5, '#FF6B35', 1);   // 哈德莱
+  drawCell(57.5, 32.5, '#FDB813', 1);  // 费雷尔（60升30沉）
+  drawCell(62.5, 85, '#4A90E2', 1);    // 极地
+  // 南半球三圈
+  drawCell(2.5, 27.5, '#FF6B35', -1);
+  drawCell(57.5, 32.5, '#FDB813', -1);
+  drawCell(62.5, 85, '#4A90E2', -1);
+
+  // 高亮闪烁区域
+  if (diagramHighlightId) {
+    const zone = DIAGRAM_ZONES.find(z => z.id === diagramHighlightId);
+    if (zone) {
+      const zx = zone.x * W, zy = zone.y * H, zw = zone.w * W, zh = zone.h * H;
+      const pulse = 0.5 + 0.5 * Math.sin(performance.now() * 0.008);
+      ctx.strokeStyle = `rgba(255,220,80,${pulse})`;
+      ctx.lineWidth = 3;
+      ctx.strokeRect(zx - zw/2, zy - zh/2, zw, zh);
+      ctx.fillStyle = `rgba(255,220,80,${pulse * 0.15})`;
+      ctx.fillRect(zx - zw/2, zy - zh/2, zw, zh);
+    }
+  }
+}
+
+// Canvas 上画小箭头辅助函数
+function drawArrow(ctx, x1, y1, x2, y2, color) {
+  ctx.strokeStyle = color;
+  ctx.fillStyle = color;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x2, y2);
+  ctx.stroke();
+  const angle = Math.atan2(y2 - y1, x2 - x1);
+  const headLen = 5;
+  ctx.beginPath();
+  ctx.moveTo(x2, y2);
+  ctx.lineTo(x2 - headLen * Math.cos(angle - 0.4), y2 - headLen * Math.sin(angle - 0.4));
+  ctx.lineTo(x2 - headLen * Math.cos(angle + 0.4), y2 - headLen * Math.sin(angle + 0.4));
+  ctx.closePath();
+  ctx.fill();
+}
+
+// 创建放置区 DOM
+function createDropZones() {
+  const container = document.getElementById('drop-zones');
+  if (!container) return;
+  container.innerHTML = '';
+  const canvas = document.getElementById('diagram-canvas');
+  const rect = canvas.getBoundingClientRect();
+  DIAGRAM_ZONES.forEach(zone => {
+    const el = document.createElement('div');
+    el.className = 'drop-zone';
+    el.dataset.zoneId = zone.id;
+    el.dataset.answer = zone.answer;
+    el.style.left = (zone.x * 100) + '%';
+    el.style.top = (zone.y * 100) + '%';
+    el.style.width = (zone.w * 100) + '%';
+    el.style.height = (zone.h * 100) + '%';
+    el.style.transform = 'translate(-50%, -50%)';
+    el.textContent = zone.label;
+    // 拖放事件
+    el.addEventListener('dragover', (e) => { e.preventDefault(); el.classList.add('over'); });
+    el.addEventListener('dragleave', () => el.classList.remove('over'));
+    el.addEventListener('drop', (e) => {
+      e.preventDefault();
+      el.classList.remove('over');
+      const labelKey = e.dataTransfer.getData('text/plain');
+      placeLabel(zone.id, labelKey, el);
+    });
+    container.appendChild(el);
+  });
+}
+
+// 创建可拖拽标签
+function createDragLabels() {
+  const container = document.getElementById('diagram-labels');
+  if (!container) return;
+  container.innerHTML = '';
+  // 打乱顺序
+  const shuffled = [...DIAGRAM_LABELS].sort(() => Math.random() - 0.5);
+  shuffled.forEach(label => {
+    const el = document.createElement('div');
+    el.className = 'drag-label';
+    el.draggable = true;
+    el.dataset.labelKey = label.key;
+    el.textContent = label.text;
+    el.addEventListener('dragstart', (e) => {
+      e.dataTransfer.setData('text/plain', label.key);
+      el.classList.add('dragging');
+    });
+    el.addEventListener('dragend', () => el.classList.remove('dragging'));
+    container.appendChild(el);
+  });
+}
+
+// 放置标签到 drop-zone
+function placeLabel(zoneId, labelKey, zoneEl) {
+  const labelEl = document.querySelector(`.drag-label[data-label-key="${labelKey}"]`);
+  if (!labelEl) return;
+  // 如果 zone 已有标签，先归还
+  if (zoneEl.dataset.placed) {
+    const prevLabel = document.querySelector(`.drag-label[data-label-key="${zoneEl.dataset.placed}"]`);
+    if (prevLabel) prevLabel.classList.remove('placed');
+  }
+  zoneEl.dataset.placed = labelKey;
+  zoneEl.classList.remove('correct', 'incorrect');
+  // 显示标签文字在 zone 中
+  zoneEl.innerHTML = '';
+  const mark = document.createElement('span');
+  mark.textContent = labelEl.textContent;
+  mark.style.fontSize = '9px';
+  mark.style.color = 'var(--text)';
+  zoneEl.appendChild(mark);
+  labelEl.classList.add('placed');
+}
+
+// 检查答案
+function checkDiagram() {
+  let correctCount = 0, totalCount = 0;
+  document.querySelectorAll('.drop-zone').forEach(zoneEl => {
+    const placed = zoneEl.dataset.placed;
+    const answer = zoneEl.dataset.answer;
+    if (placed) {
+      totalCount++;
+      if (placed === answer) {
+        zoneEl.classList.remove('incorrect');
+        zoneEl.classList.add('correct');
+        zoneEl.innerHTML = '<span class="mark" style="color:#44DD66">✓</span>';
+        correctCount++;
+      } else {
+        zoneEl.classList.remove('correct');
+        zoneEl.classList.add('incorrect');
+        zoneEl.innerHTML = '<span class="mark" style="color:#DD4444">✗</span>';
+      }
+    }
+  });
+  const hint = document.getElementById('diagram-hint');
+  if (totalCount === 0) {
+    hint.textContent = '请先拖拽标签到图中位置，再检查答案。';
+  } else {
+    hint.textContent = `答对 ${correctCount} / ${totalCount}。${correctCount === totalCount ? '全部正确！' : '红色区域需修正。'}`;
+  }
+}
+
+// 重置
+function resetDiagram() {
+  document.querySelectorAll('.drop-zone').forEach(zoneEl => {
+    delete zoneEl.dataset.placed;
+    zoneEl.classList.remove('correct', 'incorrect', 'over');
+    const zone = DIAGRAM_ZONES.find(z => z.id === zoneEl.dataset.zoneId);
+    zoneEl.textContent = zone ? zone.label : '';
+  });
+  document.querySelectorAll('.drag-label').forEach(el => el.classList.remove('placed'));
+  document.getElementById('diagram-hint').textContent = '拖拽下方标签到图中对应位置，点击"检查答案"验证。';
+}
+
+// 3D 联动：高亮二维图中对应区域
+function highlightDiagramZone(key) {
+  // 找到所有 answer 匹配 key 的 zone
+  const zones = DIAGRAM_ZONES.filter(z => z.answer === key || ZONE_TO_KNOWLEDGE[z.answer] === key);
+  if (zones.length === 0) return;
+  // 轮流高亮匹配的 zone（如果有多个）
+  let idx = 0;
+  diagramHighlightId = zones[0].id;
+  if (diagramHighlightTimer) clearInterval(diagramHighlightTimer);
+  diagramHighlightTimer = setInterval(() => {
+    diagramHighlightId = zones[idx % zones.length].id;
+    idx++;
+  }, 800);
+  // 5秒后停止
+  setTimeout(() => {
+    clearInterval(diagramHighlightTimer);
+    diagramHighlightTimer = null;
+    diagramHighlightId = null;
+  }, 5000);
+}
+
+// 面板开关
+function toggleDiagramPanel(show) {
+  const panel = document.getElementById('diagram-panel');
+  const toggle = document.getElementById('diagram-toggle');
+  if (show === undefined) show = !STATE.showDiagram;
+  STATE.showDiagram = show;
+  if (show) {
+    panel.classList.remove('closed');
+    toggle.classList.add('hidden');
+    // 自动切换侧视视角便于对照
+    if (!STATE.viewLocked) setView('side');
+    // 延迟绘制确保面板尺寸已就绪
+    setTimeout(() => { drawDiagram(); createDropZones(); createDragLabels(); }, 300);
+  } else {
+    panel.classList.add('closed');
+    toggle.classList.remove('hidden');
+    if (diagramHighlightTimer) { clearInterval(diagramHighlightTimer); diagramHighlightTimer = null; }
+  }
+}
+
+/* ========== 演示模式 & 预设状态 ========== */
+// 演示说明浮层显示
+function showDemoOverlay(title, desc, duration = 3000) {
+  const overlay = document.getElementById('demo-overlay');
+  document.getElementById('demo-title').textContent = title;
+  document.getElementById('demo-desc').textContent = desc;
+  overlay.classList.add('show');
+  clearTimeout(showDemoOverlay._timer);
+  showDemoOverlay._timer = setTimeout(() => overlay.classList.remove('show'), duration);
+}
+
+// 预设状态1：引导模式（步骤0，侧视，粒子+轨迹开启，气压带关闭）
+function presetGuided() {
+  STATE.mode = 'guided';
+  document.getElementById('btn-mode').textContent = '引导模式';
+  document.getElementById('custom-params').style.display = 'none';
+  transitionToStep(0);
+  setView('side');
+  STATE.showGrid = true; STATE.showParticles = true; STATE.showPaths = true; STATE.showPressure = false;
+  applyToggleStates();
+  if (STATE.showDiagram) toggleDiagramPanel(false);
+  hideKnowledge();
+  showDemoOverlay('引导模式', '步骤0：单圈环流（无偏转）。侧视视角，粒子与轨迹开启。', 3500);
+}
+
+// 预设状态2：自定义探索（步骤1，斜视，全部显示，偏转 12°）
+function presetExplore() {
+  STATE.mode = 'custom';
+  document.getElementById('btn-mode').textContent = '自定义模式';
+  document.getElementById('custom-params').style.display = 'flex';
+  STATE.coriolisDeflection = CONFIG.coriolis.defaultDeflection;
+  document.getElementById('coriolis-slider').value = STATE.coriolisDeflection;
+  document.getElementById('coriolis-val').textContent = STATE.coriolisDeflection + '°';
+  transitionToStep(1);
+  setView('front'); // 平视/斜视
+  STATE.showGrid = true; STATE.showParticles = true; STATE.showPaths = true; STATE.showPressure = false;
+  applyToggleStates();
+  if (STATE.showDiagram) toggleDiagramPanel(false);
+  hideKnowledge();
+  showDemoOverlay('自定义探索', '步骤1：三圈环流（偏转20°）。平视视角，全部显示开启。', 3500);
+}
+
+// 预设状态3：图示回归（步骤2，侧视，气压带+风带开启，面板打开）
+function presetDiagram() {
+  STATE.mode = 'guided';
+  document.getElementById('btn-mode').textContent = '引导模式';
+  document.getElementById('custom-params').style.display = 'none';
+  transitionToStep(2);
+  setView('side');
+  STATE.showGrid = true; STATE.showParticles = true; STATE.showPaths = true; STATE.showPressure = true;
+  applyToggleStates();
+  // 等待步骤过渡完成后打开面板
+  setTimeout(() => { if (!STATE.showDiagram) toggleDiagramPanel(true); }, 1200);
+  hideKnowledge();
+  showDemoOverlay('图示回归', '第三步：三圈环流成型 + 气压带风带，图示回归面板对照。', 3500);
+}
+
+// 同步 toggle 按钮状态到 UI
+function applyToggleStates() {
+  document.getElementById('tog-grid').classList.toggle('active', STATE.showGrid);
+  if (gridGroup) gridGroup.visible = STATE.showGrid;
+  document.getElementById('tog-particles').classList.toggle('active', STATE.showParticles);
+  toggleParticles(STATE.showParticles);
+  document.getElementById('tog-paths').classList.toggle('active', STATE.showPaths);
+  togglePaths(STATE.showPaths);
+  document.getElementById('tog-pressure').classList.toggle('active', STATE.showPressure);
+  const showP = STATE.showPressure && STATE.step >= 2;
+  pressureLabels.forEach(pl => { pl.obj.userData.baseVisible = showP; });
+  windLabels.forEach(wl => { wl.obj.userData.baseVisible = showP; });
+  pressureBeltMeshes.forEach(m => { m.visible = showP; });
+  windArrowMeshes.forEach(a => { a.visible = showP; });
+  document.getElementById('tog-labels').classList.toggle('active', STATE.showLabels);
+}
+
+// 演示模式自动序列
+function runDemoSequence() {
+  // 隐藏图例和无关UI
+  STATE.showLegend = false;
+  document.getElementById('legend').style.display = 'none';
+  document.getElementById('tog-legend').classList.remove('active');
+  // 确保教师端可见
+  document.getElementById('teacher-bar').classList.add('show');
+  // 序列：侧视 → 步骤0 → 说明 → 步骤1 → 说明 → 步骤2 → 说明 → 图示回归
+  setView('side');
+  presetGuided();
+  setTimeout(() => { presetExplore(); }, 5000);
+  setTimeout(() => { presetDiagram(); }, 10000);
+}
+
+// 课堂实录视频弹窗
+function openVideoModal() {
+  const modal = document.getElementById('video-modal');
+  const video = document.getElementById('classroom-video');
+  const tip = document.getElementById('video-tip');
+  modal.classList.add('show');
+  tip.textContent = '正在加载视频...';
+  // 尝试加载视频
+  video.load();
+  video.onerror = () => {
+    tip.textContent = '课堂试用片段待补充（./assets/video/classroom.mp4 不存在）';
+    video.style.display = 'none';
+  };
+  video.onloadeddata = () => {
+    tip.textContent = '点击播放查看课堂实录';
+    video.style.display = '';
+  };
+  // 超时检测（2秒后若仍无 loadeddata 则提示）
+  clearTimeout(openVideoModal._timer);
+  openVideoModal._timer = setTimeout(() => {
+    if (video.readyState === 0) {
+      tip.textContent = '课堂试用片段待补充（./assets/video/classroom.mp4 不存在）';
+      video.style.display = 'none';
+    }
+  }, 2000);
+}
+
+function closeVideoModal() {
+  const modal = document.getElementById('video-modal');
+  const video = document.getElementById('classroom-video');
+  modal.classList.remove('show');
+  video.pause();
+}
+
+// UI 隐藏/显示（录制纯净画面）
+function toggleUIHidden() {
+  document.body.classList.toggle('ui-hidden');
+  const hidden = document.body.classList.contains('ui-hidden');
+  showDemoOverlay(hidden ? 'UI 已隐藏' : 'UI 已恢复', hidden ? '仅保留3D场景，便于纯净录制。再按 H 恢复。' : '所有面板已恢复。', 2000);
+}
+
+// 重置到初始状态
+function resetToInitial() {
+  setView('reset');
+  transitionToStep(0);
+  STATE.mode = 'guided';
+  document.getElementById('btn-mode').textContent = '引导模式';
+  document.getElementById('custom-params').style.display = 'none';
+  STATE.showGrid = true; STATE.showParticles = true; STATE.showPaths = true;
+  STATE.showPressure = false; STATE.showLabels = true; STATE.showLegend = true;
+  applyToggleStates();
+  document.getElementById('legend').style.display = 'block';
+  document.getElementById('tog-legend').classList.add('active');
+  document.body.classList.remove('ui-hidden');
+  if (STATE.showDiagram) toggleDiagramPanel(false);
+  hideKnowledge();
+  showDemoOverlay('已重置', '恢复到初始状态。', 2000);
+}
+
+// 键盘快捷键处理
+function handleKeyboard(e) {
+  // 输入框聚焦时不响应
+  const tag = e.target.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+  switch (e.key) {
+    case '1': presetGuided(); break;
+    case '2': presetExplore(); break;
+    case '3': presetDiagram(); break;
+    case 'h': case 'H': toggleUIHidden(); break;
+    case 'r': case 'R': resetToInitial(); break;
+  }
+}
+
+// URL 参数解析
+function applyUrlState() {
+  const params = new URLSearchParams(location.search);
+  const state = params.get('state');
+  if (!state) return;
+  // 隐藏欢迎弹窗
+  document.getElementById('welcome-modal').classList.remove('show');
+  setTimeout(() => {
+    switch (state) {
+      case 'guided':  presetGuided(); break;
+      case 'explore': presetExplore(); break;
+      case 'diagram': presetDiagram(); break;
+    }
+  }, 800);
+}
+
+
+function bindControls() {
+  // 视角按钮
+  document.querySelectorAll('[data-view]').forEach(btn => {
+    btn.addEventListener('click', () => setView(btn.dataset.view));
+  });
+
+  // 步骤指示器
+  document.querySelectorAll('.step-dot').forEach(dot => {
+    dot.addEventListener('click', () => {
+      const s = parseInt(dot.dataset.step);
+      transitionToStep(s);
+    });
+  });
+
+  // 速度滑块
+  const speedSlider = document.getElementById('speed-slider');
+  speedSlider.addEventListener('input', () => {
+    STATE.speed = speedSlider.value / 10;
+    document.getElementById('speed-val').textContent = STATE.speed.toFixed(1) + 'x';
+  });
+
+  // 显示切换按钮
+  const toggles = {
+    'tog-grid':      () => { STATE.showGrid = !STATE.showGrid; if(gridGroup) gridGroup.visible = STATE.showGrid; },
+    'tog-particles': () => { STATE.showParticles = !STATE.showParticles; toggleParticles(STATE.showParticles); },
+    'tog-paths':     () => { STATE.showPaths = !STATE.showPaths; togglePaths(STATE.showPaths); },
+    'tog-pressure':  () => {
+      STATE.showPressure = !STATE.showPressure;
+      const showP = STATE.showPressure && STATE.step >= 2;
+      pressureLabels.forEach(pl => { pl.obj.userData.baseVisible = showP; });
+      windLabels.forEach(wl => { wl.obj.userData.baseVisible = showP; });
+      pressureBeltMeshes.forEach(m => { m.visible = showP; });
+      windArrowMeshes.forEach(a => { a.visible = showP; });
+    },
+    'tog-labels':    () => {
+      STATE.showLabels = !STATE.showLabels;
+      latLabels.forEach(l => { l.obj.userData.baseVisible = STATE.showLabels; });
+      verticalLabels.forEach(vl => { vl.obj.userData.baseVisible = STATE.step === 0 && STATE.showLabels; });
+    },
+    'tog-legend':    () => { STATE.showLegend = !STATE.showLegend; document.getElementById('legend').style.display = STATE.showLegend ? 'block' : 'none'; }
+  };
+  Object.entries(toggles).forEach(([id, fn]) => {
+    document.getElementById(id).addEventListener('click', () => {
+      fn();
+      document.getElementById(id).classList.toggle('active');
+    });
+  });
+
+  // 偏转滑块（自定义模式）
+  document.getElementById('coriolis-slider').addEventListener('input', (e) => {
+    STATE.coriolisDeflection = parseInt(e.target.value);
+    document.getElementById('coriolis-val').textContent = STATE.coriolisDeflection + '°';
+    updateAllCells();
+  });
+
+  // 密度选择
+  document.getElementById('density-select').addEventListener('change', (e) => {
+    STATE.density = e.target.value;
+    // 密度变化需要重建粒子（简化处理：调整可见度）
+    const factor = STATE.density === 'sparse' ? 0.5 : STATE.density === 'dense' ? 1.0 : 0.75;
+    Object.values(cellObjects).forEach(c => {
+      if (c.particles) {
+        const count = Math.floor(c.particleCount * factor);
+        c.particles.geometry.setDrawRange(0, count);
+      }
+    });
+  });
+
+  // 自转速度
+  document.getElementById('rotation-slider').addEventListener('input', (e) => {
+    STATE.earthRotationSpeed = e.target.value * 0.0002;
+  });
+
+  // 模式切换
+  document.getElementById('btn-mode').addEventListener('click', () => {
+    STATE.mode = STATE.mode === 'guided' ? 'custom' : 'guided';
+    document.getElementById('btn-mode').textContent = STATE.mode === 'guided' ? '引导模式' : '自定义模式';
+    document.getElementById('custom-params').style.display = STATE.mode === 'custom' ? 'flex' : 'none';
+  });
+
+  // 全屏
+  document.getElementById('fullscreen-btn').addEventListener('click', () => {
+    if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  });
+
+  // 低性能模式
+  document.getElementById('perf-toggle').addEventListener('click', () => {
+    STATE.lowPerf = !STATE.lowPerf;
+    document.getElementById('perf-toggle').classList.toggle('active');
+    if (STATE.lowPerf) {
+      renderer.setPixelRatio(1);
+      CONFIG.particles.baseSize = 0.15;
+    } else {
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      CONFIG.particles.baseSize = 0.1;
+    }
+  });
+
+  // 知识卡片关闭
+  document.getElementById('kc-close').addEventListener('click', hideKnowledge);
+
+  // 步骤通知
+  document.getElementById('sn-continue').addEventListener('click', () => {
+    hideStepNotification();
+    // 引导模式：自动进入下一步
+    if (STATE.mode === 'guided' && STATE.step < 2) {
+      setTimeout(() => transitionToStep(STATE.step + 1), 1500);
+    }
+  });
+  document.getElementById('sn-skip').addEventListener('click', () => {
+    hideStepNotification();
+    STATE.mode = 'custom';
+    document.getElementById('btn-mode').textContent = '自定义模式';
+    document.getElementById('custom-params').style.display = 'flex';
+  });
+
+  // 欢迎弹窗
+  document.getElementById('btn-start-guided').addEventListener('click', () => {
+    document.getElementById('welcome-modal').classList.remove('show');
+    STATE.mode = 'guided';
+    setTimeout(() => showStepNotification(0), 500);
+  });
+  document.getElementById('btn-start-free').addEventListener('click', () => {
+    document.getElementById('welcome-modal').classList.remove('show');
+    STATE.mode = 'custom';
+    document.getElementById('btn-mode').textContent = '自定义模式';
+    document.getElementById('custom-params').style.display = 'flex';
+  });
+
+  // 教师控制
+  document.getElementById('teacher-toggle').addEventListener('click', () => {
+    document.getElementById('teacher-bar').classList.toggle('show');
+  });
+  document.getElementById('tc-play').addEventListener('click', () => { STATE.playing = true; });
+  document.getElementById('tc-pause').addEventListener('click', () => { STATE.playing = false; });
+  document.getElementById('tc-jump').addEventListener('click', () => {
+    const s = parseInt(document.getElementById('tc-step-select').value);
+    transitionToStep(s);
+  });
+  document.getElementById('tc-lock-view').addEventListener('click', () => {
+    STATE.viewLocked = !STATE.viewLocked;
+    controls.enabled = !STATE.viewLocked;
+    document.getElementById('tc-lock-view').classList.toggle('active');
+  });
+
+  // 图例点击
+  document.querySelectorAll('.legend-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const key = item.dataset.cell;
+      showKnowledge(key);
+    });
+  });
+
+  // 图示回归面板
+  document.getElementById('diagram-toggle').addEventListener('click', () => toggleDiagramPanel(true));
+  document.getElementById('diagram-close').addEventListener('click', () => toggleDiagramPanel(false));
+  document.getElementById('diagram-check').addEventListener('click', checkDiagram);
+  document.getElementById('diagram-reset').addEventListener('click', resetDiagram);
+
+  // 演示模式
+  document.getElementById('tc-demo').addEventListener('click', runDemoSequence);
+  // 课堂实录（可选模块：assets/video/classroom.mp4 存在时才启用入口按钮，避免出现"待补充"的空入口）
+  const classroomBtn = document.getElementById('btn-classroom-video');
+  if (classroomBtn) {
+    const probe = document.createElement('video');
+    probe.preload = 'metadata';
+    probe.onloadedmetadata = () => {
+      classroomBtn.style.display = '';
+      classroomBtn.addEventListener('click', openVideoModal);
+    };
+    probe.onerror = () => {
+      classroomBtn.style.display = 'none';
+      console.log('[课堂实录] 未检测到 assets/video/classroom.mp4，入口按钮已隐藏。');
+    };
+    probe.src = './assets/video/classroom.mp4';
+  }
+  document.getElementById('video-close').addEventListener('click', closeVideoModal);
+  document.getElementById('video-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'video-modal') closeVideoModal();
+  });
+  // 键盘快捷键
+  window.addEventListener('keydown', handleKeyboard);
+}
+
+function toggleParticles(visible) {
+  Object.values(cellObjects).forEach(c => {
+    if (c.particles) c.particles.visible = visible;
+  });
+}
+
+function togglePaths(visible) {
+  Object.values(cellObjects).forEach(c => {
+    c.tubes.forEach(t => t.mesh.visible = visible);
+    c.innerGlows.forEach(g => g.mesh.visible = visible);
+    c.arrows.forEach(a => a.mesh.visible = visible);
+  });
+}
+
+function updateAllCells() {
+  // 第一步为无偏转理想模型；第二步起偏转介入（单圈带弯折 + 三圈演变）
+  const coriolis = STATE.step >= 1 ? STATE.coriolisDeflection : 0;
+  Object.values(cellObjects).forEach(c => c._updatePositions(coriolis));
+  if (STATE.step >= 1) {
+    _lastSingleGradient = -1;
+    applyThreeCellMorph(STATE.morph);
+  }
+}
+
+/* ========== 图例拖动 ========== */
+function initLegendDrag() {
+  const legend = document.getElementById('legend');
+  let dragging = false, ox, oy;
+  legend.addEventListener('mousedown', e => {
+    dragging = true; ox = e.clientX - legend.offsetLeft; oy = e.clientY - legend.offsetTop;
+    legend.style.cursor = 'grabbing';
+  });
+  document.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    legend.style.left = (e.clientX - ox) + 'px';
+    legend.style.top = (e.clientY - oy) + 'px';
+    legend.style.right = 'auto';
+  });
+  document.addEventListener('mouseup', () => { dragging = false; legend.style.cursor = 'move'; });
+}
+
+/* ========== 动画循环 ========== */
+function animate() {
+  requestAnimationFrame(animate);
+  const dt = clock.getDelta();
+
+  // 地球自转
+  if (earthGroup && STATE.playing) {
+    earthGroup.rotation.y += STATE.earthRotationSpeed;
+  }
+
+  syncLabelAnchorTransform();
+  // 环流剖面的屏幕锚定：跟随相机方位 → 环流圈始终停在地球屏幕左侧（与三列标签同侧对齐）
+  updateCrossSectionFacing();
+
+  // 标签背面剔除：标签与相机的连线被地球球体挡住时隐藏
+  if (latLabels.length > 0 || pressureLabels.length > 0 || windLabels.length > 0 || verticalLabels.length > 0 || coriolisLabels.length > 0) {
+    // 标签朝向跟随相机：气压带(右)、风带(中)、纬度(左)
+    updateLabelGroupFacing();
+    const _tmpVec = animate._tmpVec || (animate._tmpVec = new THREE.Vector3());
+    const _occlD = animate._occlD || (animate._occlD = new THREE.Vector3());
+    const _occlQ = animate._occlQ || (animate._occlQ = new THREE.Vector3());
+    const _rEarth2 = CONFIG.earth.radius * CONFIG.earth.radius;
+    // 视线遮挡判断（_tmpVec 已装入标签世界坐标）：
+    // 求标签→相机线段上离球心最近的点，落在球内即被地球遮挡。
+    // 旧的"点积>0"正面判断会把大气层外缘（半径≈7）的侧向标签
+    // （如赤道上升标签）误判为背面而丢失；对贴球面（≈5.6）标签两者等价。
+    const isOccluded = () => {
+      _occlD.copy(camera.position).sub(_tmpVec);
+      const t = clamp(-_tmpVec.dot(_occlD) / _occlD.lengthSq(), 0, 1);
+      _occlQ.copy(_tmpVec).addScaledVector(_occlD, t);
+      return _occlQ.lengthSq() < _rEarth2;
+    };
+    // 三列标签分别贴各自的锚点弧/色带环排布；上下拖动改变俯仰时，锚点随纬度圈
+    // 改变屏幕位置（与地球视角联动），转入地球背面的标签由遮挡判定自动隐藏 ——
+    // 保证标签始终贴在地球轮廓上，不会悬浮在地球圆盘上方（"飘起来"）。
+    latLabels.forEach(l => {
+      if (!l.obj.userData.baseVisible) { l.obj.visible = false; return; }
+      l.obj.getWorldPosition(_tmpVec);
+      l.obj.visible = !isOccluded();
+    });
+    // 气压带标签：锚点就在色带环上（半径 5.2），"贴带"与"可见"是同一件事 ——
+    // 锚点被地球挡住、或被别的色带挡在前面 = 该处色带在屏幕上根本不存在，
+    // 此时一并隐藏标签，转到真能看见它的视角时标签自动出现并贴回色带。
+    pressureLabels.forEach(pl => {
+      if (!pl.obj.userData.baseVisible) { pl.obj.visible = false; return; }
+      pl.obj.getWorldPosition(_tmpVec);
+      pl.obj.visible = !beltAnchorCovered(_tmpVec, pl.obj.userData.beltIndex);
+    });
+    // 风带标签：与纬度标签相同的背面剔除（锚点半径 5.6，越过轮廓切线防误判）。
+    windLabels.forEach(wl => {
+      if (!wl.obj.userData.baseVisible) { wl.obj.visible = false; return; }
+      wl.obj.getWorldPosition(_tmpVec);
+      wl.obj.visible = !isOccluded();
+    });
+    verticalLabels.forEach(vl => {
+      if (!vl.obj.userData.baseVisible) { vl.obj.visible = false; return; }
+      vl.obj.getWorldPosition(_tmpVec);
+      vl.obj.visible = !isOccluded();
+    });
+    // 偏转节点标签：需同时检查所在组的可见性（CSS2D不继承父级visible）
+    const corVisible = coriolisGroup ? coriolisGroup.visible : false;
+    coriolisLabels.forEach(cl => {
+      if (!corVisible || !cl.obj.userData.baseVisible) { cl.obj.visible = false; return; }
+      cl.obj.getWorldPosition(_tmpVec);
+      cl.obj.visible = !isOccluded();
+    });
+  }
+
+  // ── 第二步核心动态：单圈环流 → 三圈环流的连续演变 ──
+  // 偏转力介入的过程不能只是"多几个标注"，而应表现为环流形态真的被"折"成三圈。
+  // morph 在第一步置 0，进入第二步后自动推进到 1；拖动"偏转"滑块可即时对比不同强度。
+  if (STATE.playing && STATE.step === 1 && !STATE.stepTransitioning) {
+    if (STATE.morph < 1) {
+      STATE.morph = Math.min(1, STATE.morph + dt * 0.32); // 约 3 秒完成演变
+      applyThreeCellMorph(STATE.morph);
+    }
+  }
+
+  // 更新环流圈粒子（按组可见性驱动：过渡期间两组同屏时都保持流动）
+  if (STATE.playing) {
+    // 过渡中读取瞬时偏转量，保证粒子与管道几何形态同步
+    // 第二步（step>=1）单圈带即应体现偏转，故阈值取 1 而非 2
+    const coriolis = STATE.transitionCoriolis != null ? STATE.transitionCoriolis
+      : (STATE.step >= 1 ? STATE.coriolisDeflection : 0);
+    if (singleCellGroup && singleCellGroup.visible) {
+      // 必须传入同一偏转量：此前硬编码 0，导致每帧把第二步的弯折重新拉直
+      cellObjects['singleNH']?.update(dt, STATE.speed, coriolis);
+      cellObjects['singleSH']?.update(dt, STATE.speed, coriolis);
+    }
+    if (Object.values(threeCellGroups).some(g => g.visible)) {
+      ['hadley', 'ferrel', 'polar'].forEach(key => {
+        cellObjects[key + 'NH']?.update(dt, STATE.speed, coriolis);
+        cellObjects[key + 'SH']?.update(dt, STATE.speed, coriolis);
+      });
+    }
+  }
+
+  controls.update();
+  renderer.render(scene, camera);
+  labelRenderer.render(scene, camera);
+
+  // 图示回归面板：高亮闪烁时持续重绘 Canvas
+  if (STATE.showDiagram && (diagramHighlightId || diagramHighlightTimer)) {
+    drawDiagram();
+  }
+}
+
+/* ========== 窗口缩放 ========== */
+function onResize() {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  labelRenderer.setSize(window.innerWidth, window.innerHeight);
+}
+
+/* ========== 初始化 ========== */
+async function init() {
+  updateProgress(10);
+  initScene();
+  updateProgress(30);
+
+  createStarField();
+  updateProgress(40);
+
+  createEarth();
+  updateProgress(55);
+
+  createGrid();
+  updateProgress(65);
+
+  createCirculationCells();
+  createCoriolisVisuals();          // 第二步：30°/60° 弯折节点 + 偏转力箭头
+  createDeflectionIndicators(coriolisGroup); // 第二步：北极自转方向指示（强度数值由面板标尺承担）
+  buildDeflectScale();              // 第二步：左下角强度标尺面板（文字用，避免三维标签重叠）
+  updateProgress(80);
+
+  createLabels();
+  createPressureBelts();
+  updateProgress(90);
+
+  bindControls();
+  initLegendDrag();
+  updateProgress(100);
+
+  window.addEventListener('resize', onResize);
+
+  // 隐藏加载画面，显示欢迎弹窗
+  setTimeout(() => {
+    document.getElementById('loading-screen').classList.add('hidden');
+    // 若 URL 带 state 参数则跳过欢迎弹窗，直接应用预设状态
+    const params = new URLSearchParams(location.search);
+    if (params.get('state')) {
+      applyUrlState();
+    } else {
+      document.getElementById('welcome-modal').classList.add('show');
+    }
+  }, 600);
+
+  // 启动动画循环
+  animate();
+}
+
+init();
+/* ==== 应用代码结束标记（供 tools/build.mjs 定位；请勿删除）==== */
+</script>
+</body>
+</html>
