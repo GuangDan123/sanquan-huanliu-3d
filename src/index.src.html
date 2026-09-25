@@ -1620,7 +1620,10 @@ class CirculationCell {
   }
 
   setOpacity(op) {
-    this._opacity = op;   // 记录语义透明度（材质 opacity 是乘以基础值后的结果，不便反查）
+    this._opacity = op;
+    const visible = op > 0.001;
+    this.group.visible = visible;
+    this.arrows.forEach(a => { a.mesh.visible = visible; });
     const safeSet = (mat, val) => {
       try { if (mat && typeof mat.opacity === 'number') mat.opacity = val; } catch (e) {}
     };
@@ -1745,15 +1748,16 @@ function createCoriolisVisuals() {
     );
     g.add(core, halo);
 
-    // 垂直运动箭头：极点/30° 均为堆积下沉（指向地心）
-    const vertDir = radial.clone().multiplyScalar(-1);
-    const vertArrow = new THREE.Mesh(
-      createArrowGeometry(0.9),
-      new THREE.MeshBasicMaterial({ color: coreColor })
-    );
-    vertArrow.position.copy(vertDir.clone().multiplyScalar(0.42));
-    vertArrow.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), vertDir);
-    g.add(vertArrow);
+    if (!isSink) {
+      const vertDir = radial.clone().multiplyScalar(-1);
+      const vertArrow = new THREE.Mesh(
+        createArrowGeometry(0.9),
+        new THREE.MeshBasicMaterial({ color: coreColor })
+      );
+      vertArrow.position.copy(vertDir.clone().multiplyScalar(0.42));
+      vertArrow.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), vertDir);
+      g.add(vertArrow);
+    }
 
     // 节点标签（仅第二步显示，animate循环做背面剔除）
     const el = document.createElement('div');
@@ -1826,9 +1830,9 @@ const LABEL_R_POLE_EXTRA = 0.4;
 const latLabelRadius = (lat) => (Math.abs(lat) >= 80 ? LABEL_R_LAT + LABEL_R_POLE_EXTRA : LABEL_R_LAT);
 
 /* 气压带标签锚点：色带环（半径 PRESSURE_BELT_R、纬度 lat）上的一点。
-   组的朝向由 updateLabelGroupFacing() 每帧设为"局部 -Z 指向相机"，
-   因此 dLon=0 时锚点正是环上离相机最近的那一点（即色带在球面正前方的位置），
-   dLon 是该点沿纬圈向东/西的偏移（仅用于错开屏幕上互相拥挤的相邻标签，仍严格落在环上）。 */
+   标签层的朝向由 syncLabelAnchorTransform() 每帧设为"平面正对相机"（方位+俯仰），
+   因此 dLon=0 时锚点投影在屏幕竖直中轴上（色带在球面正前方的位置），
+   dLon 是该点沿纬圈向东/西的偏移（仅用于把整列标签向屏幕左侧错开，仍严格落在环上）。 */
 function beltAnchorPos(lat, dLon = 0) {
   const phi = degToRad(lat), t = degToRad(dLon);
   const r = PRESSURE_BELT_R;
@@ -1839,26 +1843,28 @@ function beltAnchorPos(lat, dLon = 0) {
   );
 }
 
-/* 风带标签固定在地球屏幕右侧轮廓：局部坐标保持不变，不继承地球绕 Y 轴的自转。 */
+/* 风带标签锚点半径：与纬度标尺同为 5.6。
+   若只高出球面 0.1（5.1），正常视角下锚点恰在地球轮廓切线附近，
+   背面剔除会把"贴着轮廓边缘"的标签误判为被地球挡住（实测东南信风带一度消失）；
+   抬到 5.6 让锚点越过切线，仅当标签真正转入地球背面时才隐藏。 */
 const WIND_LABEL_R = CONFIG.earth.radius + 0.1;
-function windAnchorPos(lat) {
-  const phi = degToRad(lat);
+function windAnchorPos(lat, dLon = -24) {
+  const phi = degToRad(lat), t = degToRad(dLon);
   return new THREE.Vector3(
-    -WIND_LABEL_R * Math.cos(phi),
+    WIND_LABEL_R * Math.cos(phi) * Math.sin(t),
     WIND_LABEL_R * Math.sin(phi),
-    0
+    -WIND_LABEL_R * Math.cos(phi) * Math.cos(t)
   );
 }
 
 /* 气压带标签的"贴带"判定：从相机过锚点的那一个像素，第一个命中的实体必须就是这条色带。
    不成立就隐藏标签 —— 宁可暂时不显示，也不让标签悬在没有色带的地方
-   （典型案例：侧视/平视时整个极冠藏在地球背面，只有天边一丝；默认视角下南极极冠同样不可见）。
-   等价的两个必要条件（与验收脚本 verify-belt-onband.mjs 的射线判据同一件事）：
+   （典型案例：侧视/平视时整个极冠藏在地球背面，只有天边一丝）。
+   等价的两个必要条件：
      ① 锚点没被地球球体挡住：相机→锚点线段离球心最近的点必须在地球半径之外；
      ② 锚点之前射线没有先切到**别的**色带：所有色带都在同一个半径 5.2 的球面上，
         射线与该球面共有两个交点，一个就是锚点自己（s=1），另一个 s2<1 时在锚点之前；
-        若那个交点的纬度落在别的色带的纬度区间里，说明那条色带挡在前面。
-   比自己对着 7 个三角网逐帧打射线便宜得多，且与射线结果一致。 */
+        若那个交点的纬度落在别的色带的纬度区间里，说明那条色带挡在前面。 */
 function beltAnchorCovered(P, ownIdx) {
   const C = camera.position;
   const center = beltAnchorCovered._center || (beltAnchorCovered._center = new THREE.Vector3());
@@ -1868,7 +1874,7 @@ function beltAnchorCovered(P, ownIdx) {
   if (dd < 1e-6) return false;
 
   // ① 地球遮挡
-  const t = clamp(-((P.x - center.x) * dx + (P.y - center.y) * dy + (P.z - center.z) * dz) / dd, 0, 1);
+  const t = clamp(-((C.x - center.x) * dx + (C.y - center.y) * dy + (C.z - center.z) * dz) / dd, 0, 1);
   const qx = C.x + dx * t - center.x, qy = C.y + dy * t - center.y, qz = C.z + dz * t - center.z;
   const rEarth2 = CONFIG.earth.radius * CONFIG.earth.radius;
   if (qx * qx + qy * qy + qz * qz < rEarth2) return true;
@@ -1880,7 +1886,7 @@ function beltAnchorCovered(P, ownIdx) {
   const camRelZ = C.z - center.z;
   const s2 = (camRelX * camRelX + camRelY * camRelY + camRelZ * camRelZ - R2) / dd;
   if (s2 < 1 && s2 > 0) {
-      const lat = Math.asin(clamp((C.y + dy * s2 - center.y) / PRESSURE_BELT_R, -1, 1)) * 180 / Math.PI;
+    const lat = Math.asin(clamp((C.y + dy * s2 - center.y) / PRESSURE_BELT_R, -1, 1)) * 180 / Math.PI;
     for (let i = 0; i < pressureBeltZones.length; i++) {
       if (i === ownIdx) continue;
       const z = pressureBeltZones[i];
@@ -1890,24 +1896,31 @@ function beltAnchorCovered(P, ownIdx) {
   return false;
 }
 
-/* 气压带与风带标签统一放在以地球中心为原点的屏幕标签层，随相机保持屏面朝向。 */
+/* 气压带与风带标签统一放在以地球中心为原点的屏幕标签层。
+   朝向只跟随相机的水平方位角（绕 Y 旋转），**不继承地球自转**
+   （earthGroup.rotation.y 的自转被刻意排除在外）—— 地球自转时，
+   标签列保持在屏幕左/中/右不动；上下拖动改变俯仰时，锚点随各自
+   纬度圈改变屏幕位置，背面的标签由 animate 里的遮挡判定隐藏。 */
 function syncLabelAnchorTransform() {
   if (!labelAnchorGroup || !earthGroup || !camera) return;
-  const center = syncLabelAnchorTransform._center || (syncLabelAnchorTransform._center = new THREE.Vector3());
+  const center = syncLabelAnchorTransform._center ||
+    (syncLabelAnchorTransform._center = new THREE.Vector3());
   earthGroup.getWorldPosition(center);
   labelAnchorGroup.position.copy(center);
-  labelAnchorGroup.rotation.set(earthGroup.rotation.x, -Math.atan2(camera.position.z, camera.position.x) - Math.PI / 2, earthGroup.rotation.z);
+  labelAnchorGroup.rotation.set(
+    earthGroup.rotation.x,
+    -Math.atan2(camera.position.z, camera.position.x) - Math.PI / 2,
+    earthGroup.rotation.z
+  );
 }
 
 function updateLabelGroupFacing() {
   if (!labelGroup || !camera) return;
   const az = Math.atan2(camera.position.z, camera.position.x);
-  const screenPlaneRot = -az - Math.PI / 2;
-  // 纬度组：屏幕左侧
-  if (latLabelGroup) latLabelGroup.rotation.y = screenPlaneRot;
-  // 气压带标签已挂载到 earthGroup，保持局部锚点，不再使用独立世界空间旋转
   // 垂直运动标签组（第一步内容）：单独用 -az+π/2 置于屏幕右侧
-  if (verticalLabelGroup) verticalLabelGroup.rotation.y = -az + Math.PI / 2;
+  if (verticalLabelGroup) {
+    verticalLabelGroup.rotation.y = -az + Math.PI / 2;
+  }
 }
 
 /* 环流剖面（单圈/三圈环流带 + 第二步弯折节点）的屏幕锚定：
@@ -1961,7 +1974,6 @@ function createDeflectionIndicators(parent) {
   rotGroup.visible = false;
   // 必须挂到场景根：若挂在 coriolisGroup 下，会被 setNodeScale()（弯折节点的弹性浮现动画）
   // 缩放，位置随之被拖到地球内部而看不见。
-  scene.add(rotGroup);
   deflectionIndicators.push(rotGroup);   // 纳入统一显隐
 }
 
@@ -2047,7 +2059,7 @@ function createLabels() {
     obj.position.copy(beltAnchorPos(d.anchorLat ?? d.lat, (d.dLon || 0) + PRESSURE_LABEL_DLON));
     obj.visible = false;
     obj.userData.baseVisible = false; // 气压带标签初始隐藏，第三步显示
-    obj.userData.beltIndex = pressureLabels.length;   // 对应 pressureBeltMeshes 里的序号，供遮挡判定用
+    obj.userData.beltIndex = pressureLabels.length;   // 对应 pressureBeltMeshes 里的序号，供贴带遮挡判定用
     labelGroup.add(obj);
     pressureLabels.push({ obj, data: d });
   });
@@ -2064,6 +2076,7 @@ function createLabels() {
     el.textContent = d.text;
     const obj = new CSS2DObject(el);
     obj.position.copy(rightSidePos(d.lat, LABEL_R_VERTICAL));
+    if (d.lat === 0) obj.position.set(-LABEL_R_VERTICAL - 0.95, 0, 0);
     obj.visible = false;
     obj.userData.baseVisible = STATE.step === 0 && STATE.showLabels;
     verticalLabelGroup.add(obj);
@@ -2073,19 +2086,18 @@ function createLabels() {
   // 风带箭头阵列（替代单标签样式，沿纬线均匀排布连续箭头）
   createWindArrows();
 
-  // 朝向由 updateLabelGroupFacing() 每帧按相机方位更新：
-  //   纬度组 → 屏幕左、气压带组 → 屏幕中、风带标签锚在地球右侧球面；
-  //   三组标签保持对应的纬度高度，风带标签随地球模型一起转动。
+  // 朝向由 syncLabelAnchorTransform()/updateLabelGroupFacing() 每帧按相机方位更新：
+  //   纬度组 → 屏幕左、气压带组 → 屏幕中、风带标签 → 屏幕右。
+  //   标签层挂在场景根（不进 earthGroup）→ 不随地球自转移动；
+  //   上下拖动时锚点随纬度圈改变屏幕位置，转入地球背面的标签自动隐藏（见 animate）。
   // 初始给一个兜底值（此时相机可能尚未就绪；-π/2 等价于方位角 az=0）
   labelGroup.rotation.y = 0;
-  latLabelGroup.rotation.y = -Math.PI / 2;
+  latLabelGroup.rotation.y = 0;
   verticalLabelGroup.rotation.y = Math.PI / 2;
 
   labelAnchorGroup = new THREE.Group();
-  labelAnchorGroup.add(labelGroup, windLabelGroup);
+  labelAnchorGroup.add(labelGroup, windLabelGroup, latLabelGroup);
   scene.add(labelAnchorGroup);
-  // 纬度标签保持独立屏幕布局
-  scene.add(latLabelGroup);
   // 垂直运动标签独立组加入场景（屏幕右侧）
   scene.add(verticalLabelGroup);
   syncLabelAnchorTransform();
@@ -2205,7 +2217,7 @@ function createWindArrows() {
       windArrowMeshes.push(mesh);
     }
 
-    // 在风带对应位置添加名称标签，作为 earthGroup 的固定子对象
+    // 在风带对应位置添加名称标签（挂在场景级标签层，不随地球自转，见 windLabelGroup）
     const windKey = Math.abs(belt.lat) <= 30 ? 'hadley' : (Math.abs(belt.lat) <= 60 ? 'ferrel' : 'polar');
     const el = document.createElement('div');
     el.className = 'pressure-label';
@@ -2215,9 +2227,9 @@ function createWindArrows() {
     el.textContent = belt.name;
     el.addEventListener('click', () => showKnowledge(windKey));
     const obj = new CSS2DObject(el);
-    // 风带标签锚定在 earthGroup 的局部球面坐标，随地球旋转和位移联动
+    // 风带标签锚定在标签层的局部球面坐标：只随相机方位转到屏幕右侧，不随地球自转
     obj.userData.windLat = belt.lat;
-    obj.userData.windAnchor = windAnchorPos(belt.lat);
+    obj.userData.windAnchor = windAnchorPos(belt.lat, -24);
     obj.position.copy(obj.userData.windAnchor);
     obj.visible = false;
     obj.userData.baseVisible = false; // 风带标签初始隐藏，第三步显示
@@ -2228,8 +2240,11 @@ function createWindArrows() {
 
 /* ========== 气压带环带可视化 ========== */
 let pressureBeltMeshes = [];
-let pressureBeltZones = [];   // 与 pressureBeltMeshes 一一对应：[latMin, latMax]，供遮挡判定用
+let pressureBeltZones = [];   // 与 pressureBeltMeshes 一一对应：[latMin, latMax]，供贴带遮挡判定用
+let pressureBeltGroup;
 function createPressureBelts() {
+  pressureBeltGroup = new THREE.Group();
+  scene.add(pressureBeltGroup);
   // 气压带定义：lat=中心纬度, latHalfWidth=半宽(度), color=色带颜色
   // 赤道低压浅红、副热带高压浅黄、副极地低压浅蓝、极地高压浅紫
   // 半宽收窄到贴合标准纬度带范围
@@ -2292,7 +2307,7 @@ function createPressureBelts() {
     });
     const mesh = new THREE.Mesh(geo, mat);
     mesh.visible = false;
-    scene.add(mesh);
+    pressureBeltGroup.add(mesh);
     pressureBeltMeshes.push(mesh);
     pressureBeltZones.push([latMin, latMax]);
   });
@@ -2428,12 +2443,19 @@ function setStepVisual(step) {
   showDeflectionIndicators(step === 1);
 
   const showVertical = step === 0 && STATE.showLabels;
+  latLabels.forEach(l => { l.obj.userData.baseVisible = STATE.showLabels; });
   verticalLabels.forEach(vl => { vl.obj.userData.baseVisible = showVertical; });
 
   // 气压带标签与环带
-  const showP = STATE.showPressure;
-  pressureLabels.forEach(pl => { pl.obj.userData.baseVisible = showP; });
-  windLabels.forEach(wl => { wl.obj.userData.baseVisible = showP; });
+  const showP = STATE.showPressure && step >= 2;
+  pressureLabels.forEach(pl => {
+    pl.obj.userData.baseVisible = showP;
+    if (!showP) pl.obj.visible = false;
+  });
+  windLabels.forEach(wl => {
+    wl.obj.userData.baseVisible = showP;
+    if (!showP) wl.obj.visible = false;
+  });
   pressureBeltMeshes.forEach(m => { m.visible = showP; });
   windArrowMeshes.forEach(a => { a.visible = showP; });
 
@@ -2502,6 +2524,12 @@ function transitionToStep(newStep) {
       singleCellGroup.visible = true;
       ['singleNH', 'singleSH'].forEach(k => cellObjects[k].setGradient(0, true));
       STATE.transitionCoriolis = STATE.coriolisDeflection; // 淡出期间粒子与管道形态保持一致
+      STATE.showPressure = false;
+      document.getElementById('tog-pressure').classList.remove('active');
+      pressureLabels.forEach(pl => { pl.obj.userData.baseVisible = false; pl.obj.visible = false; });
+      windLabels.forEach(wl => { wl.obj.userData.baseVisible = false; wl.obj.visible = false; });
+      pressureBeltMeshes.forEach(m => { m.visible = false; });
+      windArrowMeshes.forEach(a => { a.visible = false; });
       runAnim(1100, (p) => {
         ['singleNH', 'singleSH'].forEach(k => cellObjects[k].setOpacity(p));
         ['hadley', 'ferrel', 'polar'].forEach(key => {
@@ -2635,6 +2663,7 @@ try {
     // 纬度标签当前的 z 分量（用于校验标签分置两侧、不互相遮挡）
     get latLabelZ() { return latLabels.map(l => +l.obj.position.z.toFixed(2)); },
     get camera() { return camera; },
+    get earthGroup() { return earthGroup; },   // 供自动化脚本验证"标签不随地球自转移动"
     get crossSectionRoot() { return crossSectionRoot; },   // 环流剖面根组（校验其朝向/屏幕左右）
     setView,                                               // 便于自动化脚本切换视角后复测
     get earthRadius() { return CONFIG.earth.radius; },
@@ -3571,24 +3600,27 @@ function animate() {
       _occlQ.copy(_tmpVec).addScaledVector(_occlD, t);
       return _occlQ.lengthSq() < _rEarth2;
     };
-    // 三列标签（纬度/气压带/风带）同处一个"屏面"（过球心、垂直于视线），整组始终正对相机，
-    // 地球圆盘对它们只是背景 —— 故统一不做遮挡剔除，否则俯视时南半球一整段会被误判为
-    // "被地球挡住"而整列消失（表现为标签"缺失"）。
+    // 三列标签分别贴各自的锚点弧/色带环排布；上下拖动改变俯仰时，锚点随纬度圈
+    // 改变屏幕位置（与地球视角联动），转入地球背面的标签由遮挡判定自动隐藏 ——
+    // 保证标签始终贴在地球轮廓上，不会悬浮在地球圆盘上方（"飘起来"）。
     latLabels.forEach(l => {
-      l.obj.visible = !!l.obj.userData.baseVisible;
+      if (!l.obj.userData.baseVisible) { l.obj.visible = false; return; }
+      l.obj.getWorldPosition(_tmpVec);
+      l.obj.visible = !isOccluded();
     });
-    // 气压带标签：锚点**就在色带环上**（半径 5.2），于是"贴带"与"可见"是同一件事 ——
-    // 锚点被地球挡住、或被别的色带挡在前面 = 该处色带在屏幕上根本不存在，此时必须一并隐藏标签，
-    // 否则又会出现"悬空标签"（默认视角的南极极冠、侧视/平视的两极极冠都是这种情况）。
-    // 转到真能看见它的视角、或把地球转到极点朝前时，标签会自动出现并贴回色带。
+    // 气压带标签：锚点就在色带环上（半径 5.2），"贴带"与"可见"是同一件事 ——
+    // 锚点被地球挡住、或被别的色带挡在前面 = 该处色带在屏幕上根本不存在，
+    // 此时一并隐藏标签，转到真能看见它的视角时标签自动出现并贴回色带。
     pressureLabels.forEach(pl => {
       if (!pl.obj.userData.baseVisible) { pl.obj.visible = false; return; }
       pl.obj.getWorldPosition(_tmpVec);
       pl.obj.visible = !beltAnchorCovered(_tmpVec, pl.obj.userData.beltIndex);
     });
-    // 风带标签随标签层保持右侧屏面位置。
+    // 风带标签：与纬度标签相同的背面剔除（锚点半径 5.6，越过轮廓切线防误判）。
     windLabels.forEach(wl => {
-      wl.obj.visible = !!wl.obj.userData.baseVisible;
+      if (!wl.obj.userData.baseVisible) { wl.obj.visible = false; return; }
+      wl.obj.getWorldPosition(_tmpVec);
+      wl.obj.visible = !isOccluded();
     });
     verticalLabels.forEach(vl => {
       if (!vl.obj.userData.baseVisible) { vl.obj.visible = false; return; }
