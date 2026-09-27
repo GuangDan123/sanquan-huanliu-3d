@@ -621,6 +621,7 @@ let starField;
 let clock = new THREE.Clock();
 let particleTexture;
 const SCENE_OFFSET_X = 10.5;
+const CIRCULATION_OFFSET_X = -1.2;
 const cellObjects = {}; // 存储所有环流圈对象
 
 function updateProgress(pct) {
@@ -1654,7 +1655,7 @@ function createCirculationCells() {
   // 环流剖面根组：整组每帧按相机方位旋转（updateCrossSectionFacing）→ 环流圈始终停在地球屏幕左侧。
   // 单圈带、三圈带、第二步弯折节点都挂在这里，保证它们朝向一致、不会错位。
   crossSectionRoot = new THREE.Group();
-  crossSectionRoot.position.x = SCENE_OFFSET_X;
+  crossSectionRoot.position.x = SCENE_OFFSET_X + CIRCULATION_OFFSET_X;
   scene.add(crossSectionRoot);
 
   // 单圈环流（步骤0）
