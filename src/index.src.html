@@ -1908,9 +1908,9 @@ function syncLabelAnchorTransform() {
   earthGroup.getWorldPosition(center);
   labelAnchorGroup.position.copy(center);
   labelAnchorGroup.rotation.set(
-    earthGroup.rotation.x,
+    0,
     -Math.atan2(camera.position.z, camera.position.x) - Math.PI / 2,
-    earthGroup.rotation.z
+    0
   );
 }
 
@@ -2023,7 +2023,8 @@ function createLabels() {
      北缘微调即可把纵向间距从 20px 拉开到约 26px，横向偏移与其他档完全一致。
      极档（±85°）纬圈极小，滑动量天然可忽略。 */
   const PRESSURE_LABEL_DLON = 16;
-  const pressureData = [
+const LAT_LABEL_DLON = 42;
+const pressureData = [
     { lat: 0,   text: '赤道低气压带 ↑',     cls: 'pressure-label', key: 'pressure-0' },
     { lat: 30,  text: '副热带高气压带 ↓',    cls: 'pressure-label', key: 'pressure-30' },
     { lat: -30, anchorLat: -28, text: '副热带高气压带 ↓',    cls: 'pressure-label', key: 'pressure-30' },
@@ -2033,17 +2034,18 @@ function createLabels() {
     { lat: -85, text: '极地高气压带 ↓',      cls: 'pressure-label', key: 'pressure-90' }
   ];
 
-  // 纬度标签：屏幕左侧弧（x = +半径·cos(lat)，高度与 bandPos 同公式 → 作为高度基准）
+  // 纬度标签：与气压带标签一样，直接锚定在对应纬度圈的球面近侧。
   labelData.forEach(d => {
     const el = document.createElement('div');
     el.className = d.cls;
     el.textContent = d.text;
     el.addEventListener('click', () => showKnowledge(d.key));
     const obj = new CSS2DObject(el);
-    const R = latLabelRadius(d.lat);
-    obj.position.set(R * Math.cos(degToRad(d.lat)), R * Math.sin(degToRad(d.lat)), 0);
+    const radius = latLabelRadius(d.lat);
+    obj.position.copy(beltAnchorPos(d.lat, LAT_LABEL_DLON));
+    obj.position.multiplyScalar(radius / PRESSURE_BELT_R);
     obj.userData.baseVisible = true; // 纬度标签默认可见
-    latLabelGroup.add(obj);
+    labelGroup.add(obj);
     latLabels.push({ obj, data: d });
   });
 
