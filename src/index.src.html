@@ -620,6 +620,8 @@ let coriolisLabels = [];  // 节点CSS2D标签（背面剔除用）
 let starField;
 let clock = new THREE.Clock();
 let particleTexture;
+const SCENE_OFFSET_X = 10.5;
+const CIRCULATION_OFFSET_X = -1.2;
 const cellObjects = {}; // 存储所有环流圈对象
 
 function updateProgress(pct) {
@@ -633,7 +635,7 @@ function initScene() {
 
   // 相机
   camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.set(8, 6, 12);
+  camera.position.set(16, 2, 24);
 
   // WebGL渲染器
   renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
@@ -854,6 +856,7 @@ function createEarth() {
   rimMesh.scale.set(1.04, 1.0, 1.04);
   earthGroup.add(rimMesh);
 
+  earthGroup.position.x = SCENE_OFFSET_X;
   scene.add(earthGroup);
 
   // 加载内嵌高质量地球纹理（base64 data: URL，file:// 协议下不受跨域/污染限制，必然可用）
@@ -949,6 +952,7 @@ function createGrid() {
     gridGroup.add(new THREE.Line(geo, mat));
   }
 
+  gridGroup.position.x = SCENE_OFFSET_X;
   scene.add(gridGroup);
 }
 
@@ -1651,6 +1655,7 @@ function createCirculationCells() {
   // 环流剖面根组：整组每帧按相机方位旋转（updateCrossSectionFacing）→ 环流圈始终停在地球屏幕左侧。
   // 单圈带、三圈带、第二步弯折节点都挂在这里，保证它们朝向一致、不会错位。
   crossSectionRoot = new THREE.Group();
+  crossSectionRoot.position.x = SCENE_OFFSET_X + CIRCULATION_OFFSET_X;
   scene.add(crossSectionRoot);
 
   // 单圈环流（步骤0）
@@ -2101,6 +2106,7 @@ const pressureData = [
   labelAnchorGroup.add(labelGroup, windLabelGroup, latLabelGroup);
   scene.add(labelAnchorGroup);
   // 垂直运动标签独立组加入场景（屏幕右侧）
+  verticalLabelGroup.position.x = SCENE_OFFSET_X;
   scene.add(verticalLabelGroup);
   syncLabelAnchorTransform();
 }
@@ -2246,6 +2252,7 @@ let pressureBeltZones = [];   // 与 pressureBeltMeshes 一一对应：[latMin, 
 let pressureBeltGroup;
 function createPressureBelts() {
   pressureBeltGroup = new THREE.Group();
+  pressureBeltGroup.position.x = SCENE_OFFSET_X;
   scene.add(pressureBeltGroup);
   // 气压带定义：lat=中心纬度, latHalfWidth=半宽(度), color=色带颜色
   // 赤道低压浅红、副热带高压浅黄、副极地低压浅蓝、极地高压浅紫
