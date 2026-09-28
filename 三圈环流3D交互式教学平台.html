@@ -164,6 +164,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg-dark);font-
 .coriolis-label{background:rgba(15,17,25,0.85);border:1px solid rgba(255,224,102,0.4);border-radius:6px;padding:2px 8px;font-size:11px;color:#FFE9A8;white-space:nowrap;pointer-events:none;}
 /* 第一步垂直运动标签（赤道上升/两极下沉）：放大醒目，贴合大气层外缘放置 */
 .vertical-label{background:rgba(15,25,40,0.92);border:2px solid rgba(136,204,255,0.6);border-radius:8px;padding:6px 14px;font-size:15px;font-weight:bold;color:#BFE8FF;white-space:nowrap;pointer-events:none;letter-spacing:1px;box-shadow:0 0 10px rgba(136,204,255,0.35);text-shadow:0 0 6px rgba(136,204,255,0.6);}
+.sun-label{background:rgba(15,25,40,0.92);border:2px solid rgba(255,209,102,0.7);border-radius:8px;padding:6px 14px;font-size:15px;font-weight:bold;color:#FFE9A8;white-space:nowrap;pointer-events:none;letter-spacing:1px;box-shadow:0 0 10px rgba(255,181,46,0.45);text-shadow:0 0 6px rgba(255,209,102,0.7);}
 
 /* ========== 响应式 ========== */
 @media(max-width:768px){
@@ -53386,7 +53387,7 @@ const CONFIG = {
   singleCellLongitudes: [0],
   threeCellLongitudes: [0],
   starCount: 3000,
-  sun: { centerX: 1.25, radius: 0.78, arrowStartX: 2.25, arrowEndX: 8.15, arrowCount: 6, screenX: 0.2, screenY: 0.5, screenDepth: 15, arrowStartOffset: 2.2, arrowVisualOffsetX: -3.0, arrowTargetRadius: 7 }
+  sun: { centerX: 1.25, radius: 0.78, arrowStartX: 2.25, arrowEndX: 8.15, arrowCount: 6, screenX: 0.2, screenY: 0.5, screenDepth: 15, arrowStartOffset: 0.62, arrowTargetRadius: 7, arrowShorten: 3.5 }
 };
 
 /* ========== 全局状态 ========== */
@@ -53534,7 +53535,7 @@ let coriolisLabels = [];  // 节点CSS2D标签（背面剔除用）
 let starField;
 let clock = new THREE.Clock();
 let particleTexture;
-let sunGroup, sunCore, sunGlow, sunArrows = [];
+let sunGroup, sunCore, sunGlow, sunLabel, sunArrows = [];
 const SCENE_OFFSET_X = 10.5;
 const CIRCULATION_OFFSET_X = -1.2;
 const cellObjects = {}; // 存储所有环流圈对象
@@ -53604,6 +53605,13 @@ function createSun() {
   );
   sunGroup.add(sunGlow, sunCore);
 
+  const sunLabelElement = document.createElement('div');
+  sunLabelElement.className = 'sun-label';
+  sunLabelElement.textContent = '太阳';
+  sunLabel = new CSS2DObject(sunLabelElement);
+  sunLabel.position.set(0, CONFIG.sun.radius * 1.8 + 0.45, 0);
+  sunGroup.add(sunLabel);
+
   const arrowDefs = [
     { lat: 10, color: 0xFF4B3E }, { lat: -10, color: 0xFF4B3E },
     { lat: 30.5, color: 0xFFD23F }, { lat: -30.5, color: 0xFFD23F },
@@ -53644,36 +53652,32 @@ function updateSunArrowTargets() {
   if (sunHorizontal.lengthSq() < 0.0001) sunHorizontal.copy(viewHorizontal);
   sunHorizontal.normalize();
   sunArrows.forEach(({ line, shaft, head, lat }) => {
-    const latitude = degToRad(lat);
+    const isRedArrow = Math.abs(lat) === 10;
+    // 目标点统一锚定在地球周围的目标球面（半径 arrowTargetRadius，与大气层边缘重合）：
+    // 红色直射光线取 ±8° 纬度（直射赤道附近），黄/蓝箭头取各自纬度。
+    // 地球端按"目标点 - 太阳位置"相对计算（三色同一套地球锁定方式），
+    // 任何视角下端点都贴住地球，不随屏幕锚定的太阳漂移。
+    const latitude = isRedArrow ? Math.sign(lat) * degToRad(8) : degToRad(lat);
     const targetRadius = CONFIG.sun.arrowTargetRadius;
     const target = earthCenter.clone().add(new THREE.Vector3(
       sunHorizontal.x * targetRadius * Math.cos(latitude),
       targetRadius * Math.sin(latitude),
       sunHorizontal.z * targetRadius * Math.cos(latitude)
     ));
-    const isRedArrow = Math.abs(lat) === 10;
-    const parallelTarget = isRedArrow
-      ? earthCenter.clone().add(new THREE.Vector3(sunHorizontal.x * targetRadius, 0, sunHorizontal.z * targetRadius))
-      : target;
-    const direction = parallelTarget.clone().sub(sunOrigin);
-    const distance = target.clone().sub(sunOrigin).length();
+    const direction = target.clone().sub(sunOrigin);
+    const distance = direction.length();
     direction.normalize();
-    start.copy(direction).multiplyScalar(isRedArrow ? CONFIG.sun.radius + 0.35 : CONFIG.sun.arrowStartOffset);
-    end.copy(parallelTarget).sub(sunOrigin);
-    if (isRedArrow) {
-      const redStartY = Math.sign(lat) * targetRadius * Math.sin(degToRad(3));
-      const redEndY = Math.sign(lat) * targetRadius * Math.sin(degToRad(8));
-      start.y = redStartY;
-      end.y = redEndY;
-    }
-    start.x += CONFIG.sun.arrowVisualOffsetX;
-    end.x += CONFIG.sun.arrowVisualOffsetX;
+    // 太阳侧起点：只由方向与固定偏移决定，不受 arrowShorten 影响
+    start.copy(direction).multiplyScalar(0.55);
+    // 箭头端沿原方向往回收，仅缩短连接线；arrowTargetRadius 语义与箭头几何尺寸均不变
+    const shorten = CONFIG.sun.arrowShorten ?? 0;
+    end.copy(direction).multiplyScalar(Math.max(distance - shorten, 0.01));
     const visualDirection = end.clone().sub(start).normalize();
     const points = line.geometry.attributes.position;
     points.setXYZ(0, start.x, start.y, start.z);
     points.setXYZ(1, end.x, end.y, end.z);
     points.needsUpdate = true;
-    const shaftLength = Math.max(start.distanceTo(end) - 0.22, 0.01);
+    const shaftLength = Math.max(start.distanceTo(end) - 0.04, 0.01);
     shaft.position.copy(start).add(end).multiplyScalar(0.5);
     shaft.scale.set(1, shaftLength, 1);
     shaft.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), visualDirection);
@@ -54059,9 +54063,16 @@ function getCellPosition(t, riseLat, sinkLat, baseLonDeg, hemisphere, coriolisDe
 }
 
 /* 单圈环流经圈路径
-   纬度：赤道附近上升 → 高空向极地流动 → 极地下沉 → 近地面回流，闭合椭圆环
+   流向（保持不变）：赤道上升 → 高空流向极地 → 极地下沉 → 近地面回流，闭合环路
 
-   coriolisDeg > 0 时（第二步启用）叠加地转偏向力引起的纬向（经度）偏移：
+   外形（赤道侧单主鼓的蛋形轮廓）：
+    · 近地面回流：从极地到赤道全程贴地球球面；
+    · 赤道端近乎垂直冲到大气层顶，唯一的最大鼓包落在 ~10° 纬度高空；
+    · 从主鼓包向 90° 极地，弧高按余弦持续平滑收窄（无高纬二次鼓包）；
+    · 到极地 90° 压到最扁并贴球面，完成下沉后转入近地面回流。
+   极地转折点固定在 t=0.5，与双色着色（sin 相位）及三段渐变 LUT 的半程映射对齐。
+
+  coriolisDeg > 0 时（第二步启用）叠加地转偏向力引起的纬向（经度）偏移：
      · 偏向力在赤道为零、向两极逐渐增大 → 偏移量按 |sin(lat)| 加权
      · 只在水平气流段产生偏移（上升/下沉段保持竖直）→ 由水平权重 sin²θ 控制
      · 偏向方向 = 气流前进方向的右侧（北半球右偏 / 南半球左偏）
@@ -54076,27 +54087,43 @@ function getSingleDropPosition(t, baseLonDeg, hemisphere, coriolisDeg, riseLat =
   const surfaceAlt = CONFIG.particles.surfaceAlt;
   const upperAlt = CONFIG.particles.upperAlt;
 
-  const angle = t * Math.PI * 2;
+  const riseEnd = 0.16;            // 赤道垂直上升段
+  const upperEnd = 0.5;            // 高空去程段终点 = 极地转折（对齐 t=0.5 的着色半程）
+  const bulgeLat = riseLat + 7.5;  // 唯一主鼓包位置：赤道侧 ~10° 高空
+  let lat;
+  let alt;
+  let horizontalWeight;
+  let flowDirection;
 
-  // 纬度：上升点(riseLat) → 极地(sinkLat*h) → 上升点，沿同一经圈
-  const lat = (riseLat + (sinkLat - riseLat) * 0.5 * (1 - Math.cos(angle))) * hemisphere;
+  if (t <= riseEnd) {
+    // 赤道附近近乎垂直上升：纬度滞后（s²）先冲到大气层顶，顶点落在主鼓包纬度
+    const s = smoothstep(t / riseEnd);
+    lat = riseLat + (bulgeLat - riseLat) * s * s;
+    alt = surfaceAlt + (upperAlt - surfaceAlt) * s;
+    horizontalWeight = 0;
+    flowDirection = 1;
+  } else if (t <= upperEnd) {
+    // 从主鼓包向极地：弧高随纬度按余弦持续平滑收窄，到 90° 压到最扁贴球面下沉
+    const s = smoothstep((t - riseEnd) / (upperEnd - riseEnd));
+    lat = bulgeLat + (sinkLat - bulgeLat) * s;
+    const decline = Math.cos(((lat - bulgeLat) / (sinkLat - bulgeLat)) * Math.PI / 2);
+    alt = surfaceAlt + (upperAlt - surfaceAlt) * decline;
+    horizontalWeight = 1;
+    flowDirection = 1;
+  } else {
+    // 近地面回流：从极地到赤道全程贴地球球面
+    const s = smoothstep((t - upperEnd) / (1 - upperEnd));
+    lat = sinkLat + (riseLat - sinkLat) * s;
+    alt = surfaceAlt;
+    horizontalWeight = 1;
+    flowDirection = -1;
+  }
 
-  // 高度：去程(上半圆)在高空，回程(下半圆)在低空，形成闭合椭圆环
-  const altMid = (surfaceAlt + upperAlt) / 2;
-  const altRange = (upperAlt - surfaceAlt) / 2;
-  const alt = altMid + altRange * Math.sin(angle);
-
-  // ── 地转偏向力引起的经度偏移 ──
-  // 气流方向：cos(angle) > 0 → 高空向极地流动（时间占比 0~0.25 与 0.75~1）
-  //           cos(angle) < 0 → 近地面向赤道流动
-  // 水平权重 sin²(angle)：在上升点(t=0.25)与下沉点(t=0.75)为 0，保证竖直段不被平移
-  // 纬度权重 sin|lat|：赤道为 0、极点最大，对应"偏向力在赤道为零、向两极逐渐增大"
-  // 偏移量有界（|shift| ≤ coriolisDeg），不会因纬度变化率过大而失控
-  const horizontalWeight = Math.sin(angle) * Math.sin(angle);
   const latWeight = Math.sin(Math.abs(degToRad(lat)));
-  const coriolisShift = coriolisDeg * latWeight * horizontalWeight * Math.cos(angle) * hemisphere;
+  const coriolisShift = coriolisDeg * latWeight * horizontalWeight * flowDirection * hemisphere;
 
-  const phi = degToRad(90 - lat);
+  const actualLat = lat * hemisphere;
+  const phi = degToRad(90 - actualLat);
   const theta = degToRad(baseLonDeg + coriolisShift);
   const r = R + alt;
 
