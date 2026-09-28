@@ -1,0 +1,72 @@
+import { readFile } from 'node:fs/promises';
+
+const source = await readFile(new URL('../src/index.src.html', import.meta.url), 'utf8');
+const checks = [
+  ['太阳模型创建函数', /function createSun\(/],
+  ['太阳状态诊断', /function getSunDiagnostics\(/],
+  ['三阶段太阳亮度', /SUN_STEP_STYLE/],
+  ['统一模型右移布局', /modelOffsetX/],
+  ['整体布局移至画面右侧四分之一', /modelOffsetX:\s*9\.0/],
+  ['太阳与整体布局同步右移', /sunScreenAnchor\s*=\s*new THREE\.Vector3\(-0\.42,\s*0,\s*0\.86\)/],
+  ['太阳与地球保持同向右移', /sunScreenAnchor.*-0\.42[\s\S]*modelOffsetX:\s*9\.0|modelOffsetX:\s*9\.0[\s\S]*sunScreenAnchor.*-0\.42/],
+  ['赤道定向聚光', /sunLight/],
+  ['太阳屏幕固定更新', /updateSunScreenPosition/],
+  ['太阳与模型安全距离', /sunClearance/],
+  ['太阳不会随地球自转', /sunGroup\.rotation\.y\s*=\s*0/],
+  ['太阳尺寸缩小', /sunRadius:\s*0\.55/],
+  ['太阳继续向左移动', /new THREE\.Vector3\(-0\.42,\s*0,\s*0\.86\)/],
+  ['太阳与赤道平行', /new THREE\.Vector3\(-0\.42,\s*0,\s*0\.86\)/],
+  ['太阳进一步缩小', /sunRadius:\s*0\.55/],
+  ['太阳随地球视图缩放', /updateSunScaleWithEarth/],
+  ['太阳按相机距离联动', /sunBaseCameraDistance/],
+  ['太阳位置保持不变', /sunScreenAnchor\s*=\s*new THREE\.Vector3\(-0\.42,\s*0,\s*0\.86\)/],
+  ['地球位于画面右侧四分之一', /modelOffsetX:\s*9\.0/],
+  ['所有模型与标签统一右移', /labelAnchorGroup,\s*verticalLabelGroup/],
+  ['环流剖面按相机相对地球中心对齐', /const\s+dx\s*=\s*camera\.position\.x\s*-\s*crossSectionRoot\.position\.x[\s\S]*Math\.atan2\(dz,\s*dx\)/],
+  ['环流剖面不使用180度翻转', /CELLS_SCREEN_OFFSET\s*=\s*0/],
+  ['相机目标与模型中心一致', /controls\.target\.set\(CONFIG\.layout\.modelOffsetX,\s*0,\s*0\)/],
+  ['环流剖面使用相对相机方位', /const\s+dx\s*=\s*camera\.position\.x\s*-\s*crossSectionRoot\.position\.x[\s\S]*const\s+dz\s*=\s*camera\.position\.z\s*-\s*crossSectionRoot\.position\.z/],
+  ['环流剖面以相对方位旋转', /crossSectionRoot\.rotation\.y\s*=\s*-\(az\s*\+\s*CELLS_SCREEN_OFFSET\)/],
+  ['初始地球向画面右侧偏移', /controls\.target\.set\(CONFIG\.layout\.modelOffsetX,\s*0,\s*0\)/],
+  ['初始相机保持赤道高度', /const\s+initialCameraPosition\s*=\s*\{\s*x:\s*9,\s*y:\s*0,\s*z:\s*24\s*\}/],
+  ['初始纬度标签强制可见', /ensureInitialLatitudeLabelsVisible/],
+  ['纬度标签固定在地球左侧', /keepLatitudeLabelsOnLeftSide/],
+  ['聚光目标正对赤道', /sunLight\.target\.position\.set\(CONFIG\.layout\.modelOffsetX,\s*0,\s*0\)/],
+  ['赤道高亮参数', /equatorHighlightIntensity/],
+  ['极地暗化参数', /polarShadeFactor/],
+  ['区域光照更新', /updateRegionalLighting/],
+  ['聚光灯目标使用地球世界坐标', /sunLight\.target\.position\.copy\(earthCenter\)/],
+  ['第二步节点使用标签纬度', /getAtmosphereLatitudePosition/],
+  ['第二步节点位于大气层外缘', /r\s*=\s*CONFIG\.earth\.atmosphereRadius/],
+  ['第二步节点纬度精确对齐', /latDeg\s*\*\s*hemisphere/],
+  ['极地暗化使用有效正光照系数', /polarShadeNorth\.intensity\s*=\s*Math\.max\(0,\s*intensity\s*\*\s*polarShadeFactor\)/],
+  ['赤道区域高亮网格', /createRegionalLightMeshes/],
+  ['地球本体使用基础不自发光材质', /new THREE\.MeshBasicMaterial\(\{\s*map:\s*earthTexture/],
+  ['太阳使用平行光', /sunLight\s*=\s*new THREE\.DirectionalLight/],
+  ['太阳平行光散射层', /createCirculationLightScattering/],
+  ['圈层纬度线性衰减', /latitudeWeight\s*=\s*max\(0\.0,\s*1\.0\s*-\s*latitude\)/],
+  ['不使用地球本体明暗渐变', /earthMat\s*=\s*new THREE\.MeshBasicMaterial/],
+  ['关闭地球自发光大气层', /atmosMesh\.visible\s*=\s*false/],
+  ['关闭地球自发光外辉光', /glowMesh\.visible\s*=\s*false/],
+  ['关闭地球自发光边缘光', /rimMesh\.visible\s*=\s*false/],
+  ['散射光使用太阳方向', /sunDirection/],
+  ['散射光抑制背光面', /max\(dot\(normalDirection,\s*sunDirection\),\s*0\.0\)/],
+  ['散射光限制在大气外围', /atmosphereShell/],
+  ['散射光叠加纬度权重', /latitudeWeight/],
+  ['初始化时安全处理太阳未创建', /!circulationLightScattering\s*\|\|\s*!sunGroup/ ],
+  ['第二步标签不随节点缩放进入地球内部', /coriolisLabelGroup\.scale\.setScalar\(1\)/],
+  ['第二步标签独立于节点缩放组', /coriolisLabelGroup\.add\(labelObj\)/],
+  ['第二步节点视觉元素独立缩放', /visualGroup\.scale\.setScalar/],
+  ['第二步标签世界坐标可测量', /get coriolisLabelWorldPositions\(\)/],
+  ['第二步标签使用独立大气层标签组', /coriolisLabelGroup\s*=\s*new THREE\.Group\(\)/],
+  ['第二步标签直接绑定大气层坐标', /labelObj\.position\.copy\(pos\.clone\(\)\.add\(radial\.multiplyScalar\(0\.08\)\)\)/],
+  ['第二步标签组与环流剖面同步旋转', /crossSectionRoot\.add\(coriolisLabelGroup\)/],
+  ['第二步标签不再挂在节点组', /(?<!g\.)add\(labelObj\)/]
+];
+let pass = true;
+for (const [label, pattern] of checks) {
+  const ok = pattern.test(source);
+  console.log(`${ok ? '✔' : '✘'} ${label}`);
+  if (!ok) pass = false;
+}
+if (!pass) process.exit(1);
