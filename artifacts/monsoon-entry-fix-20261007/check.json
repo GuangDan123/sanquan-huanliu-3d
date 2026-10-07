@@ -1,0 +1,75 @@
+{
+  "browser": "Chrome/154.0.8037.99",
+  "checks": [
+    {
+      "ok": true,
+      "name": "课堂模块HTTP入口初始化"
+    },
+    {
+      "ok": true,
+      "name": "海陆差异独立入口直接可见且可点击"
+    },
+    {
+      "ok": true,
+      "name": "理想模型提示明确，不展示空播放进度"
+    },
+    {
+      "ok": true,
+      "name": "真实鼠标点击加入海陆，出现大陆与气压中心并启动演示"
+    },
+    {
+      "ok": true,
+      "name": "独立入口同步下拉选项和返回按钮"
+    },
+    {
+      "ok": true,
+      "name": "加入海陆后季风示踪实际移动"
+    },
+    {
+      "ok": true,
+      "name": "海陆过程可暂停冻结图像"
+    },
+    {
+      "ok": true,
+      "name": "返回理想模型清除季风路径及播放状态"
+    },
+    {
+      "ok": true,
+      "name": "理想模型下直接播放也会加入海陆差异"
+    },
+    {
+      "ok": true,
+      "name": "理想模型下重播也会加入海陆差异"
+    },
+    {
+      "ok": true,
+      "name": "加入与返回保留季节区域选择，南亚夏季演示正常"
+    },
+    {
+      "ok": true,
+      "name": "小屏真实点击独立入口正常"
+    },
+    {
+      "ok": true,
+      "name": "海陆入口断网file初始化"
+    },
+    {
+      "ok": true,
+      "name": "离线独立海陆入口与播放正常"
+    },
+    {
+      "ok": true,
+      "name": "课堂全过程无未捕获异常",
+      "evidence": []
+    }
+  ],
+  "errors": [],
+  "screenshots": [
+    "monsoon-entry.png",
+    "monsoon-added.png",
+    "monsoon-south-entry.png",
+    "small-monsoon-entry.png",
+    "offline-monsoon-entry.png"
+  ],
+  "passed": true
+}

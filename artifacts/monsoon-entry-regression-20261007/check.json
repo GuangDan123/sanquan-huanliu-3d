@@ -1,0 +1,15 @@
+{
+  "browser": "",
+  "checks": [
+    {
+      "ok": false,
+      "name": "验收执行",
+      "evidence": "Error: Chrome未启动"
+    }
+  ],
+  "errors": [
+    "Error: Chrome未启动"
+  ],
+  "screenshots": [],
+  "passed": false
+}

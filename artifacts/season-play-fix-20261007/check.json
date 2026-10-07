@@ -1,0 +1,307 @@
+{
+  "browser": "Chrome/154.0.8037.99",
+  "checks": [
+    {
+      "ok": true,
+      "name": "课堂模块HTTP入口初始化"
+    },
+    {
+      "ok": true,
+      "name": "季节默认春秋分参考等待播放"
+    },
+    {
+      "ok": true,
+      "name": "默认春秋分直接点击播放，图像与直射点实际北移",
+      "evidence": {
+        "open": true,
+        "tab": "season",
+        "elapsed": 1.1320000000000003,
+        "running": false,
+        "complete": false,
+        "wind": {
+          "id": "tradeN",
+          "name": "东北信风",
+          "h": 1,
+          "from": 30,
+          "to": 0,
+          "east": -1,
+          "north": -1,
+          "source": "副热带高压",
+          "target": "赤道低压",
+          "toward": "西南",
+          "coming": "东北"
+        },
+        "season": "summer",
+        "seasonMode": "cycle",
+        "seasonFrom": 0,
+        "seasonValue": 0.19493662600000009,
+        "surface": "ideal",
+        "monsoonSeason": "winter",
+        "region": "east",
+        "sectionH": "both",
+        "sectionLat": 30,
+        "climate": "equator",
+        "climateSeason": "summer",
+        "answers": {},
+        "graded": false,
+        "essay": "",
+        "explanation": false,
+        "progress": 0.07075000000000002,
+        "belts": [
+          {
+            "base": 90,
+            "lat": 90
+          },
+          {
+            "base": 60,
+            "lat": 60.779746504
+          },
+          {
+            "base": 30,
+            "lat": 31.169619756
+          },
+          {
+            "base": 0,
+            "lat": 1.5594930080000007
+          },
+          {
+            "base": -30,
+            "lat": -28.830380244
+          },
+          {
+            "base": -60,
+            "lat": -59.220253496
+          },
+          {
+            "base": -90,
+            "lat": -90
+          }
+        ],
+        "solarLatitude": 4.569314513440002,
+        "quiz": {
+          "correct": 0,
+          "wrong": 0,
+          "blank": 14,
+          "total": 14
+        },
+        "phase": "① 春季 → 北半球夏季：直射点北移，各带总体偏北（已暂停）",
+        "projection": false
+      }
+    },
+    {
+      "ok": true,
+      "name": "全年循环暂停冻结进度与图像"
+    },
+    {
+      "ok": true,
+      "name": "继续后经过秋季进入冬季，直射点与气压带南移",
+      "evidence": {
+        "open": true,
+        "tab": "season",
+        "elapsed": 11.167400000002232,
+        "running": true,
+        "complete": false,
+        "wind": {
+          "id": "tradeN",
+          "name": "东北信风",
+          "h": 1,
+          "from": 30,
+          "to": 0,
+          "east": -1,
+          "north": -1,
+          "source": "副热带高压",
+          "target": "赤道低压",
+          "toward": "西南",
+          "coming": "东北"
+        },
+        "season": "winter",
+        "seasonMode": "cycle",
+        "seasonFrom": 0,
+        "seasonValue": -0.8880575221873017,
+        "surface": "ideal",
+        "monsoonSeason": "winter",
+        "region": "east",
+        "sectionH": "both",
+        "sectionLat": 30,
+        "climate": "equator",
+        "climateSeason": "summer",
+        "answers": {},
+        "graded": false,
+        "essay": "",
+        "explanation": false,
+        "progress": 0.6979625000001395,
+        "belts": [
+          {
+            "base": 90,
+            "lat": 90
+          },
+          {
+            "base": 60,
+            "lat": 56.447769911250795
+          },
+          {
+            "base": 30,
+            "lat": 24.67165486687619
+          },
+          {
+            "base": 0,
+            "lat": -7.104460177498414
+          },
+          {
+            "base": -30,
+            "lat": -35.32834513312381
+          },
+          {
+            "base": -60,
+            "lat": -63.552230088749205
+          },
+          {
+            "base": -90,
+            "lat": -90
+          }
+        ],
+        "solarLatitude": -20.816068320070354,
+        "quiz": {
+          "correct": 0,
+          "wrong": 0,
+          "blank": 14,
+          "total": 14
+        },
+        "phase": "③ 秋季 → 北半球冬季：直射点南移，各带总体偏南",
+        "projection": false
+      }
+    },
+    {
+      "ok": true,
+      "name": "全年循环完成回到春秋分，停留当前主题",
+      "evidence": {
+        "open": true,
+        "tab": "season",
+        "elapsed": 16,
+        "running": false,
+        "complete": true,
+        "wind": {
+          "id": "tradeN",
+          "name": "东北信风",
+          "h": 1,
+          "from": 30,
+          "to": 0,
+          "east": -1,
+          "north": -1,
+          "source": "副热带高压",
+          "target": "赤道低压",
+          "toward": "西南",
+          "coming": "东北"
+        },
+        "season": "equinox",
+        "seasonMode": "cycle",
+        "seasonFrom": 0,
+        "seasonValue": 0,
+        "surface": "ideal",
+        "monsoonSeason": "winter",
+        "region": "east",
+        "sectionH": "both",
+        "sectionLat": 30,
+        "climate": "equator",
+        "climateSeason": "summer",
+        "answers": {},
+        "graded": false,
+        "essay": "",
+        "explanation": false,
+        "progress": 1,
+        "belts": [
+          {
+            "base": 90,
+            "lat": 90
+          },
+          {
+            "base": 60,
+            "lat": 60
+          },
+          {
+            "base": 30,
+            "lat": 30
+          },
+          {
+            "base": 0,
+            "lat": 0
+          },
+          {
+            "base": -30,
+            "lat": -30
+          },
+          {
+            "base": -60,
+            "lat": -60
+          },
+          {
+            "base": -90,
+            "lat": -90
+          }
+        ],
+        "solarLatitude": 0,
+        "quiz": {
+          "correct": 0,
+          "wrong": 0,
+          "blank": 14,
+          "total": 14
+        },
+        "phase": "完成一轮季节循环：春 → 夏 → 秋 → 冬 → 春；停留本主题",
+        "projection": false
+      }
+    },
+    {
+      "ok": true,
+      "name": "完成后再次播放仍有图形变化"
+    },
+    {
+      "ok": true,
+      "name": "从头重播从春季重新开始完整循环"
+    },
+    {
+      "ok": true,
+      "name": "单选夏季仍可到达北移对照终态"
+    },
+    {
+      "ok": true,
+      "name": "重入已选夏季后直接播放仍会移动"
+    },
+    {
+      "ok": true,
+      "name": "单选冬季到达南移终态"
+    },
+    {
+      "ok": true,
+      "name": "重选同一个冬季可重新观察移动"
+    },
+    {
+      "ok": true,
+      "name": "春秋分从头重播会北移，不空走进度"
+    },
+    {
+      "ok": true,
+      "name": "小屏真实点击直接播放季节循环"
+    },
+    {
+      "ok": true,
+      "name": "季节循环断网file入口初始化"
+    },
+    {
+      "ok": true,
+      "name": "离线直接播放，直射点与图像实际改变"
+    },
+    {
+      "ok": true,
+      "name": "课堂全过程无未捕获异常",
+      "evidence": []
+    }
+  ],
+  "errors": [],
+  "screenshots": [
+    "cycle-northward.png",
+    "cycle-southward.png",
+    "small-cycle.png",
+    "offline-cycle.png"
+  ],
+  "passed": true
+}

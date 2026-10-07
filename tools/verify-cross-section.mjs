@@ -92,7 +92,11 @@ const measure = `(() => {
     const v = p.clone().project(cam);            // → NDC
     return { x: (v.x + 1) / 2 * vp.w, y: (1 - v.y) / 2 * vp.h };
   };
-  const centerX = +project(dbg.makeVector3(0, 0, 0)).x.toFixed(1);   // 球心在屏幕上的 x
+  // 当前场景把地球与剖面整体放在 SCENE_OFFSET_X；以真实地球世界中心作为参照，
+  // 避免旧版以原点量测导致把“屏幕左侧”误判为右侧。
+  const earthCenter = dbg.makeVector3(0, 0, 0);
+  dbg.earthGroup.getWorldPosition(earthCenter);
+  const centerX = +project(earthCenter).x.toFixed(1);
   // 环流带在纬度约 46° 处向外鼓出最远（t=0.25 高空段 / t=0.75 近地面段）
   const pts = [];
   [0.25, 0.75].forEach(t => {
@@ -101,11 +105,12 @@ const measure = `(() => {
     const sp = project(world);
     // 视线遮挡：相机→该点线段离球心最近距离 < R 即被地球挡住
     const dir = cam.position.clone().sub(world);
-    const tt = Math.max(0, Math.min(1, -world.clone().dot(dir) / dir.lengthSq()));
-    const closest = world.clone().addScaledVector(dir, tt);
+    const relative = world.clone().sub(earthCenter);
+    const tt = Math.max(0, Math.min(1, -relative.dot(dir) / dir.lengthSq()));
+    const closest = relative.clone().addScaledVector(dir, tt);
     pts.push({
       t,
-      radius: +world.length().toFixed(2),
+      radius: +relative.length().toFixed(2),
       x: +sp.x.toFixed(1), y: +sp.y.toFixed(1),
       occluded: closest.length() < R
     });

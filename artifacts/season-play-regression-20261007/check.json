@@ -1,0 +1,347 @@
+{
+  "browser": "Chrome/154.0.8037.99",
+  "checks": [
+    {
+      "ok": true,
+      "name": "课堂模块HTTP入口初始化"
+    },
+    {
+      "ok": true,
+      "name": "真实鼠标打开风的成因，先预测"
+    },
+    {
+      "ok": true,
+      "name": "解释初始收起，背景不可误操作且焦点进入"
+    },
+    {
+      "ok": true,
+      "name": "气压差推动后加入偏向作用，画面实际改变"
+    },
+    {
+      "ok": true,
+      "name": "课堂过程暂停冻结"
+    },
+    {
+      "ok": true,
+      "name": "可展开动力、偏转、摩擦解释"
+    },
+    {
+      "ok": true,
+      "name": "风成因完成后停留主题"
+    },
+    {
+      "ok": true,
+      "name": "课堂从头重播清除进度"
+    },
+    {
+      "ok": true,
+      "name": "东北信风吹向正确且切换重新等待预测",
+      "evidence": {
+        "id": "tradeN",
+        "name": "东北信风",
+        "h": 1,
+        "from": 30,
+        "to": 0,
+        "east": -1,
+        "north": -1,
+        "source": "副热带高压",
+        "target": "赤道低压",
+        "toward": "西南",
+        "coming": "东北"
+      }
+    },
+    {
+      "ok": true,
+      "name": "东南信风吹向正确且切换重新等待预测",
+      "evidence": {
+        "id": "tradeS",
+        "name": "东南信风",
+        "h": -1,
+        "from": -30,
+        "to": 0,
+        "east": -1,
+        "north": 1,
+        "source": "副热带高压",
+        "target": "赤道低压",
+        "toward": "西北",
+        "coming": "东南"
+      }
+    },
+    {
+      "ok": true,
+      "name": "北半球盛行西风吹向正确且切换重新等待预测",
+      "evidence": {
+        "id": "westN",
+        "name": "北半球盛行西风",
+        "h": 1,
+        "from": 30,
+        "to": 60,
+        "east": 1,
+        "north": 1,
+        "source": "副热带高压",
+        "target": "副极地低压",
+        "toward": "东北",
+        "coming": "西南"
+      }
+    },
+    {
+      "ok": true,
+      "name": "南半球盛行西风吹向正确且切换重新等待预测",
+      "evidence": {
+        "id": "westS",
+        "name": "南半球盛行西风",
+        "h": -1,
+        "from": -30,
+        "to": -60,
+        "east": 1,
+        "north": -1,
+        "source": "副热带高压",
+        "target": "副极地低压",
+        "toward": "东南",
+        "coming": "西北"
+      }
+    },
+    {
+      "ok": true,
+      "name": "北半球极地东风吹向正确且切换重新等待预测",
+      "evidence": {
+        "id": "polarN",
+        "name": "北半球极地东风",
+        "h": 1,
+        "from": 90,
+        "to": 60,
+        "east": -1,
+        "north": -1,
+        "source": "极地高压",
+        "target": "副极地低压",
+        "toward": "西南",
+        "coming": "东北"
+      }
+    },
+    {
+      "ok": true,
+      "name": "南半球极地东风吹向正确且切换重新等待预测",
+      "evidence": {
+        "id": "polarS",
+        "name": "南半球极地东风",
+        "h": -1,
+        "from": -90,
+        "to": -60,
+        "east": -1,
+        "north": 1,
+        "source": "极地高压",
+        "target": "副极地低压",
+        "toward": "西北",
+        "coming": "东南"
+      }
+    },
+    {
+      "ok": true,
+      "name": "南半球西风区分吹向与来向"
+    },
+    {
+      "ok": true,
+      "name": "风带逐段推导到命名"
+    },
+    {
+      "ok": true,
+      "name": "春秋分参考纬度与直射点"
+    },
+    {
+      "ok": true,
+      "name": "季节移动连续变化，暂停保留位置"
+    },
+    {
+      "ok": true,
+      "name": "6月直射点北移，各带总体偏北",
+      "evidence": [
+        {
+          "base": 90,
+          "lat": 90
+        },
+        {
+          "base": 60,
+          "lat": 64
+        },
+        {
+          "base": 30,
+          "lat": 36
+        },
+        {
+          "base": 0,
+          "lat": 8
+        },
+        {
+          "base": -30,
+          "lat": -24
+        },
+        {
+          "base": -60,
+          "lat": -56
+        },
+        {
+          "base": -90,
+          "lat": -90
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "name": "各带移动幅度不同，极地端保持边界"
+    },
+    {
+      "ok": true,
+      "name": "12月总体偏南，两半球纬度含义不同",
+      "evidence": [
+        {
+          "base": 90,
+          "lat": 90
+        },
+        {
+          "base": 60,
+          "lat": 56
+        },
+        {
+          "base": 30,
+          "lat": 24
+        },
+        {
+          "base": 0,
+          "lat": -8
+        },
+        {
+          "base": -30,
+          "lat": -36
+        },
+        {
+          "base": -60,
+          "lat": -64
+        },
+        {
+          "base": -90,
+          "lat": -90
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "name": "海陆章节从均匀地表模型开始"
+    },
+    {
+      "ok": true,
+      "name": "东亚冬季：冷高压与大陆到海洋"
+    },
+    {
+      "ok": true,
+      "name": "东亚夏季：热低压与海洋到大陆"
+    },
+    {
+      "ok": true,
+      "name": "南亚夏季补充季节移动与跨赤道右偏"
+    },
+    {
+      "ok": true,
+      "name": "标准剖面60°对应动力性低压"
+    },
+    {
+      "ok": true,
+      "name": "标准剖面可单独观察北半球"
+    },
+    {
+      "ok": true,
+      "name": "地中海夏干解释链"
+    },
+    {
+      "ok": true,
+      "name": "地中海冬雨解释链"
+    },
+    {
+      "ok": true,
+      "name": "空卷14题均为未完成"
+    },
+    {
+      "ok": true,
+      "name": "错误风向保留作答，反馈解释来向"
+    },
+    {
+      "ok": true,
+      "name": "错误反馈定位到对应风带"
+    },
+    {
+      "ok": true,
+      "name": "回看后保留原答案"
+    },
+    {
+      "ok": true,
+      "name": "风向、成因、季节、应用14题全量正确"
+    },
+    {
+      "ok": true,
+      "name": "关闭重开保留选择题与迁移作答"
+    },
+    {
+      "ok": true,
+      "name": "重置清除作答"
+    },
+    {
+      "ok": true,
+      "name": "标准剖面返回三维对应阶段"
+    },
+    {
+      "ok": true,
+      "name": "投屏模式放大课堂文字"
+    },
+    {
+      "ok": true,
+      "name": "键盘Tab焦点留在课堂窗口"
+    },
+    {
+      "ok": true,
+      "name": "Escape关闭并恢复背景操作"
+    },
+    {
+      "ok": true,
+      "name": "小屏课堂窗口保留关闭与底部操作"
+    },
+    {
+      "ok": true,
+      "name": "小屏练习与迁移作答可滚动到达"
+    },
+    {
+      "ok": true,
+      "name": "课堂模块断网file入口"
+    },
+    {
+      "ok": true,
+      "name": "离线课堂内容正常操作"
+    },
+    {
+      "ok": true,
+      "name": "课堂全过程无未捕获异常",
+      "evidence": []
+    }
+  ],
+  "errors": [],
+  "screenshots": [
+    "pressure-deflection.png",
+    "pressure-complete.png",
+    "wind-south-westerly.png",
+    "season-summer.png",
+    "season-winter.png",
+    "monsoon-ideal.png",
+    "monsoon-east-winter.png",
+    "monsoon-east-summer.png",
+    "monsoon-south-summer.png",
+    "section-both.png",
+    "section-north.png",
+    "climate-med-summer.png",
+    "climate-med-winter.png",
+    "quiz-wrong.png",
+    "quiz-complete.png",
+    "projection-three.png",
+    "small-season.png",
+    "small-quiz.png",
+    "offline-monsoon.png"
+  ],
+  "passed": true
+}

@@ -1,0 +1,58 @@
+{
+  "browser": "Chrome/154.0.8037.99",
+  "checks": [
+    {
+      "ok": true,
+      "name": "课堂模块HTTP入口初始化"
+    },
+    {
+      "ok": true,
+      "name": "pressure完整图示及固定播放区直接可见"
+    },
+    {
+      "ok": true,
+      "name": "wind完整图示及固定播放区直接可见"
+    },
+    {
+      "ok": true,
+      "name": "season完整图示及固定播放区直接可见"
+    },
+    {
+      "ok": true,
+      "name": "monsoon完整图示及固定播放区直接可见"
+    },
+    {
+      "ok": true,
+      "name": "section完整图示及固定播放区直接可见"
+    },
+    {
+      "ok": true,
+      "name": "climate完整图示及固定播放区直接可见"
+    },
+    {
+      "ok": true,
+      "name": "投屏完整季节图直接可见"
+    },
+    {
+      "ok": true,
+      "name": "小屏播放区固定可见"
+    },
+    {
+      "ok": true,
+      "name": "课堂全过程无未捕获异常",
+      "evidence": []
+    }
+  ],
+  "errors": [],
+  "screenshots": [
+    "layout-pressure.png",
+    "layout-wind.png",
+    "layout-season.png",
+    "layout-monsoon.png",
+    "layout-section.png",
+    "layout-climate.png",
+    "projection-season.png",
+    "layout-small-monsoon.png"
+  ],
+  "passed": true
+}

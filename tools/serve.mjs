@@ -24,7 +24,7 @@ const MIME = {
 createServer(async (req, res) => {
   try {
     const urlPath = decodeURIComponent(new URL(req.url, 'http://localhost').pathname);
-    const target = normalize(join(ROOT, urlPath === '/' ? '/index.html' : urlPath));
+    const target = normalize(join(ROOT, urlPath === '/' ? '/三圈环流3D交互式教学平台.html' : urlPath));
     if (!target.startsWith(ROOT)) {
       res.writeHead(403).end('forbidden');
       return;
