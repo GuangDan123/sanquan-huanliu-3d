@@ -529,6 +529,7 @@ const STATE = {
   mechanismStage: 0,
   mechanismRevealed: [false, false, false, false],
   mechanismDemo: { elapsed: 0, running: false, complete: false },
+  singleDemo: { elapsed: 0, running: false, complete: false },
   morph: 0,
   showGrid: true,
   showParticles: true,
@@ -2594,9 +2595,23 @@ function updateStepPanel(step) {
       updateMechanismDemoUI();
     }
   } else {
+    if (step === 0) {
+      body.insertAdjacentHTML('afterbegin', `<div class="mechanism-question">预测：为什么赤道空气会上升，而两极空气会下沉？</div>
+        <div class="sp-item"><span class="sp-item-k">观察过程</span><span class="sp-item-v">先看赤道受热，再看高空输送、极地冷却下沉和近地面回流如何闭合。</span></div>
+        <div class="mechanism-demo"><div id="single-demo-phase" class="mechanism-demo-status" aria-live="polite"></div><progress id="single-demo-progress" max="10" value="0" aria-label="单圈成因演示进度"></progress><div class="mechanism-actions"><button class="btn" id="single-demo-play">播放过程</button><button class="btn" id="single-demo-replay">从头重播</button></div></div>`);
+    }
     body.insertAdjacentHTML('beforeend', '<p class="model-note">教材理想模型 / 机制示意，非动力数值模拟；30°和60°为近似位置。</p>');
     body.insertAdjacentHTML('beforeend',`<button class="btn btn-sm" id="step-related">${step===0?'先看气压差与水平风':'继续：季节移动与海陆影响'}</button>`);
     document.getElementById('step-related').onclick=()=>openLesson(step===0?'pressure':'season');
+    if (step === 0) {
+      document.getElementById('single-demo-play').onclick = () => {
+        if (STATE.singleDemo.running && STATE.playing) { STATE.singleDemo.running = false; STATE.playing = false; }
+        else playSingleDemo();
+        updateSingleDemoUI();
+      };
+      document.getElementById('single-demo-replay').onclick = () => { resetSingleDemo(); playSingleDemo(); };
+      updateSingleDemoUI();
+    }
   }
   document.getElementById('sp-progress').style.width = ((step + 1) / STEP_PANEL.length * 100) + '%';
   // 内容切换闪烁提示（强制重排以重新触发动画）
@@ -2658,6 +2673,7 @@ function setStepVisual(step) {
     singleCellGroup.visible = true;
     Object.values(threeCellGroups).forEach(g => g.visible = false);
     STATE.morph = 0;
+    resetSingleDemo();
     _lastSingleGradient = -1;
     ['singleNH', 'singleSH'].forEach(k => {
       cellObjects[k]._updatePositions(0);
@@ -2885,6 +2901,52 @@ function applyMechanismVisual() {
 
 // 环节内部的教学动画时间仅表示观察顺序，不表示真实大气时间。
 const SUBTROPICAL_DEMO_DURATION = 12;
+const SINGLE_DEMO_DURATION = 10;
+function resetSingleDemo() {
+  STATE.singleDemo = { elapsed: 0, running: false, complete: false };
+  updateSingleDemoUI();
+}
+function playSingleDemo() {
+  if (STATE.singleDemo.complete) resetSingleDemo();
+  STATE.singleDemo.running = true;
+  STATE.playing = true;
+  updateSingleDemoUI();
+}
+function getSingleDemoPhase() {
+  const e = STATE.singleDemo.elapsed;
+  if (e < 2.3) return { index: 0, text: '① 赤道受热最多 → 空气膨胀上升' };
+  if (e < 5.1) return { index: 1, text: '② 高空气流由赤道向两极输送' };
+  if (e < 7.3) return { index: 2, text: '③ 极地空气冷却变重 → 下沉' };
+  return { index: 3, text: '④ 近地面由两极流回赤道，形成闭合环流' };
+}
+function updateSingleDemoUI() {
+  const phase = getSingleDemoPhase();
+  const status = document.getElementById('single-demo-phase');
+  const progress = document.getElementById('single-demo-progress');
+  const button = document.getElementById('single-demo-play');
+  if (status) status.textContent = STATE.singleDemo.complete ? '完成：受热上升 → 高空输送 → 冷却下沉 → 近地面回流' : phase.text;
+  if (progress) progress.value = STATE.singleDemo.elapsed;
+  if (button) button.textContent = STATE.singleDemo.running && STATE.playing ? '暂停' : STATE.singleDemo.complete ? '再次播放' : '播放过程';
+  verticalLabels.forEach(({obj, data}) => {
+    if (!obj.element) return;
+    obj.element.style.transform = '';
+    obj.element.style.borderColor = 'rgba(136,204,255,0.6)';
+    obj.element.style.color = '#BFE8FF';
+    if (phase.index === 0 && data.lat === 0 || phase.index === 2 && Math.abs(data.lat) === 90) {
+      obj.element.style.borderColor = '#FFD166';
+      obj.element.style.color = '#FFE9A8';
+      obj.element.style.transform = 'scale(1.08)';
+    }
+  });
+}
+function updateSingleDemo(dt) {
+  const demo = STATE.singleDemo;
+  if (demo.running && STATE.playing) {
+    demo.elapsed = Math.min(SINGLE_DEMO_DURATION, demo.elapsed + Math.min(dt, .1) * STATE.speed);
+    if (demo.elapsed >= SINGLE_DEMO_DURATION) { demo.complete = true; demo.running = false; }
+  }
+  updateSingleDemoUI();
+}
 function getMechanismDemoDuration() { return STATE.mechanismStage === 1 ? SUBTROPICAL_DEMO_DURATION : 10; }
 function resetMechanismDemo() {
   STATE.mechanismDemo = { elapsed: 0, running: false, complete: false };
@@ -3079,6 +3141,7 @@ function getDiagnostics() {
     step: STATE.step,
     mechanismStage: STATE.mechanismStage,
     mechanismDemo: {...STATE.mechanismDemo,phase:getMechanismDemoPhase().index},
+    singleDemo: {...STATE.singleDemo,phase:getSingleDemoPhase().index},
     coriolisDemo: coriolisParcels.map(({parcel,force,velocity,hemisphere,reference}) => ({
       hemisphere, position:parcel.position.toArray(),
       force:new THREE.Vector3(0,1,0).applyQuaternion(force.quaternion).toArray(),
@@ -4168,6 +4231,7 @@ function animate() {
 
   // 不按播放时间推进教学环节；CSS2D 显隐显式同步（不依赖父级 visible）。
   mechanismLabels.forEach(({obj,group}) => { obj.visible = STATE.step === 1 && group.visible && group === mechanismGroups[STATE.mechanismStage] && STATE.showLabels; });
+  if (STATE.step === 0) updateSingleDemo(dt);
   if (STATE.step === 1 && STATE.mechanismStage <= 2) {
     const demo = STATE.mechanismDemo;
     if (demo.running && STATE.playing) {

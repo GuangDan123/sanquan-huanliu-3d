@@ -1,0 +1,36 @@
+{
+  "before": {
+    "step": 0,
+    "button": true,
+    "elapsed": 0,
+    "phase": "① 赤道受热最多 → 空气膨胀上升"
+  },
+  "early": {
+    "elapsed": 1.8164000000059604,
+    "running": true,
+    "phase": "① 赤道受热最多 → 空气膨胀上升"
+  },
+  "upper": {
+    "elapsed": 4.833299999997018,
+    "phase": "② 高空气流由赤道向两极输送"
+  },
+  "done": {
+    "elapsed": 10,
+    "complete": true,
+    "phase": "完成：受热上升 → 高空输送 → 冷却下沉 → 近地面回流",
+    "labels": [
+      {
+        "text": "赤道上升 ↑",
+        "color": "rgb(191, 232, 255)"
+      },
+      {
+        "text": "北极下沉 ↓",
+        "color": "rgb(191, 232, 255)"
+      },
+      {
+        "text": "南极下沉 ↓",
+        "color": "rgb(191, 232, 255)"
+      }
+    ]
+  }
+}
