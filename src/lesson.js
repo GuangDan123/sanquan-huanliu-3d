@@ -32,7 +32,12 @@ const LESSON_QUIZ = [
   {id:'rain',q:'“西风带控制的地方必然湿润”是否正确？',options:['正确，只要有西风就多雨','不正确，还要分析水汽、海陆位置与地形'],correct:1,reason:'海洋来的西风常可输送水汽；内陆远离水源或处于背风坡时，降水条件不同。',review:'climate'},
   {id:'pole',q:'极地高压与副热带高压的成因相同吗？',options:['相同，都是当地冷却','不同，前者主要热力、后者主要动力'],correct:1,reason:'极地冷却下沉，副热带则按高空积聚与下沉的动力过程理解。',review:'section'}
 ];
-const LESSON_STATE = {open:false,tab:'pressure',elapsed:0,running:false,complete:false,wind:'tradeN',season:'equinox',seasonMode:'target',seasonFrom:0,seasonValue:0,surface:'ideal',monsoonSeason:'winter',region:'east',sectionH:'both',sectionLat:30,climate:'equator',climateSeason:'summer',answers:{},graded:false,essay:'',explanation:false};
+const LESSON_PRESSURE_STEPS = [
+  {title:'气压梯度力推动',start:0,end:2.4},
+  {title:'地转偏向力偏转',start:2.4,end:5.2},
+  {title:'近地面摩擦影响',start:5.2,end:8}
+];
+const LESSON_STATE = {open:false,tab:'pressure',pressureStep:0,elapsed:0,running:false,complete:false,wind:'tradeN',season:'equinox',seasonMode:'target',seasonFrom:0,seasonValue:0,surface:'ideal',monsoonSeason:'winter',region:'east',sectionH:'both',sectionLat:30,climate:'equator',climateSeason:'summer',answers:{},graded:false,essay:'',explanation:false};
 let lessonReturnFocus=null, lessonPreviousPlaying=false;
 const lessonBackgroundIds=['scene-container','step-panel','legend','control-panel','mode-toggle','teacher-bar','teacher-toggle','diagram-toggle','diagram-panel','lesson-entry','fullscreen-btn','perf-toggle'];
 const lessonInertBefore=new Map();
@@ -46,14 +51,23 @@ function openLesson(tab=LESSON_STATE.tab){
     lessonReturnFocus=document.activeElement;lessonPreviousPlaying=STATE.playing;STATE.playing=false;
     lessonBackgroundIds.forEach(id=>{const el=document.getElementById(id);if(el){lessonInertBefore.set(id,el.inert);el.inert=true;}});
   }
-  LESSON_STATE.open=true;document.getElementById('lesson-panel').hidden=false;setLessonTab(tab);document.getElementById('lesson-close').focus();updateMechanismDemoUI();
+  LESSON_STATE.open=true;document.body.classList.add('lesson-open');document.getElementById('lesson-panel').hidden=false;setLessonTab(tab);document.getElementById('lesson-close').focus();updateMechanismDemoUI();
 }
 function closeLesson(){
-  LESSON_STATE.open=false;LESSON_STATE.running=false;document.getElementById('lesson-panel').hidden=true;
+  LESSON_STATE.open=false;LESSON_STATE.running=false;document.body.classList.remove('lesson-open');document.getElementById('lesson-panel').hidden=true;
   lessonInertBefore.forEach((value,id)=>{document.getElementById(id).inert=value;});lessonInertBefore.clear();
   STATE.playing=lessonPreviousPlaying;updateMechanismDemoUI();lessonReturnFocus?.focus();
 }
-function resetLessonAnimation(){LESSON_STATE.elapsed=0;LESSON_STATE.running=false;LESSON_STATE.complete=false;}
+function resetLessonAnimation(){LESSON_STATE.elapsed=0;LESSON_STATE.pressureStep=0;LESSON_STATE.running=false;LESSON_STATE.complete=false;}
+function lessonPressureStep(){return LESSON_PRESSURE_STEPS[LESSON_STATE.pressureStep];}
+function lessonPressureProgress(){const s=lessonPressureStep();return clamp((LESSON_STATE.elapsed-s.start)/(s.end-s.start),0,1);}
+function selectLessonPressureStep(index,play=false){
+  if(index<0||index>=LESSON_PRESSURE_STEPS.length)return;
+  const previous=index<LESSON_STATE.pressureStep;
+  LESSON_STATE.pressureStep=index;
+  LESSON_STATE.elapsed=previous?lessonPressureStep().end:lessonPressureStep().start;
+  LESSON_STATE.running=play;LESSON_STATE.complete=false;updateLessonView();
+}
 function startLessonSeasonCycle(){
   resetLessonAnimation();LESSON_STATE.seasonMode='cycle';LESSON_STATE.season='equinox';
   LESSON_STATE.seasonFrom=0;LESSON_STATE.seasonValue=0;LESSON_STATE.running=true;
@@ -104,7 +118,7 @@ function renderLesson(){
   if(t.id==='quiz'){renderLessonQuiz();return;}
   let controls='',note='',intro='';
   if(t.id==='pressure'){
-    intro='同一水平面比较气压：先由高压向低压运动，再观察北半球偏转及近地面摩擦。';
+    intro='按步骤讲解：① 气压梯度力推动 → ② 地转偏向力偏转 → ③ 近地面摩擦影响。直接点击“下一步”开始，每步播完自动停下，再点击继续，可回退或重播本步。';
     note='受力图为方向关系示意。高空风可近似沿等压线，近地面摩擦使风斜穿等压线流向低压；图中力箭头不是按真实数值绘制。';
   }else if(t.id==='wind'){
     controls=`<label>选择风带 <select id="lesson-wind">${LESSON_WINDS.map(w=>`<option value="${w.id}" ${w.id===LESSON_STATE.wind?'selected':''}>${w.name}</option>`).join('')}</select></label>`;
@@ -130,6 +144,16 @@ function renderLesson(){
   const animated=!['section'].includes(t.id);
   body.innerHTML=`<p class="lesson-intro">${intro}</p><div class="lesson-controls">${controls}</div><div class="lesson-stage"><div class="lesson-visual"><canvas id="lesson-canvas" width="1920" height="720" role="img" aria-label="${t.title}教学示意图"></canvas></div><aside><div class="lesson-question"><strong>先预测：</strong>${t.question}</div><button class="btn btn-sm" id="lesson-reveal">显示解释</button><p id="lesson-explanation" class="lesson-explanation" hidden>${t.answer}</p></aside></div><div id="lesson-phase" class="lesson-phase" aria-live="polite"></div><p class="lesson-note">${note}</p><p class="lesson-note">教材对应：旧版人教必修1第二章第二节；新版人教选择性必修1第三章第二节。气候应用可用于衔接下一节，具体依学校教材安排。</p>`;
   if(animated)document.getElementById('lesson-playbar').innerHTML='<button class="btn btn-sm" id="lesson-play">播放过程</button><button class="btn btn-sm" id="lesson-replay">从头重播</button><progress id="lesson-progress" max="1" value="0" aria-label="课堂演示进度"></progress>';
+  if(t.id==='pressure'){
+    document.getElementById('lesson-playbar').innerHTML='<span id="lesson-step-status" class="lesson-step-status" aria-live="polite"></span><button class="btn btn-sm" id="lesson-step-prev">上一步</button><button class="btn btn-sm" id="lesson-play">播放本步</button><button class="btn btn-sm" id="lesson-step-replay">重播本步</button><button class="btn btn-sm" id="lesson-step-next">下一步</button><button class="btn btn-sm" id="lesson-replay">从头重播</button><progress id="lesson-progress" max="1" value="0" aria-label="当前步骤进度"></progress>';
+    document.getElementById('lesson-step-prev').onclick=()=>selectLessonPressureStep(LESSON_STATE.pressureStep-1);
+    document.getElementById('lesson-step-next').onclick=()=>{
+      if(LESSON_STATE.running)return;
+      if(lessonPressureProgress()===1)selectLessonPressureStep(LESSON_STATE.pressureStep+1,true);
+      else{LESSON_STATE.running=true;updateLessonView();}
+    };
+    document.getElementById('lesson-step-replay').onclick=()=>selectLessonPressureStep(LESSON_STATE.pressureStep,true);
+  }
   document.getElementById('lesson-reveal').onclick=()=>{LESSON_STATE.explanation=!LESSON_STATE.explanation;document.getElementById('lesson-explanation').hidden=!LESSON_STATE.explanation;document.getElementById('lesson-reveal').textContent=LESSON_STATE.explanation?'收起解释':'显示解释';};
   if(animated){
     document.getElementById('lesson-play').onclick=()=>{
@@ -166,8 +190,9 @@ function renderLesson(){
 }
 function updateLessonAnimation(dt){
   if(!LESSON_STATE.open||!LESSON_STATE.running)return;
-  LESSON_STATE.elapsed=Math.min(lessonDuration(),LESSON_STATE.elapsed+Math.min(dt,.1)*STATE.speed);
-  if(LESSON_STATE.elapsed>=lessonDuration()){LESSON_STATE.running=false;LESSON_STATE.complete=true;}
+  const limit=LESSON_STATE.tab==='pressure'?lessonPressureStep().end:lessonDuration();
+  LESSON_STATE.elapsed=Math.min(limit,LESSON_STATE.elapsed+Math.min(dt,.1)*STATE.speed);
+  if(LESSON_STATE.elapsed>=limit){LESSON_STATE.running=false;LESSON_STATE.complete=limit===lessonDuration();}
   if(LESSON_STATE.tab==='season'){
     if(LESSON_STATE.seasonMode==='cycle'){
       const stops=[0,1,0,-1,0],segment=Math.min(3,Math.floor(LESSON_STATE.elapsed/4));
@@ -189,6 +214,15 @@ function updateLessonView(){
     lessonText('lesson-explanation',`${w.source}向${w.target}流动，初始${w.north>0?'向北':'向南'}；${w.h===1?'北半球右偏':'南半球左偏'}，获得${w.east>0?'东':'西'}向分量。吹向${w.toward}，来自${w.coming}，形成${w.name}。风向名称以“来向”判断。`);
   }
   const play=document.getElementById('lesson-play');if(play)play.textContent=LESSON_STATE.running?'暂停过程':LESSON_STATE.elapsed>0&&!LESSON_STATE.complete?'继续过程':LESSON_STATE.tab==='season'?'播放季节循环':LESSON_STATE.complete?'再次播放':'播放过程';
+  if(LESSON_STATE.tab==='pressure'){
+    const p=lessonPressureProgress(),index=LESSON_STATE.pressureStep;
+    lessonText('lesson-step-status',`步骤 ${index+1} / ${LESSON_PRESSURE_STEPS.length} · ${lessonPressureStep().title}`);
+    play.disabled=p===1;play.textContent=LESSON_STATE.running?'暂停本步':p===1?'本步已完成':p>0?'继续本步':'播放本步';
+    document.getElementById('lesson-step-prev').disabled=index===0;
+    const next=document.getElementById('lesson-step-next');
+    next.disabled=LESSON_STATE.running||(p===1&&index===LESSON_PRESSURE_STEPS.length-1);
+    next.title=p===1?'进入下一步':p>0?'继续当前步骤':'开始当前步骤';
+  }
   if(LESSON_STATE.tab==='monsoon'){
     const real=LESSON_STATE.surface==='real';
     lessonText('lesson-add-surface',real?'返回理想模型':'加入海陆差异');
@@ -197,7 +231,7 @@ function updateLessonView(){
     const progress=document.getElementById('lesson-progress');if(progress)progress.hidden=!real;
   }
   if(LESSON_STATE.tab==='season')document.querySelectorAll('[data-season]').forEach(b=>{const active=b.dataset.season===LESSON_STATE.season;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));});
-  const progress=document.getElementById('lesson-progress');if(progress)progress.value=lessonProgress();
+  const progress=document.getElementById('lesson-progress');if(progress)progress.value=LESSON_STATE.tab==='pressure'?lessonPressureProgress():lessonProgress();
   canvas.setAttribute('aria-label',LESSON_TOPICS.find(t=>t.id===LESSON_STATE.tab).title+'：'+document.getElementById('lesson-phase').textContent);
 }
 function lessonLabel(ctx,text,x,y,color='#d7e7f7',size=16,align='center'){
@@ -217,7 +251,7 @@ function lessonPolyline(ctx,points,p,color='#ffaa55',width=3){
   const previous=points[Math.max(0,last-1)];const dx=end[0]-previous[0],dy=end[1]-previous[1],length=Math.hypot(dx,dy);if(length>1)lessonArrow(ctx,end[0]-dx/length*16,end[1]-dy/length*16,...end,color,width);
 }
 function drawLessonPressure(ctx){
-  const p=lessonProgress(),phase=p===0?0:p<.3?1:p<.65?2:3;
+  const p=lessonPressureProgress(),phase=LESSON_STATE.pressureStep===0&&p===0?0:LESSON_STATE.pressureStep+1;
   for(let i=0;i<5;i++){
     const y=65+i*55;ctx.strokeStyle='#385779';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(90,y);ctx.lineTo(555,y);ctx.stroke();lessonLabel(ctx,String(1000+i*4)+' hPa',64,y+5,'#a9bdd3',14);
   }
@@ -225,14 +259,15 @@ function drawLessonPressure(ctx){
   lessonLabel(ctx,'北半球 · 俯视受力示意',725,40,'#d7e7f7',18);
   const origin=[320,265];
   lessonArrow(ctx,...origin,320,120,'#b6c5d4',2);lessonLabel(ctx,'水平气压梯度力',220,105,'#b6c5d4',15);
-  if(phase===1){lessonArrow(ctx,...origin,320,265-120*clamp(p/.3,0,1));}
-  if(phase>=2){lessonArrow(ctx,...origin,440,200,'#ffaa55');lessonLabel(ctx,'近地面风：斜穿等压线',433,183,'#ffaa55',15);lessonArrow(ctx,...origin,365,330,'#66eeff');}
-  if(phase===3){lessonArrow(ctx,...origin,255,300,'#e39adf');lessonLabel(ctx,'摩擦力：与风向相反',230,321,'#e39adf',14);}
+  if(phase===1){lessonArrow(ctx,...origin,320,265-120*p);}
+  if(phase>=2){const turn=phase===2?smoothstep(p):1;lessonArrow(ctx,...origin,lerp(320,440,turn),lerp(145,200,turn),'#ffaa55');lessonLabel(ctx,phase===2?'风向逐渐偏转':'近地面风：斜穿等压线',433,183,'#ffaa55',15);lessonArrow(ctx,...origin,320+45*turn,265+65*turn,'#66eeff');}
+  if(phase===3){lessonArrow(ctx,...origin,320-65*p,265+35*p,'#e39adf');lessonLabel(ctx,'摩擦力：与风向相反',230,321,'#e39adf',14);}
   const forceY=110;
   lessonArrow(ctx,665,forceY,665,forceY-40,'#b6c5d4');lessonLabel(ctx,'推动：由高压指向低压',778,forceY,'#b6c5d4',16);
   if(phase>=2){lessonArrow(ctx,645,172,685,172,'#66eeff');lessonLabel(ctx,'偏转：北右、南左',788,178,'#66eeff',16);}
   if(phase===3){lessonArrow(ctx,685,232,645,232,'#e39adf');lessonLabel(ctx,'摩擦：减速并影响风向',798,238,'#e39adf',16);lessonArrow(ctx,635,292,875,292,'#ffaa55');lessonLabel(ctx,'高空风可近似平行等压线',754,324,'#ffaa55',15);}
-  lessonText('lesson-phase',['等待预测：气压差推动，地转偏向力改变方向','① 气压梯度力推动空气由高压向低压开始运动','② 加入地转偏向力，方向发生偏转','③ 近地面摩擦作用下，风斜穿等压线流向低压'][phase]);
+  const status=phase===0?' · 点击“下一步”或“播放本步”开始':LESSON_STATE.running?' · 演示中':p===1?(phase===3?' · 全部完成，可回退或重播':' · 本步完成，点击“下一步”继续'):' · 已暂停，点击“下一步”或“继续本步”继续';
+  lessonText('lesson-phase',['等待预测：气压差推动，地转偏向力改变方向','① 气压梯度力推动空气由高压向低压开始运动','② 加入地转偏向力，方向发生偏转','③ 近地面摩擦作用下，风斜穿等压线流向低压'][phase]+status);
 }
 function drawLessonWind(ctx){
   const w=lessonWind(),p=lessonProgress(),phase=p===0?0:p<.3?1:p<.75?2:3;
@@ -354,7 +389,7 @@ function updateLessonQuizFeedback(){
   });
 }
 function getLessonDiagnostics(){return {
-  ...LESSON_STATE,answers:{...LESSON_STATE.answers},progress:lessonProgress(),wind:{...lessonWind()},
+  ...LESSON_STATE,answers:{...LESSON_STATE.answers},progress:lessonProgress(),pressureStepProgress:lessonPressureProgress(),wind:{...lessonWind()},
   belts:lessonBeltPositions(),solarLatitude:23.44*LESSON_STATE.seasonValue,quiz:lessonQuizScore(),
   phase:document.getElementById('lesson-phase')?.textContent||'',projection:document.body.classList.contains('projection')
 };}

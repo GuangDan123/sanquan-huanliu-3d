@@ -93,11 +93,14 @@ try{
   await mouseClick('#lesson-open');const initial=await state();
   check(initial.open&&initial.tab==='pressure'&&!initial.running,'真实鼠标打开风的成因，先预测');
   check(await ev("document.getElementById('lesson-explanation').hidden&&document.getElementById('control-panel').inert&&document.activeElement.id==='lesson-close'"),'解释初始收起，背景不可误操作且焦点进入');
-  const before=await imageData();await mouseClick('#lesson-play');await sleep(3100);await click('#lesson-play');const paused=await state(),pausedImage=await imageData();
-  check(paused.elapsed>2&&pausedImage!==before,'气压差推动后加入偏向作用，画面实际改变');await snap('pressure-deflection.png');await sleep(250);
+  const before=await imageData();await mouseClick('#lesson-play');await sleep(2800);const first=await state();
+  check(first.pressureStep===0&&!first.running&&first.elapsed===2.4&&first.phase.startsWith('①'),'气压推动播完自动停留第一步');
+  await mouseClick('#lesson-step-next');await sleep(800);await mouseClick('#lesson-play');const paused=await state(),pausedImage=await imageData();
+  check(paused.pressureStep===1&&paused.elapsed>2.4&&pausedImage!==before,'教师进入偏转步骤，画面实际改变');await snap('pressure-deflection.png');await sleep(250);
   check((await state()).elapsed===paused.elapsed&&await imageData()===pausedImage,'课堂过程暂停冻结');
   await click('#lesson-reveal');check(await ev("!document.getElementById('lesson-explanation').hidden&&document.getElementById('lesson-explanation').textContent.includes('摩擦')"),'可展开动力、偏转、摩擦解释');
-  await click('#lesson-play');await sleep(5200);check((await state()).complete&&(await state()).tab==='pressure','风成因完成后停留主题');await snap('pressure-complete.png');
+  await click('#lesson-play');await sleep(3000);check((await state()).pressureStep===1&&!(await state()).running&&!(await state()).complete,'偏转步骤播完停留，不自动进入摩擦');
+  await mouseClick('#lesson-step-next');await sleep(3100);check((await state()).complete&&(await state()).tab==='pressure','教师播放最后一步，完成后停留主题');await snap('pressure-complete.png');
   await click('#lesson-replay');await sleep(250);await click('#lesson-play');check((await state()).elapsed<1&&!(await state()).complete,'课堂从头重播清除进度');
   await tabClick('wind');
   const directions={tradeN:[-1,-1],tradeS:[-1,1],westN:[1,1],westS:[1,-1],polarN:[-1,-1],polarS:[-1,1]};

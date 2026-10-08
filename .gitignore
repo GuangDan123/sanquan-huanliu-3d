@@ -9,6 +9,15 @@
 .verify-*/
 .probe-*/
 .workbuddy/
+artifacts/**/profile*/
+/.rotation-check-profile*/
+/.chk-rot/
+/.git-push/
+/.git-temp-objects/
+/.git-push-*.json
+/git-clean-repo/
+/release/
+output/**/working/
 
 # 本地临时脚本
 _label_test_server.js
