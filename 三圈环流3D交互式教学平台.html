@@ -53661,6 +53661,8 @@ let particleTexture;
 let sunGroup, sunCore, sunGlow, sunLabel, sunArrows = [];
 const SCENE_OFFSET_X = 10.5;
 const CIRCULATION_OFFSET_X = -1.2;
+// 太阳光线固定在左侧屏幕区域，地球整体向右留出更清晰的光线通道。
+const EARTH_SCREEN_BIAS = 0.06;
 const cellObjects = {}; // 存储所有环流圈对象
 
 function updateProgress(pct) {
@@ -56358,7 +56360,7 @@ function getSceneFraming() {
   const availableW = Math.max(160, w - left - right), availableH = Math.max(140, bottom - top);
   const tangent = Math.tan(degToRad(camera.fov / 2)) * Math.min(availableW, availableH) / h * .78;
   const distance = (CONFIG.earth.atmosphereRadius + 1.1) / Math.sin(Math.atan(tangent));
-  return { w, h, left, availableW, centerX: left + availableW / 2, centerY: top + availableH / 2, distance };
+  return { w, h, left, availableW, centerX: left + availableW * (0.5 + EARTH_SCREEN_BIAS), centerY: top + availableH / 2, distance };
 }
 function frameScene(fitDistance = false) {
   if (!camera || !controls) return;
