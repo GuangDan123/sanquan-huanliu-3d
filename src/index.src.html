@@ -515,7 +515,7 @@ const CONFIG = {
   singleCellLongitudes: [0],
   threeCellLongitudes: [0],
   starCount: 3000,
-  sun: { centerX: 1.25, radius: 0.78, arrowStartX: 2.25, arrowEndX: 8.15, arrowCount: 6, screenX: 0.2, screenY: 0.5, screenDepth: 15, arrowStartOffset: 0.62, arrowTargetRadius: 7, arrowShorten: 3.5 }
+  sun: { centerX: 1.25, radius: 0.78, arrowStartX: 2.25, arrowEndX: 8.15, arrowCount: 6, screenX: 0.2, screenY: 0.5, screenDepth: 15, arrowStartOffset: 0.62 }
 };
 
 /* ========== 全局状态 ========== */
@@ -677,7 +677,7 @@ let sunGroup, sunCore, sunGlow, sunLabel, sunArrows = [];
 const SCENE_OFFSET_X = 10.5;
 const CIRCULATION_OFFSET_X = -1.2;
 // 太阳光线固定在左侧屏幕区域，地球整体向右留出更清晰的光线通道。
-const EARTH_SCREEN_BIAS = 0.06;
+const EARTH_SCREEN_BIAS = 0.10;
 const cellObjects = {}; // 存储所有环流圈对象
 
 function updateProgress(pct) {
@@ -786,33 +786,30 @@ function updateSunArrowTargets() {
   const sunOrigin = sunGroup.getWorldPosition(new THREE.Vector3());
   const start = new THREE.Vector3();
   const end = new THREE.Vector3();
-  const sunHorizontal = new THREE.Vector3(sunOrigin.x - earthCenter.x, 0, sunOrigin.z - earthCenter.z);
-  const viewHorizontal = new THREE.Vector3(camera.position.x - earthCenter.x, 0, camera.position.z - earthCenter.z);
-  if (viewHorizontal.lengthSq() < 0.0001) viewHorizontal.set(0, 0, 1);
-  viewHorizontal.normalize();
-  if (sunHorizontal.lengthSq() < 0.0001) sunHorizontal.copy(viewHorizontal);
-  sunHorizontal.normalize();
+  // 相机到球体的切点环就是屏幕上的大气层轮廓；随观察角度同步更新。
+  const toCamera = camera.position.clone().sub(earthCenter);
+  const cameraDistance = toCamera.length();
+  toCamera.normalize();
+  const radius = CONFIG.earth.atmosphereRadius;
+  const rimCenter = earthCenter.clone().addScaledVector(toCamera, radius * radius / cameraDistance);
+  const rimRadius = radius * Math.sqrt(1 - radius * radius / (cameraDistance * cameraDistance));
+  const screenRight = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion);
+  const screenUp = new THREE.Vector3(0, 1, 0).applyQuaternion(camera.quaternion);
   sunArrows.forEach(({ line, shaft, head, lat }) => {
     const isRedArrow = Math.abs(lat) === 10;
-    // 目标点统一锚定在地球周围的目标球面（半径 arrowTargetRadius，与大气层边缘重合）：
-    // 红色直射光线取 ±8° 纬度（直射赤道附近），黄/蓝箭头取各自纬度。
-    // 地球端按"目标点 - 太阳位置"相对计算（三色同一套地球锁定方式），
-    // 任何视角下端点都贴住地球，不随屏幕锚定的太阳漂移。
+    // 取轮廓左侧的六个示意位置，而非球面内部的投影点。
     const latitude = isRedArrow ? Math.sign(lat) * degToRad(8) : degToRad(lat);
-    const targetRadius = CONFIG.sun.arrowTargetRadius;
-    const target = earthCenter.clone().add(new THREE.Vector3(
-      sunHorizontal.x * targetRadius * Math.cos(latitude),
-      targetRadius * Math.sin(latitude),
-      sunHorizontal.z * targetRadius * Math.cos(latitude)
-    ));
+    const target = rimCenter.clone()
+      .addScaledVector(screenRight, -rimRadius * Math.cos(latitude))
+      .addScaledVector(screenUp, rimRadius * Math.sin(latitude));
     const direction = target.clone().sub(sunOrigin);
     const distance = direction.length();
     direction.normalize();
-    // 太阳侧起点：只由方向与固定偏移决定，不受 arrowShorten 影响
+    // 箭头尖端落在轮廓上；扣除锥头本身的长度，避免尖端伸入大气层。
     start.copy(direction).multiplyScalar(0.55);
-    // 箭头端沿原方向往回收，仅缩短连接线；arrowTargetRadius 语义与箭头几何尺寸均不变
-    const shorten = CONFIG.sun.arrowShorten ?? 0;
-    end.copy(direction).multiplyScalar(Math.max(distance - shorten, 0.01));
+    if (!head.geometry.boundingBox) head.geometry.computeBoundingBox();
+    const tipLength = head.geometry.boundingBox.max.z;
+    end.copy(direction).multiplyScalar(Math.max(distance - tipLength, 0.01));
     const visualDirection = end.clone().sub(start).normalize();
     const points = line.geometry.attributes.position;
     points.setXYZ(0, start.x, start.y, start.z);
@@ -827,6 +824,7 @@ function updateSunArrowTargets() {
     line.geometry.computeBoundingSphere();
     head.userData.targetLat = lat;
     head.userData.targetDistance = distance;
+    head.userData.rimTarget = target.toArray();
   });
 }
 
@@ -3138,7 +3136,16 @@ function getSunDiagnostics() {
     },
     radius: CONFIG.sun.radius,
     arrowCount: sunArrows.length,
-    arrowTargets: sunArrows.map(({ lat, head }) => ({ lat, radius: CONFIG.sun.arrowTargetRadius, distance: head.userData.targetDistance })),
+    arrowTargets: sunArrows.map(({ lat, head }) => {
+      const tip = new THREE.Vector3(0,0,head.geometry.boundingBox.max.z);
+      head.localToWorld(tip);
+      const projectedTip = tip.clone().project(camera);
+      const target = new THREE.Vector3().fromArray(head.userData.rimTarget);
+      const projectedTarget = target.clone().project(camera);
+      return { lat, radius: CONFIG.earth.atmosphereRadius, distance: head.userData.targetDistance,
+        tip: tip.toArray(), target: target.toArray(),
+        screenGap: Math.hypot((projectedTip.x-projectedTarget.x)*innerWidth/2,(projectedTip.y-projectedTarget.y)*innerHeight/2) };
+    }),
     style: SUN_STEP_STYLE[STATE.step] || SUN_STEP_STYLE[2]
   };
 }
