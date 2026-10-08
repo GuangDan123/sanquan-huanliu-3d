@@ -650,6 +650,17 @@ function createParticleTexture() {
   return new THREE.CanvasTexture(c);
 }
 
+function createSunDiscTexture() {
+  const c = document.createElement('canvas'); c.width = 128; c.height = 128;
+  const ctx = c.getContext('2d');
+  const g = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+  g.addColorStop(0, 'rgba(255,255,255,1)');
+  g.addColorStop(.96, 'rgba(255,255,255,1)');
+  g.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = g; ctx.fillRect(0, 0, 128, 128);
+  return new THREE.CanvasTexture(c);
+}
+
 /* 创建箭头几何体 */
 function createArrowGeometry(size = 1) {
   const coneGeo = new THREE.ConeGeometry(0.22 * size, 0.52 * size, 8);
@@ -678,6 +689,7 @@ const SCENE_OFFSET_X = 10.5;
 const CIRCULATION_OFFSET_X = -1.2;
 // 太阳光线固定在左侧屏幕区域，地球整体向右留出更清晰的光线通道。
 const EARTH_SCREEN_BIAS = 0.10;
+const SUN_ARROW_RIM_MARGIN = 0.65;
 const cellObjects = {}; // 存储所有环流圈对象
 
 function updateProgress(pct) {
@@ -736,14 +748,9 @@ function createSun() {
   sunGroup.position.set(CONFIG.sun.centerX, 0, 0);
   sunGroup.renderOrder = 4;
 
-  sunGlow = new THREE.Mesh(
-    new THREE.SphereGeometry(CONFIG.sun.radius * 1.8, 32, 24),
-    new THREE.MeshBasicMaterial({ color: 0xFFB52E, transparent: true, opacity: 0.12, blending: THREE.AdditiveBlending, depthWrite: false })
-  );
-  sunCore = new THREE.Mesh(
-    new THREE.SphereGeometry(CONFIG.sun.radius, 32, 24),
-    new THREE.MeshBasicMaterial({ color: 0xFFD166 })
-  );
+  const sunDiscTexture = createSunDiscTexture();
+  sunGlow = new THREE.Mesh(new THREE.CircleGeometry(CONFIG.sun.radius * 1.8, 64), new THREE.MeshBasicMaterial({ map: sunDiscTexture, color: 0xFFB52E, transparent: true, opacity: 0.12, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide }));
+  sunCore = new THREE.Mesh(new THREE.CircleGeometry(CONFIG.sun.radius, 64), new THREE.MeshBasicMaterial({ map: sunDiscTexture, color: 0xFFD166, transparent: true, opacity: 1, depthWrite: false, side: THREE.DoubleSide }));
   sunGroup.add(sunGlow, sunCore);
 
   const sunLabelElement = document.createElement('div');
@@ -790,7 +797,7 @@ function updateSunArrowTargets() {
   const toCamera = camera.position.clone().sub(earthCenter);
   const cameraDistance = toCamera.length();
   toCamera.normalize();
-  const radius = CONFIG.earth.atmosphereRadius;
+  const radius = CONFIG.earth.atmosphereRadius + SUN_ARROW_RIM_MARGIN;
   const rimCenter = earthCenter.clone().addScaledVector(toCamera, radius * radius / cameraDistance);
   const rimRadius = radius * Math.sqrt(1 - radius * radius / (cameraDistance * cameraDistance));
   const screenRight = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion);
@@ -838,6 +845,9 @@ function updateSunScreenPosition() {
   ).unproject(camera);
   const ray = target.sub(camera.position).normalize();
   sunGroup.position.copy(camera.position).add(ray.multiplyScalar(CONFIG.sun.screenDepth));
+  // 太阳圆盘始终正对屏幕，避免随相机透视变成椭圆；箭头仍由独立几何按世界坐标更新。
+  sunCore.quaternion.copy(camera.quaternion);
+  sunGlow.quaternion.copy(camera.quaternion);
 }
 
 const SUN_STEP_STYLE = [
@@ -3142,7 +3152,7 @@ function getSunDiagnostics() {
       const projectedTip = tip.clone().project(camera);
       const target = new THREE.Vector3().fromArray(head.userData.rimTarget);
       const projectedTarget = target.clone().project(camera);
-      return { lat, radius: CONFIG.earth.atmosphereRadius, distance: head.userData.targetDistance,
+      return { lat, radius: CONFIG.earth.atmosphereRadius + SUN_ARROW_RIM_MARGIN, distance: head.userData.targetDistance,
         tip: tip.toArray(), target: target.toArray(),
         screenGap: Math.hypot((projectedTip.x-projectedTarget.x)*innerWidth/2,(projectedTip.y-projectedTarget.y)*innerHeight/2) };
     }),
