@@ -1,0 +1,153 @@
+{
+  "flows": [
+    {
+      "kind": "upper",
+      "hemisphere": 1,
+      "color": "ffaa55",
+      "tracer": "ffaa55",
+      "arrows": [
+        {
+          "color": "ffaa55",
+          "visible": true
+        },
+        {
+          "color": "ffaa55",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "kind": "sink",
+      "hemisphere": 1,
+      "color": "ffd93d",
+      "tracer": "ffd93d",
+      "arrows": [
+        {
+          "color": "ffd93d",
+          "visible": true
+        },
+        {
+          "color": "ffd93d",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "kind": "trade",
+      "hemisphere": 1,
+      "color": "55ddcc",
+      "tracer": "55ddcc",
+      "arrows": [
+        {
+          "color": "55ddcc",
+          "visible": true
+        },
+        {
+          "color": "55ddcc",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "kind": "westerly",
+      "hemisphere": 1,
+      "color": "70b7ff",
+      "tracer": "70b7ff",
+      "arrows": [
+        {
+          "color": "70b7ff",
+          "visible": true
+        },
+        {
+          "color": "70b7ff",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "kind": "upper",
+      "hemisphere": -1,
+      "color": "ffaa55",
+      "tracer": "ffaa55",
+      "arrows": [
+        {
+          "color": "ffaa55",
+          "visible": true
+        },
+        {
+          "color": "ffaa55",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "kind": "sink",
+      "hemisphere": -1,
+      "color": "ffd93d",
+      "tracer": "ffd93d",
+      "arrows": [
+        {
+          "color": "ffd93d",
+          "visible": true
+        },
+        {
+          "color": "ffd93d",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "kind": "trade",
+      "hemisphere": -1,
+      "color": "55ddcc",
+      "tracer": "55ddcc",
+      "arrows": [
+        {
+          "color": "55ddcc",
+          "visible": true
+        },
+        {
+          "color": "55ddcc",
+          "visible": true
+        }
+      ]
+    },
+    {
+      "kind": "westerly",
+      "hemisphere": -1,
+      "color": "70b7ff",
+      "tracer": "70b7ff",
+      "arrows": [
+        {
+          "color": "70b7ff",
+          "visible": true
+        },
+        {
+          "color": "70b7ff",
+          "visible": true
+        }
+      ]
+    }
+  ],
+  "legendVisible": true,
+  "legend": [
+    {
+      "kind": "upper",
+      "color": "rgb(255, 170, 85)"
+    },
+    {
+      "kind": "sink",
+      "color": "rgb(255, 217, 61)"
+    },
+    {
+      "kind": "trade",
+      "color": "rgb(85, 221, 204)"
+    },
+    {
+      "kind": "westerly",
+      "color": "rgb(112, 183, 255)"
+    }
+  ],
+  "hadleySurface": "#55DDCC",
+  "otherStageLegendHidden": true
+}

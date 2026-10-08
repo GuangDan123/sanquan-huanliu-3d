@@ -88,6 +88,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg-dark);font-
 .legend-item{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:13px;cursor:pointer;padding:2px 4px;border-radius:4px;transition:background 0.2s;}
 .legend-item:hover{background:rgba(255,255,255,0.06);}
 .legend-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0;}
+.flow-legend-item{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:12px;}
+#flow-legend{border-top:1px solid var(--panel-border);margin-top:10px;padding-top:10px;}
 
 /* ========== 知识卡片 ========== */
 #knowledge-card{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:7000;background:rgba(20,24,40,0.95);border:1px solid var(--panel-border);border-radius:16px;padding:28px 32px;max-width:460px;width:90%;box-shadow:var(--shadow);backdrop-filter:blur(10px);opacity:0;pointer-events:none;transition:opacity 0.3s;}
@@ -325,6 +327,13 @@ body.ui-hidden #step-notification{display:none !important;}
   <div class="legend-item" data-cell="hadley"><span class="legend-dot" style="background:var(--hadley)"></span>低纬环流</div>
   <div class="legend-item" data-cell="ferrel"><span class="legend-dot" style="background:var(--ferrel)"></span>中纬环流</div>
   <div class="legend-item" data-cell="polar"><span class="legend-dot" style="background:var(--polar)"></span>高纬环流</div>
+  <div id="flow-legend" hidden>
+    <h3>气流箭头</h3>
+    <div class="flow-legend-item" data-flow="upper"><span class="legend-dot"></span>高空气流</div>
+    <div class="flow-legend-item" data-flow="sink"><span class="legend-dot"></span>30°下沉气流</div>
+    <div class="flow-legend-item" data-flow="trade"><span class="legend-dot"></span>近地面向低纬：信风</div>
+    <div class="flow-legend-item" data-flow="westerly"><span class="legend-dot"></span>近地面向高纬：西风</div>
+  </div>
 </div>
 
 <!-- 左侧常驻知识点面板（三步切换时内容同步更新） -->
@@ -493,7 +502,7 @@ const { OrbitControls, CSS2DRenderer, CSS2DObject } = THREE;
 const CONFIG = {
   earth: { radius: 5, rotationSpeed: 0.0004, atmosphereRadius: 7.0 },
   cells: {
-    hadley:  { riseLat: 2.5,  sinkLat: 27.5, color: '#FF4422', upperColor: '#FF4422', surfaceColor: '#FFAA33', name: '哈德莱环流', particleCount: 240 },
+    hadley:  { riseLat: 2.5,  sinkLat: 27.5, color: '#FF4422', upperColor: '#FF4422', surfaceColor: '#55DDCC', name: '哈德莱环流', particleCount: 240 },
     ferrel:  { riseLat: 57.5, sinkLat: 32.5, color: '#FDB813', upperColor: '#5599DD', surfaceColor: '#FDB813', name: '费雷尔环流', particleCount: 200 },
     polar:   { riseLat: 62.5, sinkLat: 90,   color: '#4A90E2', upperColor: '#4A90E2', surfaceColor: '#88AAEE', name: '极地环流',   particleCount: 200 }
   },
@@ -2730,9 +2739,13 @@ function transitionToStep(newStep) {
 
 // 分阶段机制对象挂在现有环流剖面根组，保持原来的相机锚定视觉。
 let mechanismGroups = [], mechanismLabels = [];
+const MECHANISM_FLOW_COLORS = { upper: 0xFFAA55, sink: 0xFFD93D, trade: 0x55DDCC, westerly: 0x70B7FF };
 const subtropicalAccumulations = [];
 const coriolisParcels = [];
 function createMechanismVisuals() {
+  document.querySelectorAll('[data-flow]').forEach(row => {
+    row.querySelector('.legend-dot').style.backgroundColor = '#' + MECHANISM_FLOW_COLORS[row.dataset.flow].toString(16).padStart(6,'0');
+  });
   const point = (lat, alt = .4, lon = 0) => {
     // 与近地面风带共用东经为负 theta 的球面约定：从北极看，东向为逆时针。
     const r = CONFIG.earth.radius + alt, phi = degToRad(lat), theta = -degToRad(lon);
@@ -2762,6 +2775,10 @@ function createMechanismVisuals() {
     const el = document.createElement('div'); el.className = 'mechanism-label'; el.textContent = text;
     const obj = new CSS2DObject(el); obj.position.copy(point(lat, alt)); group.add(obj);
     obj.userData.demoKind = lat === 18 ? 'trade' : lat === 46 ? 'westerly' : 'status';
+    if (['trade','westerly'].includes(obj.userData.demoKind)) {
+      const color = '#' + MECHANISM_FLOW_COLORS[obj.userData.demoKind].toString(16).padStart(6,'0');
+      el.style.color = color; el.style.borderColor = color;
+    }
     mechanismLabels.push({obj, group});
   };
   for (let stage=0; stage<4; stage++) {
@@ -2785,7 +2802,7 @@ function createMechanismVisuals() {
     } else if (stage === 1 || stage === 2) {
       [1,-1].forEach(h => {
         if (stage === 1) {
-          path(group,[point(5*h,1.8,-24),point(18*h,1.8,-12),point(30*h,1.8)],0xFFAA55,'upper',h);
+          path(group,[point(5*h,1.8,-24),point(18*h,1.8,-12),point(30*h,1.8)],MECHANISM_FLOW_COLORS.upper,'upper',h);
           const cloudGeometry = new THREE.BufferGeometry(), positions = new Float32Array(72 * 3);
           for (let i=0;i<72;i++) {
             const angle = i * 2.399963, radius = .55 * Math.sqrt((i+.5)/72);
@@ -2797,9 +2814,9 @@ function createMechanismVisuals() {
           const cloud = new THREE.Points(cloudGeometry,new THREE.PointsMaterial({color:0xFFD93D,size:.18,map:particleTexture,transparent:true,opacity:.95,depthWrite:false,blending:THREE.AdditiveBlending}));
           cloud.position.copy(point(30*h,1.8)); group.add(cloud); subtropicalAccumulations.push(cloud);
         }
-        path(group,[point(30*h,1.8),point(30*h,.45)],0xFFD93D,'sink',h);
-        path(group,[point(30*h,.45),point(20*h,.45,-8),point(8*h,.45,-18)],0xFFAA55,'trade',h);
-        path(group,[point(30*h,.5),point(45*h,.5,8),point(60*h,.5,15)],0xFFAA55,'westerly',h);
+        path(group,[point(30*h,1.8),point(30*h,.45)],MECHANISM_FLOW_COLORS.sink,'sink',h);
+        path(group,[point(30*h,.45),point(20*h,.45,-8),point(8*h,.45,-18)],MECHANISM_FLOW_COLORS.trade,'trade',h);
+        path(group,[point(30*h,.5),point(45*h,.5,8),point(60*h,.5,15)],MECHANISM_FLOW_COLORS.westerly,'westerly',h);
         if (stage === 2) {
           path(group,[point(82*h,.45,38),point(72*h,.45,29),point(60*h,.45,15)],0x66AAFF,'polar-easterly',h);
           path(group,[point(60*h,.5,15),point(60*h,1.8,15)],0x66EEFF,'rise',h);
@@ -2840,6 +2857,7 @@ function setMechanismStage(index) {
 }
 function applyMechanismVisual() {
   const stage = STATE.mechanismStage, active = STATE.step === 1;
+  document.getElementById('flow-legend').hidden = !active || stage !== 1;
   document.getElementById('coriolis-comparison').hidden = !active || stage !== 0 || !STATE.showPaths;
   document.getElementById('polar-front').hidden = !active || stage !== 2 || !STATE.showPaths;
   mechanismGroups.forEach((g,i) => { g.visible = active && i === stage && STATE.showPaths; });
