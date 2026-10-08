@@ -55914,6 +55914,8 @@ function updateSingleDemoUI() {
   if (button) button.textContent = STATE.singleDemo.running && STATE.playing ? '暂停' : STATE.singleDemo.complete ? '再次播放' : '播放过程';
   verticalLabels.forEach(({obj, data}) => {
     if (!obj.element) return;
+    if (data.lat === 0) obj.element.textContent = phase.index === 0 ? '赤道受热上升 ↑' : '赤道上升 ↑';
+    if (Math.abs(data.lat) === 90) obj.element.textContent = phase.index === 2 ? '极地冷却下沉 ↓' : (data.lat > 0 ? '北极下沉 ↓' : '南极下沉 ↓');
     obj.element.style.transform = '';
     obj.element.style.borderColor = 'rgba(136,204,255,0.6)';
     obj.element.style.color = '#BFE8FF';
@@ -55922,6 +55924,21 @@ function updateSingleDemoUI() {
       obj.element.style.color = '#FFE9A8';
       obj.element.style.transform = 'scale(1.08)';
     }
+  });
+  const focusRanges = [[0, .18], [.18, .58], [.58, .72], [.72, 1]];
+  const range = focusRanges[phase.index];
+  ['singleNH', 'singleSH'].forEach(key => {
+    const cell = cellObjects[key];
+    if (!cell) return;
+    cell.arrows.forEach(a => {
+      const focused = !STATE.singleDemo.complete && a.phase >= range[0] && a.phase < range[1];
+      const material = a.mesh.children[0]?.material;
+      if (material) {
+        material.opacity = focused ? .98 : (STATE.singleDemo.complete ? .95 : .25);
+        material.emissiveIntensity = focused ? .9 : .2;
+      }
+      a.mesh.scale.setScalar(focused ? 1.18 : .86);
+    });
   });
 }
 function updateSingleDemo(dt) {
