@@ -53487,7 +53487,7 @@ const { OrbitControls, CSS2DRenderer, CSS2DObject } = THREE;
 const CONFIG = {
   earth: { radius: 5, rotationSpeed: 0.0004, atmosphereRadius: 7.0 },
   cells: {
-    hadley:  { riseLat: 2.5,  sinkLat: 27.5, color: '#FF4422', upperColor: '#FF4422', surfaceColor: '#55DDCC', name: '哈德莱环流', particleCount: 240 },
+    hadley:  { riseLat: 2.5,  sinkLat: 27.5, color: '#FF4422', upperColor: '#FF4422', surfaceColor: '#FFAA33', name: '哈德莱环流', particleCount: 240 },
     ferrel:  { riseLat: 57.5, sinkLat: 32.5, color: '#FDB813', upperColor: '#5599DD', surfaceColor: '#FDB813', name: '费雷尔环流', particleCount: 200 },
     polar:   { riseLat: 62.5, sinkLat: 90,   color: '#4A90E2', upperColor: '#4A90E2', surfaceColor: '#88AAEE', name: '极地环流',   particleCount: 200 }
   },
@@ -54546,6 +54546,9 @@ class CirculationCell {
       }
       return c0;
     }
+    // 经圈归纳图的箭头沿用环流圈主色；分流颜色由独立近地面路径表达，
+    // 避免把椭圆下半段中的上升气流误染成信风/西风的颜色。
+    if (this.customPath === 'threeCellDrop') return this._cBase;
     // 三圈：alt = midAlt - altRange * sin → sin>0为近地面(surfaceColor)，sin<0为高空(upperColor)
     // t=0(sinkLat下沉点)~0.5(riseLat上升点): 地面段→surfaceColor
     // t=0.5(riseLat上升点)~1(sinkLat下沉点): 高空段→upperColor
