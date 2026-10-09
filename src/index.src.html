@@ -595,7 +595,7 @@ const KNOWLEDGE = {
 <p><b>形成机理：</b>赤道地区接收太阳辐射最多，空气强烈受热上升，在高层向两极方向流动；在教材理想模型中，高空气流向极地运动时偏转，30°附近空气积聚并下沉，在近地面回流赤道，构成闭合环流。</p>
 <p><b>近地面风：</b>受地转偏向力影响，北半球右偏形成东北信风，南半球左偏形成东南信风。</p>
 <p><b>高空回流：</b>剖面中向较高纬度回流；不能把剖面回流关系理解成所有实际高空风向均与地面风向完全相反。</p>
-<p><b>影响：</b>赤道上升气流形成赤道低气压带（多雨）；30°下沉气流形成副热带高气压带（干旱）。</p>`
+<p><b>影响：</b>赤道上升在水汽充足时有利于降水；副热带下沉增温通常不利于凝结降水，实际气候还受水汽、海陆位置及地形影响。</p>`
   },
   ferrel: {
     title: '费雷尔环流（Ferrel Cell）',
@@ -611,7 +611,7 @@ const KNOWLEDGE = {
     content: `<p><b>范围：</b>副极地（60°）— 极地（90°），南北半球对称分布。</p>
 <p><b>形成机理：</b>极地地区空气强烈冷却下沉，在近地面流向较低纬度；至60°附近与盛行西风带的较暖空气交汇，暖空气被迫上升，在高层回流极地。</p>
 <p><b>近地面风：</b>极地高压流向副极地低压，受地转偏向力偏转形成极地东风带。</p>
-<p><b>特点：</b>与哈德莱环流同为热力直接驱动，环流圈较小但稳定。</p>`
+<p><b>特点：</b>教材平均环流模型中的热力直接环流，实际范围和强度随季节、地区变化。</p>`
   },
   'pressure-0':   { title: '赤道低气压带', color: '#FF4444', content: '<p>位于赤道附近（0°±5°）。空气受热强烈上升，形成低压区，多对流雨，气候湿热。</p>' },
   'pressure-30':  { title: '副热带高气压带', color: '#FF9900', content: '<p>位于南北纬30°附近。教材理想模型中，赤道上升后的高空气流向极地运动并偏转，在30°附近积聚、下沉，形成动力性高压；下沉空气绝热增温，通常干燥少雨。不能简单解释为当地冷却形成高压。</p>' },
@@ -621,7 +621,7 @@ const KNOWLEDGE = {
 
 const STEP_INFO = [
   { title: '第一步：理想单圈环流（无偏转）', body: '假设地球不自转：赤道空气受热上升，高空流向极地；极地空气冷却下沉，近地面流回赤道——形成单一闭合的热力环流圈。这是理想化模型，真实地球因自转产生了地转偏向力。' },
-  { title: '第二步：地转偏向力介入', body: '地球自转产生地转偏向力：北半球右偏、南半球左偏，且随纬度增大而增强。高空气流在30°附近偏转堆积下沉，在60°附近冷暖交汇抬升——请逐环节预测、显示解释并观察对应箭头，最后归纳三圈；不按时间自动推进。这是教材理想模型，不是动力数值模拟。' },
+  { title: '第二步：地转偏向力介入', body: '地球自转产生地转偏向力：北半球右偏、南半球左偏；相同水平风速下，其大小随纬度增大而增强。高空气流在30°附近偏转积聚下沉，在60°附近冷暖交汇抬升——请逐环节预测、显示解释并观察对应箭头，最后归纳三圈。这是教材理想模型，不是动力数值模拟。' },
   { title: '第三步：三圈环流成型', body: '在教材理想模型中，归纳每个半球的三个相互联系的环流圈：哈德莱环流（0°~30°）、费雷尔环流（30°~60°）、极地环流（60°~90°），配合地面七个气压带与六个风带，构成完整的三圈环流体系。' }
 ];
 
@@ -630,7 +630,7 @@ const STEP_PANEL = [
   {
     tag: 'STEP 1 / 3', title: '理想单圈环流', color: '#88CCFF',
     points: [
-      ['假设前提', '地球<b>不自转</b>（无地转偏向力）、地表性质均匀'],
+      ['假设前提', '不考虑地球自转，地表性质均匀；以<b>太阳直射赤道</b>为基准'],
       ['热力驱动', '赤道受热多→空气膨胀<b>上升</b>；极地受热少→空气冷却<b>下沉</b>'],
       ['高空流动', '赤道高空为高压、极地为低压→气流由赤道<b>流向极地</b>'],
       ['近地面回流', '极地为高压、赤道为低压→气流由极地<b>流回赤道</b>'],
@@ -641,7 +641,7 @@ const STEP_PANEL = [
     tag: 'STEP 2 / 3', title: '地转偏向力介入', color: '#FDB813',
     points: [
       ['真实地球自转', '产生<b>地转偏向力</b>（科里奥利力）：北半球右偏、南半球左偏'],
-      ['随纬度增强', '偏向力在赤道为零、向两极逐渐增大（注意观察黄色箭头长度变化）'],
+      ['随纬度增强', '在<b>相同水平风速</b>下，偏向力在赤道为零、随纬度增大而增强；青色箭头表示偏向方向，长度为示意'],
       ['30°附近', '教材简化为高空气流偏转、积聚与<b>下沉</b>；地转偏向力没有直接向下压空气的作用'],
       ['60° 纬度', '低纬暖空气与极地冷空气<b>交汇</b>→暖空气被迫抬升→副极地低气压带'],
       ['环流酝酿分化', '按偏转、30°下沉分流、60°交汇上升的机制逐步归纳，不是把单圈机械折成三圈']
@@ -720,6 +720,9 @@ let starField;
 let clock = new THREE.Clock();
 let particleTexture;
 let sunGroup, sunCore, sunGlow, sunLabel, sunArrows = [];
+let sunRadiationPhase = 0;
+const SUN_RADIATION_PERIOD_PX = 24;
+const SUN_RADIATION_CYCLES_PER_SECOND = 0.5;
 const SCENE_OFFSET_X = 10.5;
 const CIRCULATION_OFFSET_X = -1.2;
 // 太阳光线固定在左侧屏幕区域，地球整体向右留出更清晰的光线通道。
@@ -807,13 +810,30 @@ function createSun() {
       new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.9, linewidth: 4 })
     );
     const shaft = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.055, 0.055, 1, 8),
-      new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.9 })
+      new THREE.BufferGeometry().setAttribute('position',new THREE.Float32BufferAttribute([-.5,-.5,0,.5,-.5,0,-.5,.5,0,.5,.5,0],3)).setAttribute('solarRayT',new THREE.Float32BufferAttribute([0,0,1,1],1)).setIndex([0,1,2,2,1,3]),
+      new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.9, side: THREE.DoubleSide })
     );
+    {
+      // 在面向屏幕的渐宽箭杆上裁出虚线，保持太阳端细、地球端粗。
+      // 路径参数从太阳端递增至地球端；减去相位使亮段向地球流动。
+      const radiation = {enabled:{value:1},phase:{value:0},count:{value:12}};
+      shaft.userData.radiation = radiation;
+      shaft.material.onBeforeCompile = shader => {
+        shader.uniforms.solarDashEnabled = radiation.enabled;
+        shader.uniforms.solarDashPhase = radiation.phase;
+        shader.uniforms.solarDashCount = radiation.count;
+        shader.vertexShader = 'attribute float solarRayT;\nvarying float solarRayPosition;\n' + shader.vertexShader;
+        shader.vertexShader = shader.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\nsolarRayPosition = solarRayT;');
+        shader.fragmentShader = 'varying float solarRayPosition;\nuniform float solarDashEnabled;\nuniform float solarDashPhase;\nuniform float solarDashCount;\n' + shader.fragmentShader;
+        shader.fragmentShader = shader.fragmentShader.replace('#include <clipping_planes_fragment>', '#include <clipping_planes_fragment>\nif (solarDashEnabled > 0.5 && fract(solarRayPosition * solarDashCount - solarDashPhase) > 0.58) discard;');
+      };
+      shaft.material.customProgramCacheKey = () => 'solar-radiation-dashes-v1';
+    }
     const head = new THREE.Mesh(
-      createArrowGeometry(1),
-      new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.95 })
+      new THREE.BufferGeometry().setAttribute('position',new THREE.Float32BufferAttribute([-9,0,0,9,0,0,0,0,24],3)),
+      new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.95, side: THREE.DoubleSide })
     );
+    head.userData.sunEndpoint = true;
     sunGroup.add(line, shaft, head);
     sunArrows.push({ line, shaft, head, lat });
   });
@@ -858,22 +878,39 @@ function updateSunArrowTargets() {
     const direction = target.clone().sub(sunOrigin);
     const distance = direction.length();
     direction.normalize();
-    // 扣除锥头本身的长度，使尖端落在收短后的目标；太阳圆盘写入深度遮住根部。
+    // 加粗后的地球端采用18×24像素等腰三角形，切换视角保持对称。
     start.copy(direction).multiplyScalar(0.55);
     if (!head.geometry.boundingBox) head.geometry.computeBoundingBox();
-    const tipLength = head.geometry.boundingBox.max.z;
-    end.copy(direction).multiplyScalar(Math.max(distance - tipLength, 0.01));
-    const visualDirection = end.clone().sub(start).normalize();
+    const screenDx=(projectedRim.x-projectedSun.x)*innerWidth/2;
+    const screenDy=(projectedRim.y-projectedSun.y)*innerHeight/2;
+    const screenDirection=screenRight.clone().multiplyScalar(screenDx).addScaledVector(screenUp,screenDy).normalize();
+    const sideDirection=screenRight.clone().multiplyScalar(-screenDy).addScaledVector(screenUp,screenDx).normalize();
+    const headDepth=-target.clone().applyMatrix4(camera.matrixWorldInverse).z;
+    const pixelScale=2*headDepth*Math.tan(degToRad(camera.fov/2))/innerHeight;
+    head.scale.setScalar(pixelScale);
+    end.copy(target).sub(sunOrigin).addScaledVector(screenDirection,-24*pixelScale);
     const points = line.geometry.attributes.position;
     points.setXYZ(0, start.x, start.y, start.z);
     points.setXYZ(1, end.x, end.y, end.z);
     points.needsUpdate = true;
-    const shaftLength = Math.max(start.distanceTo(end) - 0.04, 0.01);
-    shaft.position.copy(start).add(end).multiplyScalar(0.5);
-    shaft.scale.set(1, shaftLength, 1);
-    shaft.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), visualDirection);
+    // 两端分别换算像素宽度，避免近处太阳端因透视反而显得更粗。
+    const startDepth=-start.clone().add(sunOrigin).applyMatrix4(camera.matrixWorldInverse).z;
+    const endDepth=-end.clone().add(sunOrigin).applyMatrix4(camera.matrixWorldInverse).z;
+    const pixelsToWorld=2*Math.tan(degToRad(camera.fov/2))/innerHeight;
+    const startHalfWidth=startDepth*pixelsToWorld; // 太阳端全宽2px。
+    const endHalfWidth=endDepth*pixelsToWorld*6; // 地球端全宽12px。
+    const shaftPoints=shaft.geometry.attributes.position;
+    [start.clone().addScaledVector(sideDirection,-startHalfWidth),start.clone().addScaledVector(sideDirection,startHalfWidth),
+      end.clone().addScaledVector(sideDirection,-endHalfWidth),end.clone().addScaledVector(sideDirection,endHalfWidth)].forEach((p,i)=>shaftPoints.setXYZ(i,p.x,p.y,p.z));
+    shaftPoints.needsUpdate=true;shaft.geometry.computeBoundingSphere();
+    if (shaft.userData.radiation) {
+      const screenStart = start.clone().add(sunOrigin).project(camera);
+      const screenEnd = end.clone().add(sunOrigin).project(camera);
+      const projectedLength = Math.hypot((screenEnd.x-screenStart.x)*innerWidth/2,(screenEnd.y-screenStart.y)*innerHeight/2);
+      shaft.userData.radiation.count.value = Math.max(1, projectedLength / SUN_RADIATION_PERIOD_PX);
+    }
     head.position.copy(end);
-    head.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), visualDirection);
+    head.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(sideDirection,screenDirection.clone().cross(sideDirection),screenDirection));
     line.geometry.computeBoundingSphere();
     head.userData.targetLat = lat;
     head.userData.targetDistance = distance;
@@ -915,9 +952,21 @@ function updateSunStyle() {
     line.material.opacity = arrows;
     shaft.material.opacity = arrows;
     head.material.opacity = Math.min(0.95, arrows + 0.04);
-    line.visible = style.arrows > 0.01;
+    // 隐藏实线辅助层，透出六条辐射虚线的空隙。
+    line.visible = style.arrows > 0.01 && !(shaft.userData.radiation && STATE.step === 0);
+    if (shaft.userData.radiation) shaft.userData.radiation.enabled.value = STATE.step === 0 ? 1 : 0;
     shaft.visible = style.arrows > 0.01;
     head.visible = style.arrows > 0.01;
+  });
+}
+
+function updateSunRadiation(dt) {
+  if (STATE.step === 0 && STATE.playing && !LESSON_STATE.open && !document.hidden) {
+    // 默认每秒半个虚线周期（12px/s），为原速度的四分之一。
+    sunRadiationPhase = (sunRadiationPhase + Math.min(dt, .05) * STATE.speed * SUN_RADIATION_CYCLES_PER_SECOND) % 1;
+  }
+  sunArrows.forEach(({shaft}) => {
+    if (shaft.userData.radiation) shaft.userData.radiation.phase.value = sunRadiationPhase;
   });
 }
 
@@ -2685,6 +2734,8 @@ function updateStepPanel(step) {
   }
   const demoPanel = body.querySelector('.mechanism-demo');
   if (demoPanel) demoControls.appendChild(demoPanel);
+  body.insertAdjacentHTML('afterbegin',modelAssumptionsHTML(step===0?'single':'three'));
+  if (demoPanel) mountDemoNodes(step===0?'single':'mechanism',demoPanel);
   document.getElementById('sp-progress').style.width = ((step + 1) / STEP_PANEL.length * 100) + '%';
   // 内容切换闪烁提示（强制重排以重新触发动画）
   const panel = document.getElementById('step-panel');
@@ -2975,7 +3026,7 @@ function applyMechanismVisual() {
 const SUBTROPICAL_DEMO_DURATION = 12;
 const SINGLE_DEMO_DURATION = 10;
 function resetSingleDemo() {
-  STATE.singleDemo = { elapsed: 0, running: false, complete: false };
+  STATE.singleDemo = { elapsed: 0, running: false, complete: false, node:0 };
   updateSingleDemoUI();
 }
 function playSingleDemo() {
@@ -2986,6 +3037,10 @@ function playSingleDemo() {
 }
 function getSingleDemoPhase() {
   const e = STATE.singleDemo.elapsed;
+  if (STATE.demoMode==='step') {
+    const index=STATE.singleDemo.node||0;
+    return {index,text:SINGLE_FLOW_STAGES[index].text};
+  }
   const index = Math.max(0,SINGLE_FLOW_STAGES.findIndex(s => e < s.until));
   const stageIndex = e >= SINGLE_DEMO_DURATION ? 3 : index;
   return {index:stageIndex,text:SINGLE_FLOW_STAGES[stageIndex].text};
@@ -2998,6 +3053,7 @@ function updateSingleDemoUI() {
   if (status) status.textContent = STATE.singleDemo.complete ? '完成：受热上升 → 高空输送 → 冷却下沉 → 近地面回流' : phase.text;
   if (progress) progress.value = STATE.singleDemo.elapsed;
   if (button) button.textContent = STATE.singleDemo.running && STATE.playing ? '暂停' : STATE.singleDemo.complete ? '再次播放' : STATE.singleDemo.elapsed > 0 ? '继续过程' : '播放过程';
+  updateDemoNodeControls('single');
   verticalLabels.forEach(({obj, data}) => {
     if (!obj.element) return;
     if (data.lat === 0) obj.element.textContent = phase.index === 0 ? '赤道受热上升 ↑' : '赤道上升 ↑';
@@ -3029,14 +3085,13 @@ function updateSingleDemoUI() {
 function updateSingleDemo(dt) {
   const demo = STATE.singleDemo;
   if (demo.running && STATE.playing) {
-    demo.elapsed = Math.min(SINGLE_DEMO_DURATION, demo.elapsed + Math.min(dt, .1) * STATE.speed);
-    if (demo.elapsed >= SINGLE_DEMO_DURATION) { demo.complete = true; demo.running = false; }
+    advanceDemoNodeTime('single',dt);
   }
   updateSingleDemoUI();
 }
 function getMechanismDemoDuration() { return STATE.mechanismStage === 1 ? SUBTROPICAL_DEMO_DURATION : 10; }
 function resetMechanismDemo() {
-  STATE.mechanismDemo = { elapsed: 0, running: false, complete: false };
+  STATE.mechanismDemo = { elapsed: 0, running: false, complete: false, node:0 };
 }
 function playMechanismDemo() {
   if (STATE.mechanismDemo.complete) resetMechanismDemo();
@@ -3044,7 +3099,8 @@ function playMechanismDemo() {
   updateMechanismDemoUI();
 }
 function getMechanismDemoPhase() {
-  const {elapsed,complete} = STATE.mechanismDemo;
+  const {complete} = STATE.mechanismDemo;
+  const elapsed=demoPhaseElapsed('mechanism');
   if (STATE.mechanismStage === 0) {
     if (complete) return {index:3,text:'完成：两半球均获得东向分量 → 偏西风；可重播对照'};
     if (elapsed === 0) return {index:0,text:'等待预测：灰色虚线为沿经线的无偏转参考'};
@@ -3076,6 +3132,7 @@ function updateMechanismDemoUI() {
   const text = phase.text + (demo.elapsed > 0 && !demo.complete && (!demo.running || !STATE.playing) ? '（已暂停）' : '');
   if (status.textContent !== text) status.textContent = text;
   document.getElementById('mechanism-demo-progress').value = demo.elapsed;
+  updateDemoNodeControls('mechanism');
 }
 function updateCoriolisDemo() {
   const elapsed = STATE.mechanismDemo.elapsed;
@@ -3206,14 +3263,20 @@ function getSunDiagnostics() {
     },
     radius: CONFIG.sun.radius,
     arrowCount: sunArrows.length,
-    arrowTargets: sunArrows.map(({ lat, head }) => {
+    arrowTargets: sunArrows.map(({ lat, head, shaft, line }) => {
       const tip = new THREE.Vector3(0,0,head.geometry.boundingBox.max.z);
       head.localToWorld(tip);
       const projectedTip = tip.clone().project(camera);
       const target = new THREE.Vector3().fromArray(head.userData.rimTarget);
       const projectedTarget = target.clone().project(camera);
       const projectedRim = new THREE.Vector3().fromArray(head.userData.atmosphereRimTarget).project(camera);
+      const radiation = shaft.userData.radiation;
+      const shaftPoints=shaft.geometry.attributes.position;
+      const shaftStart = shaft.localToWorld(new THREE.Vector3().fromBufferAttribute(shaftPoints,0).add(new THREE.Vector3().fromBufferAttribute(shaftPoints,1)).multiplyScalar(.5)).project(camera);
+      const shaftEnd = shaft.localToWorld(new THREE.Vector3().fromBufferAttribute(shaftPoints,2).add(new THREE.Vector3().fromBufferAttribute(shaftPoints,3)).multiplyScalar(.5)).project(camera);
       return { lat, radius: CONFIG.earth.atmosphereRadius + SUN_ARROW_RIM_MARGIN, distance: head.userData.targetDistance,
+        radiation: radiation ? {enabled:radiation.enabled.value===1,phase:radiation.phase.value,count:radiation.count.value,solidLineVisible:line.visible,
+          screenStart:[(shaftStart.x+1)*innerWidth/2,(1-shaftStart.y)*innerHeight/2],screenEnd:[(shaftEnd.x+1)*innerWidth/2,(1-shaftEnd.y)*innerHeight/2]} : null,
         tip: tip.toArray(), target: target.toArray(),
         clearancePixels: Math.hypot((projectedTip.x-projectedRim.x)*innerWidth/2,(projectedTip.y-projectedRim.y)*innerHeight/2),
         screenGap: Math.hypot((projectedTip.x-projectedTarget.x)*innerWidth/2,(projectedTip.y-projectedTarget.y)*innerHeight/2) };
@@ -3989,6 +4052,7 @@ function resetToInitial() {
   STATE.speed = 1;STATE.coriolisDeflection = CONFIG.coriolis.defaultDeflection;
   STATE.density = 'medium';STATE.lowPerf = false;STATE.earthRotationSpeed = .0004;
   STATE.mechanismStage = 0;STATE.mechanismRevealed = [false,false,false,false];
+  STATE.demoMode='step';
   resetMechanismDemo();STATE.playing = true;
   document.getElementById('speed-slider').value = 10;
   document.getElementById('speed-val').textContent = '1.0x';
@@ -4316,6 +4380,8 @@ function animate() {
   updateSunScreenPosition();
   updateSunArrowTargets();
 
+  updateSunRadiation(dt);
+
   // 标签背面剔除：标签与相机的连线被地球球体挡住时隐藏
   if (latLabels.length > 0 || pressureLabels.length > 0 || windLabels.length > 0 || verticalLabels.length > 0 || coriolisLabels.length > 0) {
     // 标签朝向跟随相机：气压带(右)、风带(中)、纬度(左)
@@ -4377,9 +4443,7 @@ function animate() {
   if (STATE.step === 1 && STATE.mechanismStage <= 2) {
     const demo = STATE.mechanismDemo;
     if (demo.running && STATE.playing) {
-      const duration = getMechanismDemoDuration();
-      demo.elapsed = Math.min(duration,demo.elapsed + Math.min(dt,.1)*STATE.speed);
-      if (demo.elapsed >= duration) { demo.complete = true; demo.running = false; }
+      advanceDemoNodeTime('mechanism',dt);
     }
     if (STATE.mechanismStage === 0) updateCoriolisDemo();
     else if (STATE.mechanismStage === 1) updateSubtropicalDemo();

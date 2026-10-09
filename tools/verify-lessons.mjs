@@ -86,6 +86,51 @@ try{
     await mouseClick('#lesson-add-surface');await mouseClick('#lesson-replay');await sleep(250);check((await state()).surface==='real'&&(await state()).running,'理想模型下重播也会加入海陆差异');await mouseClick('#lesson-play');
     await select('#lesson-monsoon-season','summer');await select('#lesson-region','south');await mouseClick('#lesson-add-surface');await mouseClick('#lesson-add-surface');await sleep(4200);const south=await state();
     check(south.complete&&south.monsoonSeason==='summer'&&south.region==='south'&&south.phase.includes('跨赤道'),'加入与返回保留季节区域选择，南亚夏季演示正常');await snap('monsoon-south-entry.png');
+    // 记录实际Canvas绘制，独立核对学生看到的气压标识、区域和箭头，而非读取绘图配置。
+    await ev(`(()=>{
+      window.monsoonFrame={labels:[],areas:[],strokes:[]};let points=[];
+      const proto=CanvasRenderingContext2D.prototype;
+      for(const method of ['clearRect','fillText','ellipse','beginPath','moveTo','lineTo','stroke']){
+        const original=proto[method];proto[method]=function(...args){
+          if(this.canvas.id==='lesson-canvas'){
+            const f=window.monsoonFrame;
+            if(method==='clearRect'){f.labels=[];f.areas=[];f.strokes=[];}
+            if(method==='fillText')f.labels.push({text:args[0],x:args[1],y:args[2],width:this.measureText(args[0]).width,size:parseFloat(this.font)});
+            if(method==='ellipse')f.areas.push(args.slice(0,4));
+            if(method==='beginPath')points=[];
+            if(method==='moveTo'||method==='lineTo')points.push(args.slice(0,2));
+            if(method==='stroke'&&points.length>=3)f.strokes.push({points:[...points],color:this.strokeStyle,width:this.lineWidth});
+          }
+          return original.apply(this,args);
+        };
+      }
+    })()`);
+    for(const scenario of [
+      {region:'east',season:'winter',high:'亚洲冬季高压',low:'海洋较低压区（相对大陆）',dx:1,dy:1},
+      {region:'east',season:'summer',high:'太平洋副热带高压',low:'大陆热低压',dx:-1,dy:-1},
+      {region:'south',season:'winter',high:'大陆冷高压',low:'印度洋近赤道较低压区',dx:-1,dy:1},
+      {region:'south',season:'summer',high:'南半球副热带高压',low:'印度低压（热低压）',dx:-1,dy:-1}
+    ]){
+      const name=scenario.region+'-'+scenario.season;
+      await select('#lesson-region',scenario.region);await select('#lesson-monsoon-season',scenario.season);
+      const initial=await ev('window.monsoonFrame'),labels=initial.labels.map(l=>l.text);
+      check(!(await state()).running&&(await state()).elapsed===0&&['H 高压','L 低压',scenario.high,scenario.low,'近地面：由高压流向低压'].every(t=>labels.includes(t))&&initial.areas.length===2,`${name}未播放即显示高低压区域及对应地理名称`,initial);
+      const prediction=await imageData();await mouseClick('#lesson-play');await sleep(300);await mouseClick('#lesson-play');
+      const pause=await state(),pauseImage=await imageData();await sleep(180);
+      check((await state()).elapsed===pause.elapsed&&await imageData()===pauseImage&&pauseImage!==prediction,`${name}示踪改变画面，暂停保留高低压图示`);
+      await mouseClick('#lesson-play');await sleep(4200);const drawn=await ev('window.monsoonFrame');
+      const paths=drawn.strokes.filter(s=>s.width===3&&['#ffaa55','#88caff'].includes(s.color)),first=paths[0]?.points,last=paths.at(-1)?.points;
+      const high=drawn.areas[0],low=drawn.areas[1],distance=(point,area)=>Math.hypot((point[0]-area[0])/area[2],(point[1]-area[1])/area[3]);
+      check((await state()).complete&&first&&last&&distance(first[0],high)<1.4&&distance(last.at(-1),low)<1.4&&Math.sign(first.at(-1)[0]-first[0][0])===scenario.dx&&Math.sign(last.at(-1)[1]-first[0][1])===scenario.dy,`${name}实际气流从高压区域到低压区域，流向正确`,paths);
+      check(drawn.labels.every(l=>l.x-l.width/2>=0&&l.x+l.width/2<=960&&l.y-l.size>=0&&l.y<=360),`${name}文字保留在画布范围内`);
+      if(name==='south-summer')check(paths.length===2&&first[0][1]>280&&first.at(-1)[1]===280&&last.at(-1)[1]<280&&last.at(-1)[0]>last.at(-2)[0], '南亚夏季实际跨赤道后转向东北，形成西南季风');
+      await snap(`pressure-${name}.png`);
+    }
+    await click('#lesson-reveal');
+    check(await ev("document.getElementById('lesson-explanation').textContent.includes('相对大陆')&&document.getElementById('lesson-explanation').textContent.includes('昼夜变化')"),'解释区分相对低压、季节季风与昼夜海陆风');
+    await select('#teaching-monsoon-view','compare');
+    check(await ev("document.getElementById('lesson-playbar').hidden")&&(await ev('window.monsoonFrame.labels')).some(l=>l.text.includes('1月')), '1月7月对照仍可切换');
+    await select('#teaching-monsoon-view','monsoon');
     await click('#lesson-close');await viewport(760,800);await mouseClick('#lesson-open');await tabClick('monsoon');await mouseClick('#lesson-add-surface');await mouseClick('#lesson-add-surface');await sleep(250);
     check((await state()).surface==='real'&&(await state()).running,'小屏真实点击独立入口正常');await snap('small-monsoon-entry.png');
     await click('#lesson-close');await viewport(1366,768);await send('Network.enable');await send('Network.emulateNetworkConditions',{offline:true,latency:0,downloadThroughput:0,uploadThroughput:0});const local=pathToFileURL(resolve('三圈环流3D交互式教学平台.html'));local.searchParams.set('state','explore');await send('Page.navigate',{url:local.href});check(await ready(),'海陆入口断网file初始化');await sleep(1800);await click('#lesson-open');await tabClick('monsoon');await mouseClick('#lesson-add-surface');await sleep(250);check((await state()).surface==='real'&&(await state()).running,'离线独立海陆入口与播放正常');await snap('offline-monsoon-entry.png');
@@ -122,16 +167,16 @@ try{
   await select('#lesson-section-h','north');check((await state()).sectionH==='north','标准剖面可单独观察北半球');await snap('section-north.png');
   await tabClick('climate');await select('#lesson-climate','med');await click('#lesson-play');await sleep(4200);check((await state()).phase.includes('副热带高压')&&(await state()).phase.includes('干燥'),'地中海夏干解释链');await snap('climate-med-summer.png');
   await click('[data-climate-season="winter"]');await click('#lesson-play');await sleep(4200);check((await state()).phase.includes('西风')&&(await state()).phase.includes('水汽'),'地中海冬雨解释链');await snap('climate-med-winter.png');
-  await tabClick('quiz');await mouseClick('#lesson-quiz-check');check((await state()).quiz.blank===14&&(await state()).quiz.correct===0,'空卷14题均为未完成');
+  await tabClick('quiz');await mouseClick('#lesson-quiz-check');check((await state()).quiz.blank===17&&(await state()).quiz.correct===0,'空卷17题均为未完成');
   await click('[data-quiz-id="arrowTrade"][data-option="0"]');await click('#lesson-quiz-check');check((await state()).quiz.wrong===1&&await ev("document.getElementById('feedback-arrowTrade').textContent.includes('来向')"),'错误风向保留作答，反馈解释来向');await snap('quiz-wrong.png');
   await click('#feedback-arrowTrade .lesson-link');check((await state()).tab==='wind'&&(await state()).wind.id==='tradeN','错误反馈定位到对应风带');
   await tabClick('quiz');check((await state()).answers.arrowTrade===0,'回看后保留原答案');
   // 教学题库预期答案由人工确认，不读取页面中的correct字段。
-  const answers={drive:0,subtropical:1,subpolar:2,right:1,force:1,june:1,eastWinter:0,southAsia:1,med:1,arrowTrade:2,arrowWest:1,arrowPolar:2,rain:1,pole:1};
-  for(const [id,a] of Object.entries(answers))await click(`[data-quiz-id="${id}"][data-option="${a}"]`);await click('#lesson-quiz-check');const full=await state();check(full.quiz.correct===14&&full.quiz.wrong===0&&full.quiz.blank===0,'风向、成因、季节、应用14题全量正确');
+  const answers={drive:0,subtropical:1,subpolar:2,right:1,force:1,june:1,eastWinter:0,southAsia:1,med:1,arrowTrade:2,arrowWest:1,arrowPolar:2,rain:1,pole:1,upperWind:0,seaCut:0,southJuly:1};
+  for(const [id,a] of Object.entries(answers))await click(`[data-quiz-id="${id}"][data-option="${a}"]`);await click('#lesson-quiz-check');const full=await state();check(full.quiz.correct===17&&full.quiz.wrong===0&&full.quiz.blank===0,'风向、成因、季节、应用17题全量正确');
   await ev("document.getElementById('lesson-essay').value='夏季副热带高压下沉少雨；冬季海洋西风带来水汽。';document.getElementById('lesson-essay').dispatchEvent(new Event('input',{bubbles:true}))");
-  await click('#lesson-close');await mouseClick('#lesson-open');check((await state()).quiz.correct===14&&(await state()).essay.includes('海洋西风'),'关闭重开保留选择题与迁移作答');await snap('quiz-complete.png');
-  await click('#lesson-quiz-reset');check((await state()).quiz.blank===14&&(await state()).essay==='','重置清除作答');
+  await click('#lesson-close');await mouseClick('#lesson-open');check((await state()).quiz.correct===17&&(await state()).essay.includes('海洋西风'),'关闭重开保留选择题与迁移作答');await snap('quiz-complete.png');
+  await click('#lesson-quiz-reset');check((await state()).quiz.blank===17&&(await state()).essay==='','重置清除作答');
   await tabClick('section');await click('#lesson-to-three');check(!(await state()).open&&await ev('window.__threeCellDebug.STATE.step===2'),'标准剖面返回三维对应阶段');
   await click('#projection-toggle');check((await state()).projection&&await ev("parseFloat(getComputedStyle(document.querySelector('.sp-item')).fontSize)>=16"),'投屏模式放大课堂文字');await sleep(1200);await snap('projection-three.png');await click('#projection-toggle');
   await mouseClick('#lesson-open');await tabClick('section');
@@ -139,7 +184,7 @@ try{
   check(await ev("document.activeElement.id==='lesson-close'"),'键盘Tab焦点留在课堂窗口');
   await send('Input.dispatchKeyEvent',{type:'keyDown',key:'Escape',code:'Escape',windowsVirtualKeyCode:27});check(!(await state()).open&&await ev("!document.getElementById('control-panel').inert"),'Escape关闭并恢复背景操作');
   await viewport(760,800);await mouseClick('#lesson-open');await tabClick('season');await click('[data-season="summer"]');await sleep(2200);
-  check(await ev("(()=>{const p=document.getElementById('lesson-panel').getBoundingClientRect(),c=document.getElementById('control-panel').getBoundingClientRect(),b=document.getElementById('lesson-close').getBoundingClientRect();return p.left>=0&&p.right<=innerWidth&&p.top>=0&&p.bottom<c.top&&b.right<=innerWidth&&b.top>=0;})()"),'小屏课堂窗口保留关闭与底部操作');await snap('small-season.png');
+  check(await ev("(()=>{const p=document.getElementById('lesson-panel').getBoundingClientRect(),b=document.getElementById('lesson-close').getBoundingClientRect(),f=document.getElementById('lesson-panel').querySelector('footer').getBoundingClientRect();return p.left>=0&&p.right<=innerWidth&&p.top>=0&&p.bottom<=innerHeight&&b.right<=innerWidth&&b.top>=0&&f.bottom<=innerHeight&&getComputedStyle(document.getElementById('control-panel')).visibility==='hidden';})()"),'小屏课堂充分使用屏幕，关闭与课堂底部操作可见');await snap('small-season.png');
   await tabClick('quiz');await ev("document.getElementById('lesson-essay').scrollIntoView({block:'nearest'})");check(await ev("document.getElementById('lesson-body').scrollHeight>document.getElementById('lesson-body').clientHeight"),'小屏练习与迁移作答可滚动到达');await snap('small-quiz.png');
   await click('#lesson-close');await viewport(1366,768);await send('Network.enable');await send('Network.emulateNetworkConditions',{offline:true,latency:0,downloadThroughput:0,uploadThroughput:0});const local=pathToFileURL(resolve('三圈环流3D交互式教学平台.html'));local.searchParams.set('state','explore');await send('Page.navigate',{url:local.href});check(await ready(),'课堂模块断网file入口');await sleep(1800);await click('#lesson-open');await tabClick('monsoon');await select('#lesson-surface','real');await snap('offline-monsoon.png');check((await state()).open&&(await state()).surface==='real','离线课堂内容正常操作');
   }

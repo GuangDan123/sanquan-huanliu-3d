@@ -92,8 +92,7 @@ body.projection .lesson-intro,body.projection .lesson-phase,body.projection .les
 body.projection .lesson-note{font-size:14px;}
 body.projection .lesson-visual canvas{height:clamp(230px,36vh,330px);}
 body.projection .lesson-stage{grid-template-columns:1fr;}
-body.projection #lesson-panel:not([data-topic="quiz"]) .lesson-intro,
-body.projection #lesson-panel:not([data-topic="quiz"]) .lesson-question{display:none;}
+body.projection #lesson-panel:not([data-topic="quiz"]) .lesson-intro{display:none;}
 body.projection #custom-params{display:none!important;}
 @media(max-width:768px){
   #lesson-entry{left:150px;top:60px;}
@@ -130,6 +129,66 @@ body.projection #custom-params{display:none!important;}
   .lesson-visual{overflow-x:auto;}
   .lesson-visual::before{content:'横向滑动查看完整图示';display:block;position:sticky;left:0;font-size:12px;color:#a9bdd3;padding-bottom:8px;}
   .lesson-visual canvas,body.projection .lesson-visual canvas{width:960px;height:360px;max-width:none;}
+}
+
+/* 主图、核心问题和操作区优先显示，投屏保留预测问题。 */
+body.lesson-open #lesson-panel{inset:12px 16px;max-width:1280px;}
+body.lesson-open #control-panel{visibility:hidden;}
+body.lesson-open #demo-overlay{display:none;}
+#teaching-routes{flex-shrink:0;margin:0;padding:7px 20px;border-bottom:1px solid #2d4059;font-size:12px;}
+#lesson-tabs .btn[hidden],#lesson-body article[hidden]{display:none!important;}
+#lesson-playbar[hidden],.lesson-controls [hidden]{display:none!important;}
+.model-assumptions{padding:7px 10px;border-left:3px solid #7ca9cf;background:#152237;color:#b9d0e4;font-size:13px;line-height:1.7;margin-bottom:8px;}
+.model-assumptions strong{color:#9ed5ff;}
+.demo-mode{display:flex;gap:6px;align-items:center;font-size:12px;}
+.demo-node-question{font-size:12px;line-height:1.5;color:#a6d8ff;padding:3px 0;}
+.demo-mode select{min-width:0;max-width:180px;background:#21344d;border:1px solid #54718f;border-radius:5px;padding:4px;color:#eef6ff;}
+.demo-node-actions .btn{flex:1;min-width:0;padding:5px 4px;font-size:12px;}
+.teaching-bridge,.teaching-work,.teaching-site-card{margin-top:14px;padding:12px;border:1px solid #54718f;border-radius:9px;background:#142033;line-height:1.8;}
+.teaching-bridge summary,.teaching-work summary{cursor:pointer;color:#a6d8ff;}
+.thermal-grid{display:grid;grid-template-columns:1fr 1.4fr 1.4fr;gap:1px;margin:12px 0;background:#3b5672;}
+.thermal-grid>div{background:#17283c;padding:8px;text-align:center;}
+.thermal-grid>div:nth-child(3n+2){color:#ffc29e;}.thermal-grid>div:nth-child(3n){color:#a4d6ff;}
+.drawing-canvas{touch-action:none;cursor:crosshair;}
+.drawing-label{background:#0e1826;border:1px solid #698bae;color:#eef6ff;padding:8px;border-radius:6px;width:230px;max-width:100%;font:inherit;}
+.lesson-visual canvas.drawing-canvas{height:auto;aspect-ratio:8/3;object-fit:fill;}
+.teaching-climate-chart canvas{height:auto;aspect-ratio:8/3;}
+.teaching-prompt{padding:8px;color:#ffe2a0;border-left:3px solid #8dc7f5;line-height:1.8;}
+.teaching-site-card p{margin:7px 0;}
+#lesson-body input[type="checkbox"]{width:18px;height:18px;accent-color:#8ecbff;}
+body.projection .model-assumptions,body.projection .teaching-site-card,body.projection .teaching-work{font-size:17px;}
+body.projection .lesson-stage{grid-template-columns:minmax(0,1fr) 260px;}
+body.projection .lesson-question{display:block;font-size:18px;padding:12px;}
+body.projection #lesson-panel .btn{font-size:16px;min-height:40px;}
+body.projection #teaching-routes{font-size:14px;}
+@media(max-width:768px){
+ body.lesson-open #lesson-panel{inset:8px;}
+ #teaching-routes{padding:5px 12px;flex-wrap:nowrap;overflow-x:auto;}
+ #teaching-routes .btn,#teaching-routes span{flex-shrink:0;}
+ .model-assumptions{font-size:12px;}
+ body.projection .lesson-stage{grid-template-columns:1fr;}
+ body.projection #lesson-panel .btn{font-size:12px;min-height:36px;}
+ .thermal-grid{font-size:12px;}
+}
+@media(max-width:600px){
+ .lesson-visual canvas.drawing-canvas,.teaching-climate-chart canvas{width:960px;height:360px;}
+ .teaching-work{padding:8px;}
+ .demo-mode select{max-width:150px;}
+}
+@media(max-height:600px){
+ #lesson-panel header{padding:6px 12px;}
+ #lesson-heading{font-size:14px;}
+ #teaching-routes{padding:4px 12px;flex-wrap:nowrap;overflow-x:auto;}
+ #teaching-routes .btn,#teaching-routes span{flex-shrink:0;font-size:11px;min-height:28px;padding:3px 6px;}
+ #lesson-tabs{padding:4px 12px;}
+ #lesson-tabs .btn{min-height:28px;}
+ #lesson-playbar{padding:4px 12px;gap:4px;}
+ #lesson-playbar .lesson-step-status{flex-basis:auto;font-size:11px;}
+ #lesson-playbar .btn{min-height:30px;padding:4px 7px;font-size:11px;}
+ #lesson-panel footer{padding:4px 12px;}
+ #lesson-panel footer .btn{min-height:30px;}
+ #lesson-body{padding:8px 12px;}
+ .demo-node-question{font-size:11px;}
 }
 
 /* ========== 全局重置与基础样式 ========== */
@@ -53602,7 +53661,7 @@ const KNOWLEDGE = {
 <p><b>形成机理：</b>赤道地区接收太阳辐射最多，空气强烈受热上升，在高层向两极方向流动；在教材理想模型中，高空气流向极地运动时偏转，30°附近空气积聚并下沉，在近地面回流赤道，构成闭合环流。</p>
 <p><b>近地面风：</b>受地转偏向力影响，北半球右偏形成东北信风，南半球左偏形成东南信风。</p>
 <p><b>高空回流：</b>剖面中向较高纬度回流；不能把剖面回流关系理解成所有实际高空风向均与地面风向完全相反。</p>
-<p><b>影响：</b>赤道上升气流形成赤道低气压带（多雨）；30°下沉气流形成副热带高气压带（干旱）。</p>`
+<p><b>影响：</b>赤道上升在水汽充足时有利于降水；副热带下沉增温通常不利于凝结降水，实际气候还受水汽、海陆位置及地形影响。</p>`
   },
   ferrel: {
     title: '费雷尔环流（Ferrel Cell）',
@@ -53618,7 +53677,7 @@ const KNOWLEDGE = {
     content: `<p><b>范围：</b>副极地（60°）— 极地（90°），南北半球对称分布。</p>
 <p><b>形成机理：</b>极地地区空气强烈冷却下沉，在近地面流向较低纬度；至60°附近与盛行西风带的较暖空气交汇，暖空气被迫上升，在高层回流极地。</p>
 <p><b>近地面风：</b>极地高压流向副极地低压，受地转偏向力偏转形成极地东风带。</p>
-<p><b>特点：</b>与哈德莱环流同为热力直接驱动，环流圈较小但稳定。</p>`
+<p><b>特点：</b>教材平均环流模型中的热力直接环流，实际范围和强度随季节、地区变化。</p>`
   },
   'pressure-0':   { title: '赤道低气压带', color: '#FF4444', content: '<p>位于赤道附近（0°±5°）。空气受热强烈上升，形成低压区，多对流雨，气候湿热。</p>' },
   'pressure-30':  { title: '副热带高气压带', color: '#FF9900', content: '<p>位于南北纬30°附近。教材理想模型中，赤道上升后的高空气流向极地运动并偏转，在30°附近积聚、下沉，形成动力性高压；下沉空气绝热增温，通常干燥少雨。不能简单解释为当地冷却形成高压。</p>' },
@@ -53628,7 +53687,7 @@ const KNOWLEDGE = {
 
 const STEP_INFO = [
   { title: '第一步：理想单圈环流（无偏转）', body: '假设地球不自转：赤道空气受热上升，高空流向极地；极地空气冷却下沉，近地面流回赤道——形成单一闭合的热力环流圈。这是理想化模型，真实地球因自转产生了地转偏向力。' },
-  { title: '第二步：地转偏向力介入', body: '地球自转产生地转偏向力：北半球右偏、南半球左偏，且随纬度增大而增强。高空气流在30°附近偏转堆积下沉，在60°附近冷暖交汇抬升——请逐环节预测、显示解释并观察对应箭头，最后归纳三圈；不按时间自动推进。这是教材理想模型，不是动力数值模拟。' },
+  { title: '第二步：地转偏向力介入', body: '地球自转产生地转偏向力：北半球右偏、南半球左偏；相同水平风速下，其大小随纬度增大而增强。高空气流在30°附近偏转积聚下沉，在60°附近冷暖交汇抬升——请逐环节预测、显示解释并观察对应箭头，最后归纳三圈。这是教材理想模型，不是动力数值模拟。' },
   { title: '第三步：三圈环流成型', body: '在教材理想模型中，归纳每个半球的三个相互联系的环流圈：哈德莱环流（0°~30°）、费雷尔环流（30°~60°）、极地环流（60°~90°），配合地面七个气压带与六个风带，构成完整的三圈环流体系。' }
 ];
 
@@ -53637,7 +53696,7 @@ const STEP_PANEL = [
   {
     tag: 'STEP 1 / 3', title: '理想单圈环流', color: '#88CCFF',
     points: [
-      ['假设前提', '地球<b>不自转</b>（无地转偏向力）、地表性质均匀'],
+      ['假设前提', '不考虑地球自转，地表性质均匀；以<b>太阳直射赤道</b>为基准'],
       ['热力驱动', '赤道受热多→空气膨胀<b>上升</b>；极地受热少→空气冷却<b>下沉</b>'],
       ['高空流动', '赤道高空为高压、极地为低压→气流由赤道<b>流向极地</b>'],
       ['近地面回流', '极地为高压、赤道为低压→气流由极地<b>流回赤道</b>'],
@@ -53648,7 +53707,7 @@ const STEP_PANEL = [
     tag: 'STEP 2 / 3', title: '地转偏向力介入', color: '#FDB813',
     points: [
       ['真实地球自转', '产生<b>地转偏向力</b>（科里奥利力）：北半球右偏、南半球左偏'],
-      ['随纬度增强', '偏向力在赤道为零、向两极逐渐增大（注意观察黄色箭头长度变化）'],
+      ['随纬度增强', '在<b>相同水平风速</b>下，偏向力在赤道为零、随纬度增大而增强；青色箭头表示偏向方向，长度为示意'],
       ['30°附近', '教材简化为高空气流偏转、积聚与<b>下沉</b>；地转偏向力没有直接向下压空气的作用'],
       ['60° 纬度', '低纬暖空气与极地冷空气<b>交汇</b>→暖空气被迫抬升→副极地低气压带'],
       ['环流酝酿分化', '按偏转、30°下沉分流、60°交汇上升的机制逐步归纳，不是把单圈机械折成三圈']
@@ -53727,6 +53786,9 @@ let starField;
 let clock = new THREE.Clock();
 let particleTexture;
 let sunGroup, sunCore, sunGlow, sunLabel, sunArrows = [];
+let sunRadiationPhase = 0;
+const SUN_RADIATION_PERIOD_PX = 24;
+const SUN_RADIATION_CYCLES_PER_SECOND = 0.5;
 const SCENE_OFFSET_X = 10.5;
 const CIRCULATION_OFFSET_X = -1.2;
 // 太阳光线固定在左侧屏幕区域，地球整体向右留出更清晰的光线通道。
@@ -53814,13 +53876,30 @@ function createSun() {
       new THREE.LineBasicMaterial({ color, transparent: true, opacity: 0.9, linewidth: 4 })
     );
     const shaft = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.055, 0.055, 1, 8),
-      new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.9 })
+      new THREE.BufferGeometry().setAttribute('position',new THREE.Float32BufferAttribute([-.5,-.5,0,.5,-.5,0,-.5,.5,0,.5,.5,0],3)).setAttribute('solarRayT',new THREE.Float32BufferAttribute([0,0,1,1],1)).setIndex([0,1,2,2,1,3]),
+      new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.9, side: THREE.DoubleSide })
     );
+    {
+      // 在面向屏幕的渐宽箭杆上裁出虚线，保持太阳端细、地球端粗。
+      // 路径参数从太阳端递增至地球端；减去相位使亮段向地球流动。
+      const radiation = {enabled:{value:1},phase:{value:0},count:{value:12}};
+      shaft.userData.radiation = radiation;
+      shaft.material.onBeforeCompile = shader => {
+        shader.uniforms.solarDashEnabled = radiation.enabled;
+        shader.uniforms.solarDashPhase = radiation.phase;
+        shader.uniforms.solarDashCount = radiation.count;
+        shader.vertexShader = 'attribute float solarRayT;\nvarying float solarRayPosition;\n' + shader.vertexShader;
+        shader.vertexShader = shader.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\nsolarRayPosition = solarRayT;');
+        shader.fragmentShader = 'varying float solarRayPosition;\nuniform float solarDashEnabled;\nuniform float solarDashPhase;\nuniform float solarDashCount;\n' + shader.fragmentShader;
+        shader.fragmentShader = shader.fragmentShader.replace('#include <clipping_planes_fragment>', '#include <clipping_planes_fragment>\nif (solarDashEnabled > 0.5 && fract(solarRayPosition * solarDashCount - solarDashPhase) > 0.58) discard;');
+      };
+      shaft.material.customProgramCacheKey = () => 'solar-radiation-dashes-v1';
+    }
     const head = new THREE.Mesh(
-      createArrowGeometry(1),
-      new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.95 })
+      new THREE.BufferGeometry().setAttribute('position',new THREE.Float32BufferAttribute([-9,0,0,9,0,0,0,0,24],3)),
+      new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0.95, side: THREE.DoubleSide })
     );
+    head.userData.sunEndpoint = true;
     sunGroup.add(line, shaft, head);
     sunArrows.push({ line, shaft, head, lat });
   });
@@ -53865,22 +53944,39 @@ function updateSunArrowTargets() {
     const direction = target.clone().sub(sunOrigin);
     const distance = direction.length();
     direction.normalize();
-    // 扣除锥头本身的长度，使尖端落在收短后的目标；太阳圆盘写入深度遮住根部。
+    // 加粗后的地球端采用18×24像素等腰三角形，切换视角保持对称。
     start.copy(direction).multiplyScalar(0.55);
     if (!head.geometry.boundingBox) head.geometry.computeBoundingBox();
-    const tipLength = head.geometry.boundingBox.max.z;
-    end.copy(direction).multiplyScalar(Math.max(distance - tipLength, 0.01));
-    const visualDirection = end.clone().sub(start).normalize();
+    const screenDx=(projectedRim.x-projectedSun.x)*innerWidth/2;
+    const screenDy=(projectedRim.y-projectedSun.y)*innerHeight/2;
+    const screenDirection=screenRight.clone().multiplyScalar(screenDx).addScaledVector(screenUp,screenDy).normalize();
+    const sideDirection=screenRight.clone().multiplyScalar(-screenDy).addScaledVector(screenUp,screenDx).normalize();
+    const headDepth=-target.clone().applyMatrix4(camera.matrixWorldInverse).z;
+    const pixelScale=2*headDepth*Math.tan(degToRad(camera.fov/2))/innerHeight;
+    head.scale.setScalar(pixelScale);
+    end.copy(target).sub(sunOrigin).addScaledVector(screenDirection,-24*pixelScale);
     const points = line.geometry.attributes.position;
     points.setXYZ(0, start.x, start.y, start.z);
     points.setXYZ(1, end.x, end.y, end.z);
     points.needsUpdate = true;
-    const shaftLength = Math.max(start.distanceTo(end) - 0.04, 0.01);
-    shaft.position.copy(start).add(end).multiplyScalar(0.5);
-    shaft.scale.set(1, shaftLength, 1);
-    shaft.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), visualDirection);
+    // 两端分别换算像素宽度，避免近处太阳端因透视反而显得更粗。
+    const startDepth=-start.clone().add(sunOrigin).applyMatrix4(camera.matrixWorldInverse).z;
+    const endDepth=-end.clone().add(sunOrigin).applyMatrix4(camera.matrixWorldInverse).z;
+    const pixelsToWorld=2*Math.tan(degToRad(camera.fov/2))/innerHeight;
+    const startHalfWidth=startDepth*pixelsToWorld; // 太阳端全宽2px。
+    const endHalfWidth=endDepth*pixelsToWorld*6; // 地球端全宽12px。
+    const shaftPoints=shaft.geometry.attributes.position;
+    [start.clone().addScaledVector(sideDirection,-startHalfWidth),start.clone().addScaledVector(sideDirection,startHalfWidth),
+      end.clone().addScaledVector(sideDirection,-endHalfWidth),end.clone().addScaledVector(sideDirection,endHalfWidth)].forEach((p,i)=>shaftPoints.setXYZ(i,p.x,p.y,p.z));
+    shaftPoints.needsUpdate=true;shaft.geometry.computeBoundingSphere();
+    if (shaft.userData.radiation) {
+      const screenStart = start.clone().add(sunOrigin).project(camera);
+      const screenEnd = end.clone().add(sunOrigin).project(camera);
+      const projectedLength = Math.hypot((screenEnd.x-screenStart.x)*innerWidth/2,(screenEnd.y-screenStart.y)*innerHeight/2);
+      shaft.userData.radiation.count.value = Math.max(1, projectedLength / SUN_RADIATION_PERIOD_PX);
+    }
     head.position.copy(end);
-    head.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), visualDirection);
+    head.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(sideDirection,screenDirection.clone().cross(sideDirection),screenDirection));
     line.geometry.computeBoundingSphere();
     head.userData.targetLat = lat;
     head.userData.targetDistance = distance;
@@ -53922,9 +54018,21 @@ function updateSunStyle() {
     line.material.opacity = arrows;
     shaft.material.opacity = arrows;
     head.material.opacity = Math.min(0.95, arrows + 0.04);
-    line.visible = style.arrows > 0.01;
+    // 隐藏实线辅助层，透出六条辐射虚线的空隙。
+    line.visible = style.arrows > 0.01 && !(shaft.userData.radiation && STATE.step === 0);
+    if (shaft.userData.radiation) shaft.userData.radiation.enabled.value = STATE.step === 0 ? 1 : 0;
     shaft.visible = style.arrows > 0.01;
     head.visible = style.arrows > 0.01;
+  });
+}
+
+function updateSunRadiation(dt) {
+  if (STATE.step === 0 && STATE.playing && !LESSON_STATE.open && !document.hidden) {
+    // 默认每秒半个虚线周期（12px/s），为原速度的四分之一。
+    sunRadiationPhase = (sunRadiationPhase + Math.min(dt, .05) * STATE.speed * SUN_RADIATION_CYCLES_PER_SECOND) % 1;
+  }
+  sunArrows.forEach(({shaft}) => {
+    if (shaft.userData.radiation) shaft.userData.radiation.phase.value = sunRadiationPhase;
   });
 }
 
@@ -55692,6 +55800,8 @@ function updateStepPanel(step) {
   }
   const demoPanel = body.querySelector('.mechanism-demo');
   if (demoPanel) demoControls.appendChild(demoPanel);
+  body.insertAdjacentHTML('afterbegin',modelAssumptionsHTML(step===0?'single':'three'));
+  if (demoPanel) mountDemoNodes(step===0?'single':'mechanism',demoPanel);
   document.getElementById('sp-progress').style.width = ((step + 1) / STEP_PANEL.length * 100) + '%';
   // 内容切换闪烁提示（强制重排以重新触发动画）
   const panel = document.getElementById('step-panel');
@@ -55982,7 +56092,7 @@ function applyMechanismVisual() {
 const SUBTROPICAL_DEMO_DURATION = 12;
 const SINGLE_DEMO_DURATION = 10;
 function resetSingleDemo() {
-  STATE.singleDemo = { elapsed: 0, running: false, complete: false };
+  STATE.singleDemo = { elapsed: 0, running: false, complete: false, node:0 };
   updateSingleDemoUI();
 }
 function playSingleDemo() {
@@ -55993,6 +56103,10 @@ function playSingleDemo() {
 }
 function getSingleDemoPhase() {
   const e = STATE.singleDemo.elapsed;
+  if (STATE.demoMode==='step') {
+    const index=STATE.singleDemo.node||0;
+    return {index,text:SINGLE_FLOW_STAGES[index].text};
+  }
   const index = Math.max(0,SINGLE_FLOW_STAGES.findIndex(s => e < s.until));
   const stageIndex = e >= SINGLE_DEMO_DURATION ? 3 : index;
   return {index:stageIndex,text:SINGLE_FLOW_STAGES[stageIndex].text};
@@ -56005,6 +56119,7 @@ function updateSingleDemoUI() {
   if (status) status.textContent = STATE.singleDemo.complete ? '完成：受热上升 → 高空输送 → 冷却下沉 → 近地面回流' : phase.text;
   if (progress) progress.value = STATE.singleDemo.elapsed;
   if (button) button.textContent = STATE.singleDemo.running && STATE.playing ? '暂停' : STATE.singleDemo.complete ? '再次播放' : STATE.singleDemo.elapsed > 0 ? '继续过程' : '播放过程';
+  updateDemoNodeControls('single');
   verticalLabels.forEach(({obj, data}) => {
     if (!obj.element) return;
     if (data.lat === 0) obj.element.textContent = phase.index === 0 ? '赤道受热上升 ↑' : '赤道上升 ↑';
@@ -56036,14 +56151,13 @@ function updateSingleDemoUI() {
 function updateSingleDemo(dt) {
   const demo = STATE.singleDemo;
   if (demo.running && STATE.playing) {
-    demo.elapsed = Math.min(SINGLE_DEMO_DURATION, demo.elapsed + Math.min(dt, .1) * STATE.speed);
-    if (demo.elapsed >= SINGLE_DEMO_DURATION) { demo.complete = true; demo.running = false; }
+    advanceDemoNodeTime('single',dt);
   }
   updateSingleDemoUI();
 }
 function getMechanismDemoDuration() { return STATE.mechanismStage === 1 ? SUBTROPICAL_DEMO_DURATION : 10; }
 function resetMechanismDemo() {
-  STATE.mechanismDemo = { elapsed: 0, running: false, complete: false };
+  STATE.mechanismDemo = { elapsed: 0, running: false, complete: false, node:0 };
 }
 function playMechanismDemo() {
   if (STATE.mechanismDemo.complete) resetMechanismDemo();
@@ -56051,7 +56165,8 @@ function playMechanismDemo() {
   updateMechanismDemoUI();
 }
 function getMechanismDemoPhase() {
-  const {elapsed,complete} = STATE.mechanismDemo;
+  const {complete} = STATE.mechanismDemo;
+  const elapsed=demoPhaseElapsed('mechanism');
   if (STATE.mechanismStage === 0) {
     if (complete) return {index:3,text:'完成：两半球均获得东向分量 → 偏西风；可重播对照'};
     if (elapsed === 0) return {index:0,text:'等待预测：灰色虚线为沿经线的无偏转参考'};
@@ -56083,6 +56198,7 @@ function updateMechanismDemoUI() {
   const text = phase.text + (demo.elapsed > 0 && !demo.complete && (!demo.running || !STATE.playing) ? '（已暂停）' : '');
   if (status.textContent !== text) status.textContent = text;
   document.getElementById('mechanism-demo-progress').value = demo.elapsed;
+  updateDemoNodeControls('mechanism');
 }
 function updateCoriolisDemo() {
   const elapsed = STATE.mechanismDemo.elapsed;
@@ -56213,14 +56329,20 @@ function getSunDiagnostics() {
     },
     radius: CONFIG.sun.radius,
     arrowCount: sunArrows.length,
-    arrowTargets: sunArrows.map(({ lat, head }) => {
+    arrowTargets: sunArrows.map(({ lat, head, shaft, line }) => {
       const tip = new THREE.Vector3(0,0,head.geometry.boundingBox.max.z);
       head.localToWorld(tip);
       const projectedTip = tip.clone().project(camera);
       const target = new THREE.Vector3().fromArray(head.userData.rimTarget);
       const projectedTarget = target.clone().project(camera);
       const projectedRim = new THREE.Vector3().fromArray(head.userData.atmosphereRimTarget).project(camera);
+      const radiation = shaft.userData.radiation;
+      const shaftPoints=shaft.geometry.attributes.position;
+      const shaftStart = shaft.localToWorld(new THREE.Vector3().fromBufferAttribute(shaftPoints,0).add(new THREE.Vector3().fromBufferAttribute(shaftPoints,1)).multiplyScalar(.5)).project(camera);
+      const shaftEnd = shaft.localToWorld(new THREE.Vector3().fromBufferAttribute(shaftPoints,2).add(new THREE.Vector3().fromBufferAttribute(shaftPoints,3)).multiplyScalar(.5)).project(camera);
       return { lat, radius: CONFIG.earth.atmosphereRadius + SUN_ARROW_RIM_MARGIN, distance: head.userData.targetDistance,
+        radiation: radiation ? {enabled:radiation.enabled.value===1,phase:radiation.phase.value,count:radiation.count.value,solidLineVisible:line.visible,
+          screenStart:[(shaftStart.x+1)*innerWidth/2,(1-shaftStart.y)*innerHeight/2],screenEnd:[(shaftEnd.x+1)*innerWidth/2,(1-shaftEnd.y)*innerHeight/2]} : null,
         tip: tip.toArray(), target: target.toArray(),
         clearancePixels: Math.hypot((projectedTip.x-projectedRim.x)*innerWidth/2,(projectedTip.y-projectedRim.y)*innerHeight/2),
         screenGap: Math.hypot((projectedTip.x-projectedTarget.x)*innerWidth/2,(projectedTip.y-projectedTarget.y)*innerHeight/2) };
@@ -56996,6 +57118,7 @@ function resetToInitial() {
   STATE.speed = 1;STATE.coriolisDeflection = CONFIG.coriolis.defaultDeflection;
   STATE.density = 'medium';STATE.lowPerf = false;STATE.earthRotationSpeed = .0004;
   STATE.mechanismStage = 0;STATE.mechanismRevealed = [false,false,false,false];
+  STATE.demoMode='step';
   resetMechanismDemo();STATE.playing = true;
   document.getElementById('speed-slider').value = 10;
   document.getElementById('speed-val').textContent = '1.0x';
@@ -57323,6 +57446,8 @@ function animate() {
   updateSunScreenPosition();
   updateSunArrowTargets();
 
+  updateSunRadiation(dt);
+
   // 标签背面剔除：标签与相机的连线被地球球体挡住时隐藏
   if (latLabels.length > 0 || pressureLabels.length > 0 || windLabels.length > 0 || verticalLabels.length > 0 || coriolisLabels.length > 0) {
     // 标签朝向跟随相机：气压带(右)、风带(中)、纬度(左)
@@ -57384,9 +57509,7 @@ function animate() {
   if (STATE.step === 1 && STATE.mechanismStage <= 2) {
     const demo = STATE.mechanismDemo;
     if (demo.running && STATE.playing) {
-      const duration = getMechanismDemoDuration();
-      demo.elapsed = Math.min(duration,demo.elapsed + Math.min(dt,.1)*STATE.speed);
-      if (demo.elapsed >= duration) { demo.complete = true; demo.running = false; }
+      advanceDemoNodeTime('mechanism',dt);
     }
     if (STATE.mechanismStage === 0) updateCoriolisDemo();
     else if (STATE.mechanismStage === 1) updateSubtropicalDemo();
@@ -57527,7 +57650,7 @@ const LESSON_QUIZ = [
 ];
 const LESSON_PRESSURE_STEPS = [
   {title:'气压梯度力推动',start:0,end:2.4},
-  {title:'地转偏向力偏转',start:2.4,end:5.2},
+  {title:'高空风逐渐平行等压线',start:2.4,end:5.2},
   {title:'近地面摩擦影响',start:5.2,end:8}
 ];
 const LESSON_STATE = {open:false,tab:'pressure',pressureStep:0,elapsed:0,running:false,complete:false,wind:'tradeN',season:'equinox',seasonMode:'target',seasonFrom:0,seasonValue:0,surface:'ideal',monsoonSeason:'winter',region:'east',sectionH:'both',sectionLat:30,climate:'equator',climateSeason:'summer',answers:{},graded:false,essay:'',explanation:false};
@@ -57587,7 +57710,7 @@ function initLesson(){
   };
   document.getElementById('lesson-tabs').innerHTML=LESSON_TOPICS.map(t=>`<button class="btn btn-sm" data-lesson-tab="${t.id}" aria-pressed="false">${t.title}</button>`).join('');
   document.querySelectorAll('[data-lesson-tab]').forEach(b=>b.onclick=()=>setLessonTab(b.dataset.lessonTab));
-  ['prev','next'].forEach((name,i)=>document.getElementById('lesson-'+name).onclick=()=>{const index=LESSON_TOPICS.findIndex(t=>t.id===LESSON_STATE.tab)+(i?1:-1);if(index>=0&&index<LESSON_TOPICS.length)setLessonTab(LESSON_TOPICS[index].id);});
+  ['prev','next'].forEach((name,i)=>document.getElementById('lesson-'+name).onclick=()=>{const topics=teachingRouteTopics(),index=topics.findIndex(t=>t.id===LESSON_STATE.tab)+(i?1:-1);if(index>=0&&index<topics.length)setLessonTab(topics[index].id);});
   document.getElementById('lesson-panel').addEventListener('keydown',e=>{
     if(e.key==='Escape'){e.preventDefault();closeLesson();return;}
     if(e.key==='Tab'){
@@ -57598,6 +57721,8 @@ function initLesson(){
     }
   });
   window.__lessonDebug={state:LESSON_STATE,diagnostics:getLessonDiagnostics,topics:LESSON_TOPICS,winds:LESSON_WINDS};
+  initTeachingRoutes();
+  window.__teachingDebug={state:TEACHING,force:pressureForceData,site:teachingSiteInfo,nodes:demoNodeStages,section:sectionAssessment,download:teachingEvidence};
 }
 function renderLesson(){
   const t=LESSON_TOPICS.find(t=>t.id===LESSON_STATE.tab),index=LESSON_TOPICS.indexOf(t);
@@ -57605,13 +57730,15 @@ function renderLesson(){
   lessonText('lesson-heading',t.title+' · '+t.goal);
   document.querySelectorAll('[data-lesson-tab]').forEach(b=>{b.classList.toggle('active',b.dataset.lessonTab===t.id);b.setAttribute('aria-pressed',String(b.dataset.lessonTab===t.id));});
   lessonText('lesson-location',`主题 ${index+1} / ${LESSON_TOPICS.length} · 可随时返回三维`);
-  document.getElementById('lesson-prev').disabled=index===0;document.getElementById('lesson-next').disabled=index===LESSON_TOPICS.length-1;
+  const routeTopics=teachingRouteTopics(),routeIndex=routeTopics.indexOf(t);
+  document.getElementById('lesson-prev').disabled=routeIndex===0;document.getElementById('lesson-next').disabled=routeIndex===routeTopics.length-1;
   const body=document.getElementById('lesson-body');body.scrollTop=0;
   document.getElementById('lesson-playbar').replaceChildren();
-  if(t.id==='quiz'){renderLessonQuiz();return;}
+  updateTeachingRouteUI();
+  if(t.id==='quiz'){renderLessonQuiz();mountTeachingQuiz();return;}
   let controls='',note='',intro='';
   if(t.id==='pressure'){
-    intro='按步骤讲解：① 气压梯度力推动 → ② 地转偏向力偏转 → ③ 近地面摩擦影响。直接点击“下一步”开始，每步播完自动停下，再点击继续，可回退或重播本步。';
+    intro='① 气压梯度力推动 → ② 忽略摩擦，高空风逐渐平行等压线 → ③ 加入摩擦，近地面风斜穿等压线。点击“下一步”开始，每步完成停住，可回退或重播。';
     note='受力图为方向关系示意。高空风可近似沿等压线，近地面摩擦使风斜穿等压线流向低压；图中力箭头不是按真实数值绘制。';
   }else if(t.id==='wind'){
     controls=`<label>选择风带 <select id="lesson-wind">${LESSON_WINDS.map(w=>`<option value="${w.id}" ${w.id===LESSON_STATE.wind?'selected':''}>${w.name}</option>`).join('')}</select></label>`;
@@ -57636,6 +57763,7 @@ function renderLesson(){
   }
   const animated=!['section'].includes(t.id);
   body.innerHTML=`<p class="lesson-intro">${intro}</p><div class="lesson-controls">${controls}</div><div class="lesson-stage"><div class="lesson-visual"><canvas id="lesson-canvas" width="1920" height="720" role="img" aria-label="${t.title}教学示意图"></canvas></div><aside><div class="lesson-question"><strong>先预测：</strong>${t.question}</div><button class="btn btn-sm" id="lesson-reveal">显示解释</button><p id="lesson-explanation" class="lesson-explanation" hidden>${t.answer}</p></aside></div><div id="lesson-phase" class="lesson-phase" aria-live="polite"></div><p class="lesson-note">${note}</p><p class="lesson-note">教材对应：旧版人教必修1第二章第二节；新版人教选择性必修1第三章第二节。气候应用可用于衔接下一节，具体依学校教材安排。</p>`;
+  mountTeachingTopic(t.id);
   if(animated)document.getElementById('lesson-playbar').innerHTML='<button class="btn btn-sm" id="lesson-play">播放过程</button><button class="btn btn-sm" id="lesson-replay">从头重播</button><progress id="lesson-progress" max="1" value="0" aria-label="课堂演示进度"></progress>';
   if(t.id==='pressure'){
     document.getElementById('lesson-playbar').innerHTML='<span id="lesson-step-status" class="lesson-step-status" aria-live="polite"></span><button class="btn btn-sm" id="lesson-step-prev">上一步</button><button class="btn btn-sm" id="lesson-play">播放本步</button><button class="btn btn-sm" id="lesson-step-replay">重播本步</button><button class="btn btn-sm" id="lesson-step-next">下一步</button><button class="btn btn-sm" id="lesson-replay">从头重播</button><progress id="lesson-progress" max="1" value="0" aria-label="当前步骤进度"></progress>';
@@ -57726,6 +57854,7 @@ function updateLessonView(){
   if(LESSON_STATE.tab==='season')document.querySelectorAll('[data-season]').forEach(b=>{const active=b.dataset.season===LESSON_STATE.season;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));});
   const progress=document.getElementById('lesson-progress');if(progress)progress.value=LESSON_STATE.tab==='pressure'?lessonPressureProgress():lessonProgress();
   canvas.setAttribute('aria-label',LESSON_TOPICS.find(t=>t.id===LESSON_STATE.tab).title+'：'+document.getElementById('lesson-phase').textContent);
+  updateTeachingTopic();
 }
 function lessonLabel(ctx,text,x,y,color='#d7e7f7',size=16,align='center'){
   if(LESSON_STATE.open)size=Math.max(size,18);
@@ -57744,23 +57873,7 @@ function lessonPolyline(ctx,points,p,color='#ffaa55',width=3){
   const previous=points[Math.max(0,last-1)];const dx=end[0]-previous[0],dy=end[1]-previous[1],length=Math.hypot(dx,dy);if(length>1)lessonArrow(ctx,end[0]-dx/length*16,end[1]-dy/length*16,...end,color,width);
 }
 function drawLessonPressure(ctx){
-  const p=lessonPressureProgress(),phase=LESSON_STATE.pressureStep===0&&p===0?0:LESSON_STATE.pressureStep+1;
-  for(let i=0;i<5;i++){
-    const y=65+i*55;ctx.strokeStyle='#385779';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(90,y);ctx.lineTo(555,y);ctx.stroke();lessonLabel(ctx,String(1000+i*4)+' hPa',64,y+5,'#a9bdd3',14);
-  }
-  lessonLabel(ctx,'低压侧',320,38,'#ff9292');lessonLabel(ctx,'高压侧',320,330,'#83bbff');
-  lessonLabel(ctx,'北半球 · 俯视受力示意',725,40,'#d7e7f7',18);
-  const origin=[320,265];
-  lessonArrow(ctx,...origin,320,120,'#b6c5d4',2);lessonLabel(ctx,'水平气压梯度力',220,105,'#b6c5d4',15);
-  if(phase===1){lessonArrow(ctx,...origin,320,265-120*p);}
-  if(phase>=2){const turn=phase===2?smoothstep(p):1;lessonArrow(ctx,...origin,lerp(320,440,turn),lerp(145,200,turn),'#ffaa55');lessonLabel(ctx,phase===2?'风向逐渐偏转':'近地面风：斜穿等压线',433,183,'#ffaa55',15);lessonArrow(ctx,...origin,320+45*turn,265+65*turn,'#66eeff');}
-  if(phase===3){lessonArrow(ctx,...origin,320-65*p,265+35*p,'#e39adf');lessonLabel(ctx,'摩擦力：与风向相反',230,321,'#e39adf',14);}
-  const forceY=110;
-  lessonArrow(ctx,665,forceY,665,forceY-40,'#b6c5d4');lessonLabel(ctx,'推动：由高压指向低压',778,forceY,'#b6c5d4',16);
-  if(phase>=2){lessonArrow(ctx,645,172,685,172,'#66eeff');lessonLabel(ctx,'偏转：北右、南左',788,178,'#66eeff',16);}
-  if(phase===3){lessonArrow(ctx,685,232,645,232,'#e39adf');lessonLabel(ctx,'摩擦：减速并影响风向',798,238,'#e39adf',16);lessonArrow(ctx,635,292,875,292,'#ffaa55');lessonLabel(ctx,'高空风可近似平行等压线',754,324,'#ffaa55',15);}
-  const status=phase===0?' · 点击“下一步”或“播放本步”开始':LESSON_STATE.running?' · 演示中':p===1?(phase===3?' · 全部完成，可回退或重播':' · 本步完成，点击“下一步”继续'):' · 已暂停，点击“下一步”或“继续本步”继续';
-  lessonText('lesson-phase',['等待预测：气压差推动，地转偏向力改变方向','① 气压梯度力推动空气由高压向低压开始运动','② 加入地转偏向力，方向发生偏转','③ 近地面摩擦作用下，风斜穿等压线流向低压'][phase]+status);
+  drawTeachingPressure(ctx);
 }
 function drawLessonWind(ctx){
   const w=lessonWind(),p=lessonProgress(),phase=p===0?0:p<.3?1:p<.75?2:3;
@@ -57800,30 +57913,52 @@ function drawLessonSeason(ctx){
     lessonText('lesson-phase',LESSON_STATE.complete?'完成一轮季节循环：春 → 夏 → 秋 → 冬 → 春；停留本主题':phases[segment]+(!LESSON_STATE.running?'（已暂停）':''));
   }else lessonText('lesson-phase',LESSON_STATE.season==='equinox'?'春秋分附近：直射点在赤道附近，点击“播放季节循环”观察全年移动':LESSON_STATE.season==='summer'?'6月：总体偏北；北半球向高纬、南半球向低纬':'12月：总体偏南；北半球向低纬、南半球向高纬');
 }
+// 只突出当前季风的源区与目标区；完整气压中心分布另见1月/7月对照图。
+// 冬季海上L表示相对大陆较低的近地面气压，不命名为固定的海洋低压中心。
+function lessonMonsoonPressure(){
+  const summer=LESSON_STATE.monsoonSeason==='summer',south=LESSON_STATE.region==='south';
+  if(south&&summer)return {high:{x:430,y:326,rx:50,ry:24,name:'南半球副热带高压',labelX:554,labelY:354},low:{x:305,y:182,rx:56,ry:28,name:'印度低压（热低压）',labelX:305,labelY:139},paths:[[[394,309],[345,300],[310,280]],[[310,280],[280,237],[305,210]]],flow:'高压 → 低压',comparison:['南半球副热带高压','→ 印度低压'],cause:'北移与海陆差异共同作用'};
+  if(south)return {high:{x:265,y:135,rx:58,ry:30,name:'大陆冷高压',labelX:265,labelY:91},low:{x:180,y:273,rx:58,ry:30,name:'印度洋近赤道较低压区',labelX:200,labelY:322},paths:[[[246,164],[230,215],[201,249]]],flow:'大陆高压 → 海洋较低压',comparison:['大陆冷高压','＞ 海洋较低气压'],cause:'陆地降温较快'};
+  if(summer)return {high:{x:535,y:238,rx:60,ry:32,name:'太平洋副热带高压',labelX:535,labelY:290},low:{x:340,y:155,rx:58,ry:30,name:'大陆热低压',labelX:340,labelY:111},paths:[[[494,221],[440,205],[378,176]]],flow:'海洋高压 → 大陆低压',comparison:['海洋副热带高压','＞ 大陆热低压'],cause:'陆地升温较快'};
+  return {high:{x:265,y:95,rx:58,ry:30,name:'亚洲冬季高压',labelX:265,labelY:51},low:{x:465,y:238,rx:60,ry:32,name:'海洋较低压区（相对大陆）',labelX:465,labelY:290},paths:[[[297,120],[357,165],[429,213]]],flow:'大陆高压 → 海洋较低压',comparison:['大陆冷高压','＞ 海洋较低气压'],cause:'陆地降温较快'};
+}
+function drawMonsoonPressureRegion(ctx,area,high){
+  const color=high?'#ffe2a0':'#ff9292';
+  ctx.save();ctx.fillStyle=high?'rgba(255,211,92,.17)':'rgba(255,121,121,.17)';ctx.strokeStyle=color;ctx.lineWidth=2;
+  ctx.beginPath();ctx.ellipse(area.x,area.y,area.rx,area.ry,0,0,Math.PI*2);ctx.fill();ctx.stroke();
+  lessonLabel(ctx,high?'H 高压':'L 低压',area.x,area.y+6,color,21);
+  lessonLabel(ctx,area.name,area.labelX,area.labelY,color,18);ctx.restore();
+}
 function drawLessonMonsoon(ctx){
+  if(TEACHING.monsoonView==='compare'){drawTeachingPressureMaps(ctx);return;}
   const p=lessonProgress(),real=LESSON_STATE.surface==='real',summer=LESSON_STATE.monsoonSeason==='summer',south=LESSON_STATE.region==='south';
-  ctx.fillStyle='#112b42';ctx.fillRect(70,30,600,280);
+  ctx.fillStyle='#112b42';ctx.fillRect(70,30,600,real&&south&&summer?320:280);
   for(const [lat,yy] of [[60,60],[30,170],[0,280]]){ctx.strokeStyle='#4c647e';ctx.lineWidth=1;ctx.setLineDash([5,5]);ctx.beginPath();ctx.moveTo(70,yy);ctx.lineTo(670,yy);ctx.stroke();ctx.setLineDash([]);lessonLabel(ctx,lat===0?'赤道':lat+'°N',41,yy+5,'#a9bdd3',14);}
-  if(real){ctx.fillStyle='#3f5b49';ctx.beginPath();[[85,55],[350,45],[435,105],[350,160],[322,205],[267,257],[239,190],[120,185]].forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.closePath();ctx.fill();lessonLabel(ctx,'亚欧大陆',220,92,'#d7e7f7',17);lessonLabel(ctx,'太平洋',535,120,'#93c9f0',17);lessonLabel(ctx,'印度洋',350,303,'#93c9f0',15);}
+  if(real){ctx.fillStyle='#3f5b49';ctx.beginPath();[[85,55],[350,45],[435,105],[350,160],[322,205],[267,257],[239,190],[120,185]].forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.closePath();ctx.fill();lessonLabel(ctx,'亚欧大陆',159,182,'#d7e7f7',17);lessonLabel(ctx,'太平洋',555,120,'#93c9f0',17);lessonLabel(ctx,'印度洋',390,264,'#93c9f0',15);}
   else{for(const [yy,color,text] of [[60,'#74c0ee','副极地低压带'],[170,'#ffd35c','副热带高压带'],[280,'#ff7979','赤道低压带']]){ctx.globalAlpha=.3;ctx.fillStyle=color;ctx.fillRect(70,yy-12,600,24);ctx.globalAlpha=1;lessonLabel(ctx,text,365,yy+6,color,17);}}
   const phase=p===0?0:p<.35?1:2;
+  const pressure=lessonMonsoonPressure();
   if(real){
-    if(summer){lessonDot(ctx,270,170,'#ff7979');lessonLabel(ctx,'亚洲夏季低压',235,149,'#ff9292',16);lessonDot(ctx,535,170,'#ffd35c');lessonLabel(ctx,'太平洋副热带高压',550,200,'#ffe2a0',15);lessonDot(ctx,500,65,'#ff7979');lessonLabel(ctx,'海洋低压',550,55,'#ff9292',14);}
-    else{lessonDot(ctx,265,90,'#ffd35c');lessonLabel(ctx,'亚洲冬季高压',235,124,'#ffe2a0',16);lessonDot(ctx,535,65,'#ff7979');lessonLabel(ctx,'阿留申低压',552,48,'#ff9292',14);lessonDot(ctx,535,205,'#ffd35c');lessonLabel(ctx,'海洋副热带高压',535,234,'#ffe2a0',14);}
+    if(TEACHING.pressureReference){ctx.save();ctx.setLineDash([8,6]);ctx.strokeStyle=summer?'#ffd35c':'#74c0ee';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(75,summer?170:60);ctx.lineTo(665,summer?170:60);ctx.stroke();ctx.restore();}
+    drawMonsoonPressureRegion(ctx,pressure.high,true);drawMonsoonPressureRegion(ctx,pressure.low,false);
     if(p>0){
-      if(!south){const pts=summer?[[510,250],[435,217],[370,160]]:[[280,95],[352,150],[440,215]];lessonPolyline(ctx,pts,clamp(p/.8,0,1),summer?'#ffaa55':'#88caff');}
-      else if(!summer){lessonPolyline(ctx,[[270,160],[239,215],[180,268]],clamp(p/.8,0,1),'#88caff');}
-      else{lessonPolyline(ctx,[[415,333],[345,305],[310,280]],clamp(p/.4,0,1),'#88caff');if(p>.4)lessonPolyline(ctx,[[310,280],[280,240],[305,195]],clamp((p-.4)/.4,0,1),'#ffaa55');lessonLabel(ctx,'跨赤道后北半球右偏',467,263,'#ffaa55',14);}
+      if(south&&summer){lessonPolyline(ctx,pressure.paths[0],clamp(p/.4,0,1),'#88caff');if(p>.4)lessonPolyline(ctx,pressure.paths[1],clamp((p-.4)/.4,0,1),'#ffaa55');lessonLabel(ctx,'跨赤道后右偏',500,195,'#ffaa55',18);}
+      else lessonPolyline(ctx,pressure.paths[0],clamp(p/.8,0,1),summer?'#ffaa55':'#88caff');
     }
   }
   lessonLabel(ctx,real?(south?'南亚季风':'东亚季风'):'均匀地表模型',800,60,'#d7e7f7',19);
-  if(real){lessonLabel(ctx,summer?'北半球夏季':'北半球冬季',800,105,'#ffe2a0',17);lessonLabel(ctx,summer?'陆地升温较快':'陆地降温较快',800,155,'#d7e7f7',16);lessonLabel(ctx,summer?'大陆热低压':'大陆冷高压',800,190,summer?'#ff9292':'#83bbff',17);
-    if(phase>=1){lessonLabel(ctx,south?(summer?'东南信风跨赤道':'东北季风'):(summer?'海洋 → 大陆':'大陆 → 海洋'),800,245,'#ffaa55',18);}
-    if(phase===2){lessonLabel(ctx,south?(summer?'转为西南季风':'陆地吹向海洋'):(summer?'偏南风，通常较湿润':'偏北风，通常较干冷'),800,292,'#ffaa55',16);}
+  if(real){lessonLabel(ctx,summer?'北半球夏季':'北半球冬季',800,101,'#ffe2a0',17);lessonLabel(ctx,pressure.cause,800,139,'#d7e7f7',16);
+    lessonLabel(ctx,pressure.comparison[0],800,175,'#ffe2a0',18);lessonLabel(ctx,pressure.comparison[1],800,206,'#ff9292',18);
+    lessonLabel(ctx,'近地面：由高压流向低压',800,245,'#d7e7f7',18);
+    if(phase>=1){lessonLabel(ctx,south?(summer?'东南信风跨赤道':'东北季风'):(summer?'海洋 → 大陆':'大陆 → 海洋'),800,285,'#ffaa55',18);}
+    if(phase===2){lessonLabel(ctx,south?(summer?'转为西南季风':'陆地吹向海洋'):(summer?'偏南风，通常较湿润':'偏北风，通常较干冷'),800,321,'#ffaa55',16);}
   }else{lessonLabel(ctx,'连续带状分布',800,140,'#a9bdd3',17);lessonLabel(ctx,'请点击“加入海陆差异”',800,190,'#ffe2a0',16);}
-  lessonText('lesson-phase',!real?'理想模型：点击“加入海陆差异”，观察真实海陆的气压中心与季风':p===0?'先预测：比较大陆、海洋气压，判断季风初始流向':south&&summer?'南亚夏季：北移与海陆差异共同作用；东南信风跨赤道后右偏为西南气流':summer?'夏季：大陆热低压与海洋气压中心，气流由海洋吹向大陆':'冬季：大陆冷高压与海洋气压中心，气流由大陆吹向海洋');
+  lessonText('lesson-phase',!real?'理想模型：点击“加入海陆差异”，观察真实海陆的气压中心与季风':p===0?`先预测：${pressure.flow}；比较H与L，判断季风初始流向`:south&&summer?'南亚夏季：南半球副热带高压 → 印度低压；北移与海陆差异共同作用，东南信风跨赤道后右偏为西南气流':summer?'夏季：海洋高压 → 大陆热低压，气流由海洋吹向大陆':'冬季：大陆冷高压 → 海洋较低压，气流由大陆吹向海洋');
 }
 function drawLessonSection(ctx){
+  drawTeachingSection(ctx);
+}
+function drawLegacyLessonSection(ctx){
   const x=lat=>480+lat*4.5,ground=260,upper=85,focus=LESSON_STATE.sectionLat;
   ctx.fillStyle='#233648';ctx.fillRect(55,ground+4,850,45);lessonLabel(ctx,'近地面',920,ground+5,'#b6c5d4',15);lessonLabel(ctx,'高空',920,upper+5,'#b6c5d4',15);
   const showH=h=>LESSON_STATE.sectionH==='both'||(LESSON_STATE.sectionH==='north'?h===1:h===-1);
@@ -57846,9 +57981,9 @@ function drawLessonSection(ctx){
   lessonText('lesson-phase',messages[focus]);
 }
 function drawLessonClimate(ctx){
-  const med=LESSON_STATE.climate==='med',winter=LESSON_STATE.climateSeason==='winter',rising=LESSON_STATE.climate==='equator',wet=rising||med&&winter,p=lessonProgress();
+  const med=LESSON_STATE.climate==='med',winter=TEACHING.siteHemisphere==='south'?LESSON_STATE.climateSeason==='summer':LESSON_STATE.climateSeason==='winter',rising=LESSON_STATE.climate==='equator',wet=rising||med&&winter,p=lessonProgress();
   const belt=rising?'赤道低气压带':med&&winter?'盛行西风带':'副热带高气压带';
-  lessonLabel(ctx,med?'地中海沿岸 · 北半球大陆西岸':rising?'赤道地区':'副热带高压控制的情境',470,36,'#d7e7f7',21);
+  lessonLabel(ctx,med?`35°附近大陆西岸 · ${TEACHING.siteHemisphere==='south'?'南':'北'}半球`:rising?'赤道地区':'副热带高压控制的情境',470,36,'#d7e7f7',21);
   ['控制带','空气运动','降水条件'].forEach((s,i)=>{ctx.fillStyle='#1d3047';ctx.fillRect(60+i*310,90,270,170);lessonLabel(ctx,s,195+i*310,125,'#8ecbff',16);});
   lessonLabel(ctx,belt,195,180,'#ffe2a0',19);
   if(p>.25){lessonArrow(ctx,340,174,365,174,'#a9bdd3');lessonLabel(ctx,med&&winter?'海洋西风输送水汽':rising?'上升、膨胀冷却':'下沉、压缩增温',505,180,'#ffaa55',18);if(!med||!winter)lessonArrow(ctx,505,rising?236:202,505,rising?204:234,'#ffaa55');}
@@ -57913,6 +58048,292 @@ function updatePolarDemo(){
   }
   updateMechanismDemoUI();
 }
+
+/* 教师讲课、教材读图与无提示作图。随构建内联，所有资料为离线概念示意。 */
+const TEACHING = {route:'all',sectionMode:'full',tool:'arrow',sectionStrokes:[],windStrokes:[],sectionChecked:false,monsoonView:'monsoon',pressureReference:false,siteHemisphere:'north',quizLevel:'all'};
+STATE.demoMode='step';
+LESSON_QUIZ.push(
+  {id:'upperWind',q:'忽略摩擦、达到理想稳定状态时，高空风与等压线怎样相交？',options:['近似平行','垂直相交','始终斜穿'],correct:0,reason:'气压梯度力与地转偏向力平衡时，高空风可近似平行等压线；近地面摩擦使风斜穿等压线。',review:'pressure'},
+  {id:'seaCut',q:'北半球1月，大陆强高压使哪一气压带呈间断分布？',options:['副极地低气压带','副热带高气压带','赤道低气压带'],correct:0,reason:'冬季大陆冷高压使副极地低气压带呈间断分布；夏季大陆热低压使副热带高气压带呈间断分布。',review:'monsoon'},
+  {id:'southJuly',q:'南半球35°附近大陆西岸，7月通常处于哪种控制情境？',options:['当地夏季，副热带高压','当地冬季，西风带','当地冬季，赤道低压'],correct:1,reason:'7月是南半球冬季，西风带向较低纬度移动，可带来海洋水汽；季节和月份需结合半球判断。',review:'climate'}
+);
+
+function modelAssumptionsHTML(context){
+  const messages={single:'不考虑自转 · 地表均一 · 以太阳直射赤道为基准',three:'加入自转 · 保留均一地表与直射赤道基准',pressure:'同一水平面比较气压 · 北半球方向示意 · 区分瞬时运动与稳定状态',wind:'近地面平均风向 · 北右南左相对于前进方向',season:'加入直射点季节移动 · 均一地表参考 · 带宽和位移为示意',monsoon:'近地面同一高度比较气压 · 季风为季节变化 · 地图位置、纬度和区域范围不按比例',section:'经圈平均剖面 · 0°/30°/60°/90°为近似位置 · 高度不按比例',climate:'固定地点解释控制带 · 结合水汽与海陆位置 · 气候资料为示意'};
+  return `<div class="model-assumptions"><strong>本图条件：</strong>${messages[context]||messages.three}</div>`;
+}
+function teachingRouteTopics(){const ids=TEACHING.route==='one'?['pressure','wind','section','quiz']:TEACHING.route==='two'?['season','monsoon','quiz','climate']:LESSON_TOPICS.map(t=>t.id);return LESSON_TOPICS.filter(t=>ids.includes(t.id));}
+function initTeachingRoutes(){
+  document.getElementById('lesson-tabs').insertAdjacentHTML('beforebegin','<div id="teaching-routes" class="lesson-controls"><span>教学路线</span><button class="btn btn-sm" data-route="all">全部主题</button><button class="btn btn-sm" data-route="one">第1课时：形成与分布</button><button class="btn btn-sm" data-route="two">第2课时：移动与季风</button></div>');
+  document.querySelectorAll('[data-route]').forEach(b=>b.onclick=()=>{TEACHING.route=b.dataset.route;setLessonTab(teachingRouteTopics()[0].id);});
+  updateTeachingRouteUI();
+}
+function updateTeachingRouteUI(){
+  const ids=teachingRouteTopics().map(t=>t.id);
+  document.querySelectorAll('[data-lesson-tab]').forEach(b=>b.hidden=!ids.includes(b.dataset.lessonTab));
+  document.querySelectorAll('[data-route]').forEach(b=>{b.classList.toggle('active',b.dataset.route===TEACHING.route);b.setAttribute('aria-pressed',String(b.dataset.route===TEACHING.route));});
+}
+
+function pressureForceData(step=LESSON_STATE.pressureStep,p=lessonPressureProgress()){
+  const angle=step===0?-Math.PI/2:step===1?lerp(-Math.PI/2,0,smoothstep(p)):lerp(0,-Math.PI/6,smoothstep(p));
+  const unit=[Math.cos(angle),Math.sin(angle)],speed=step===0?110*p:step===1?110:lerp(110,78,smoothstep(p));
+  const corSize=step===0?0:step===1?90*smoothstep(p):90*Math.cos(Math.abs(angle));
+  const frictionSize=step===2?90*Math.sin(Math.abs(angle)):0;
+  return {angle,velocity:unit.map(v=>v*speed),gradient:[0,-90],coriolis:[-unit[1]*corSize,unit[0]*corSize],friction:unit.map(v=>-v*frictionSize),stable:step>0&&p===1};
+}
+function drawPressurePanel(ctx,x,title,data,showWind=true){
+  lessonLabel(ctx,title,x+230,28,'#d7e7f7',22);
+  for(let i=0;i<5;i++){const y=80+i*48;ctx.strokeStyle='#3b5672';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x+100,y);ctx.lineTo(x+435,y);ctx.stroke();lessonLabel(ctx,`${1000+i*4}`,x+53,y+5,'#b4c9dd',18);}
+  lessonLabel(ctx,'hPa',x+53,55,'#b4c9dd',18);lessonLabel(ctx,'低压',x+390,55,'#ff9292',18);lessonLabel(ctx,'高压',x+390,301,'#83bbff',18);
+  const o=[x+255,202];
+  for(const [key,color] of [['gradient','#c8d7e6'],['coriolis','#66eeff'],['friction','#e39adf'],['velocity','#ffaa55']]){
+    if(key==='velocity'&&!showWind)continue;
+    const v=data[key];lessonArrow(ctx,...o,o[0]+v[0],o[1]+v[1],color,key==='velocity'?4:3);
+  }
+}
+function drawTeachingPressure(ctx){
+  const step=LESSON_STATE.pressureStep,p=lessonPressureProgress(),data=pressureForceData(step,p);
+  if(step===2){drawPressurePanel(ctx,0,'高空：忽略摩擦',pressureForceData(1,1));drawPressurePanel(ctx,480,'近地面：加入摩擦',data);}
+  else{
+    drawPressurePanel(ctx,0,step===0?'① 由高压向低压开始运动':'② 高空风逐渐偏转',data,p>0||step>0);
+    lessonLabel(ctx,'北半球 · 同一水平面',725,40,'#d7e7f7',22);
+    const entries=[['气压梯度力：垂直等压线，向低压','#c8d7e6'],['地转偏向力：垂直风向，向右侧','#66eeff'],['风向：橙色；偏向力不直接向下','#ffaa55']];
+    entries.forEach(([text,color],i)=>lessonLabel(ctx,text,725,112+i*62,color,18));
+    lessonLabel(ctx,step===0?'直接动力来自气压差':'理想稳定时：两力平衡，风平行等压线',725,305,'#ffe2a0',18);
+  }
+  lessonLabel(ctx,'白：气压梯度力    青：地转偏向力    紫：摩擦力    橙：风向',480,345,'#c8d7e6',18);
+  const texts=['① 气压梯度力推动空气由高压向低压开始运动','② 忽略摩擦：高空风逐渐趋于平行等压线','③ 摩擦减速并影响风向：近地面风斜穿等压线吹向低压'];
+  const status=LESSON_STATE.running?'演示中':p===1?(step===2?'全部完成，可回退或重播':'本步完成，点击“下一步”继续'):p>0?'已暂停，可继续本步':'点击“下一步”开始';
+  lessonText('lesson-phase',texts[step]+' · '+status);
+}
+
+function demoNodeStages(kind){
+  if(kind==='single')return SINGLE_FLOW_STAGES.map((s,i)=>({start:i?SINGLE_FLOW_STAGES[i-1].until:0,end:s.until,title:s.text}));
+  if(STATE.mechanismStage===0)return[{start:0,end:3,title:'① 高空气流先向极地运动'},{start:3,end:10,title:'② 对照经线，观察两半球向东偏转'}];
+  if(STATE.mechanismStage===2)return[{start:0,end:3,title:'① 冷暖气流向60°附近辐合'},{start:3,end:7,title:'② 暖空气沿冷空气上方抬升'},{start:7,end:10,title:'③ 归纳副极地低压与高纬环流'}];
+  return[{start:0,end:2.5,title:'① 高空气流汇入'},{start:2.5,end:4.5,title:'② 气流逐渐积聚'},{start:4.5,end:7.2,title:'③ 下沉形成近地面高压'},{start:7.2,end:10.2,title:'④ 近地面向两侧分流'},{start:10.2,end:12,title:'⑤ 归纳低纬环流'}];
+}
+function demoNodeState(kind){return kind==='single'?STATE.singleDemo:STATE.mechanismDemo;}
+function demoPhaseElapsed(kind){const d=demoNodeState(kind),s=demoNodeStages(kind)[d.node||0];return STATE.demoMode==='step'&&!d.complete?Math.min(d.elapsed,s.end-1e-6):d.elapsed;}
+function advanceDemoNodeTime(kind,dt){
+  const d=demoNodeState(kind),stages=demoNodeStages(kind),last=stages.at(-1).end;
+  const limit=STATE.demoMode==='step'?stages[d.node||0].end:last;
+  d.elapsed=Math.min(limit,d.elapsed+Math.min(dt,.1)*STATE.speed);
+  if(d.elapsed>=limit){d.running=false;d.complete=limit===last;STATE.playing=false;}
+}
+function chooseDemoNode(kind,index,play=false,previous=false){
+  const d=demoNodeState(kind),stages=demoNodeStages(kind);if(index<0||index>=stages.length)return;
+  d.node=index;d.elapsed=previous?stages[index].end:stages[index].start;d.complete=false;d.running=play;STATE.playing=play;
+  if(kind==='single')updateSingleDemoUI();else{applyMechanismVisual();updateMechanismDemoUI();}
+}
+function mountDemoNodes(kind,panel){
+  panel.insertAdjacentHTML('afterbegin',`<label class="demo-mode">播放方式 <select id="${kind}-demo-mode"><option value="step">讲课：每步停顿</option><option value="continuous">复习：连续演示</option></select></label><div id="${kind}-node-status" class="mechanism-demo-status" aria-live="polite"></div><div id="${kind}-node-question" class="demo-node-question"></div>`);
+  panel.insertAdjacentHTML('beforeend',`<div class="mechanism-actions demo-node-actions"><button class="btn" id="${kind}-node-prev">上一步</button><button class="btn" id="${kind}-node-replay">重播本步</button><button class="btn" id="${kind}-node-next">下一步</button></div>`);
+  const select=document.getElementById(kind+'-demo-mode');select.value=STATE.demoMode;
+  select.onchange=()=>{STATE.demoMode=select.value;chooseDemoNode(kind,0);};
+  document.getElementById(kind+'-node-prev').onclick=()=>chooseDemoNode(kind,(demoNodeState(kind).node||0)-1,false,true);
+  document.getElementById(kind+'-node-replay').onclick=()=>chooseDemoNode(kind,demoNodeState(kind).node||0,true);
+  document.getElementById(kind+'-node-next').onclick=()=>{
+    const d=demoNodeState(kind),s=demoNodeStages(kind)[d.node||0];if(d.running&&STATE.playing)return;
+    if(d.elapsed>=s.end)chooseDemoNode(kind,(d.node||0)+1,true);else{d.running=true;STATE.playing=true;}
+  };
+  updateDemoNodeControls(kind);
+}
+function updateDemoNodeControls(kind){
+  const el=document.getElementById(kind+'-node-status');if(!el)return;
+  const d=demoNodeState(kind),stages=demoNodeStages(kind),index=d.node||0,s=stages[index],step=STATE.demoMode==='step';
+  el.textContent=step?`步骤 ${index+1}/${stages.length} · ${s.title}${!d.running&&d.elapsed>=s.end?' · 本步完成':''}`:'连续演示：可随时暂停';
+  const questions=kind==='single'?['先预测：受热最多的赤道，空气怎样运动？','追问：同一高度上，气压差怎样推动高空回流？','先预测：极地空气冷却后，垂直运动怎样？','归纳：近地面从哪一端流向哪一端？']:STATE.mechanismStage===0?['先判断：高空气流的初始方向？','对照：两半球左右偏转为何都获得东向分量？']:STATE.mechanismStage===2?['比较：两股气流的冷热与来向？','解释：暖空气为什么被抬升，而不是当地受热上升？','归纳：近地面气压高低与高纬圈方向？']:['观察：高空气流向哪里汇入？','预测：积聚后会怎样运动？','解释：这是热力性还是动力性高压？','推导：近地面向两侧分别形成什么风带？','归纳：上下气流如何连接成低纬圈？'];
+  lessonText(kind+'-node-question',step?questions[index]:'复习时请口述形成的因果链。');
+  document.getElementById(kind+'-node-prev').disabled=!step||index===0;
+  document.getElementById(kind+'-node-next').disabled=!step||(d.running&&STATE.playing)||(index===stages.length-1&&d.elapsed>=s.end);
+  document.getElementById(kind+'-node-replay').disabled=!step;
+  const play=document.getElementById(kind==='single'?'single-demo-play':'mechanism-demo-play');
+  if(play){play.disabled=step&&d.elapsed>=s.end; if(play.disabled)play.textContent='本步已完成';}
+}
+
+function teachingSiteInfo(h=TEACHING.siteHemisphere,month=LESSON_STATE.season==='winter'?1:LESSON_STATE.season==='summer'?7:3){
+  const north=h==='north',summer=north?month===7:month===1,winter=north?month===1:month===7;
+  return{hemisphere:h,latitude:north?35:-35,month,season:summer?'夏季':winter?'冬季':'过渡季节',belt:summer?'副热带高气压带':winter?'盛行西风带':'控制带过渡',rain:summer?'下沉增温，通常少雨':winter?'海洋西风输送水汽，通常较湿润':'需结合实际移动与海陆条件'};
+}
+function climateTeachingData(h=TEACHING.siteHemisphere){
+  const temp=[10,11,13,16,20,24,27,27,24,19,14,11],rain=[95,80,65,40,20,8,2,5,20,60,85,100],shift=h==='south'?6:0;
+  return{temperature:temp.map((_,i)=>temp[(i+shift)%12]),precipitation:rain.map((_,i)=>rain[(i+shift)%12])};
+}
+
+function mountTeachingTopic(topic){
+  const body=document.getElementById('lesson-body'),controls=body.querySelector('.lesson-controls');
+  body.insertAdjacentHTML('afterbegin',modelAssumptionsHTML(topic));
+  if(topic==='pressure'){
+    body.insertAdjacentHTML('beforeend','<details class="teaching-bridge"><summary>先备知识：受热不均怎样形成热力环流？</summary><div class="thermal-grid"><div>同一高度比较</div><div><strong>暖端</strong></div><div><strong>冷端</strong></div><div>高空</div><div>相对较高压 →</div><div>相对较低压</div><div>垂直运动</div><div>受热膨胀，上升 ↑</div><div>冷却收缩，下沉 ↓</div><div>近地面</div><div>相对低压</div><div>← 相对高压</div></div><p>同一水平面的气压差产生水平气压梯度力，推动空气由高压向低压运动；高空与近地面回流联系成环流。气压高低须在同一高度比较。</p><button class="btn btn-sm" id="teaching-to-single">返回三维推导单圈环流</button></details>');
+    document.getElementById('teaching-to-single').onclick=()=>{closeLesson();transitionToStep(0);setView('side');};
+  }
+  if(topic==='section'){
+    controls.insertAdjacentHTML('beforeend','<label>图示 <select id="teaching-section-mode"><option value="full">完整参考图</option><option value="names">隐藏名称</option><option value="arrows">隐藏箭头</option><option value="blank">空白作图</option></select></label>');
+    const mode=document.getElementById('teaching-section-mode');mode.value=TEACHING.sectionMode;
+    mode.onchange=()=>{TEACHING.sectionMode=mode.value;TEACHING.sectionChecked=false;updateLessonView();};
+    body.insertAdjacentHTML('beforeend',`<div class="teaching-work"><strong>独立作图：垂直运动 → 近地面流向 → 高空回流 → 气压带和风带</strong>${drawingControlsHTML('section')}<div class="lesson-controls"><button class="btn btn-sm" id="section-check">展开核对依据</button><button class="btn btn-sm" id="section-reference">显示参考图</button></div><p id="section-feedback" aria-live="polite"></p><div id="section-rubric" hidden>① 赤道与60°附近上升，30°附近与极地下沉；② 近地面从高压吹向低压；③ 高空回流与近地面经向流动对应，形成三个平均环流圈；④ 结合北右南左推导风向，名称按来向判断。自由作图由师生核对，不自动判分。</div></div>`);
+    bindDrawing('section',document.getElementById('lesson-canvas'));
+    document.getElementById('section-check').onclick=()=>{TEACHING.sectionChecked=true;document.getElementById('section-rubric').hidden=false;lessonText('section-feedback',`已记录 ${TEACHING.sectionStrokes.length} 笔，请按四项依据核对；可下载图示留作前后测。`);};
+    document.getElementById('section-reference').onclick=()=>{TEACHING.sectionMode='full';mode.value='full';updateLessonView();};
+  }
+  if(topic==='monsoon'){
+    controls.insertAdjacentHTML('beforeend','<label>读图任务 <select id="teaching-monsoon-view"><option value="monsoon">季风推导</option><option value="compare">1月/7月气压对照</option></select></label><label><input type="checkbox" id="teaching-pressure-reference">叠加理想气压带参考</label>');
+    const select=document.getElementById('teaching-monsoon-view');select.value=TEACHING.monsoonView;
+    select.onchange=()=>{TEACHING.monsoonView=select.value;LESSON_STATE.running=false;updateLessonView();};
+    const reference=document.getElementById('teaching-pressure-reference');reference.checked=TEACHING.pressureReference;
+    reference.onchange=()=>{TEACHING.pressureReference=reference.checked;updateLessonView();};
+    body.insertAdjacentHTML('beforeend','<p class="teaching-prompt" id="teaching-monsoon-task"></p>');
+  }
+  if(topic==='season'||topic==='climate'){
+    controls.insertAdjacentHTML('beforeend','<label>固定地点 <select id="teaching-site"><option value="north">35°N附近大陆西岸</option><option value="south">35°S附近大陆西岸</option></select></label>');
+    const site=document.getElementById('teaching-site');site.value=TEACHING.siteHemisphere;
+    site.onchange=()=>{TEACHING.siteHemisphere=site.value;updateLessonView();};
+    body.insertAdjacentHTML('beforeend','<div class="teaching-site-card"><strong id="teaching-site-heading"></strong><p id="teaching-site-question"></p><button class="btn btn-sm" id="teaching-site-reveal">显示地点解释</button><p id="teaching-site-answer" hidden></p></div>');
+    document.getElementById('teaching-site-reveal').onclick=()=>{const answer=document.getElementById('teaching-site-answer');answer.hidden=!answer.hidden;lessonText('teaching-site-reveal',answer.hidden?'显示地点解释':'收起地点解释');};
+    if(topic==='climate'){
+      body.insertAdjacentHTML('beforeend','<div class="lesson-visual teaching-climate-chart"><canvas id="teaching-climate-chart" width="1600" height="600" role="img" aria-label="35度附近大陆西岸气温与降水示意资料"></canvas></div><p class="lesson-note">示意资料，用于练习季节与降水关系；不是具体城市的观测数据。红线为气温，蓝柱为月降水量。</p>');
+      document.querySelectorAll('[data-climate-season]').forEach(b=>b.textContent=b.dataset.climateSeason==='summer'?'7月对照':'1月对照');
+    }
+  }
+}
+function updateTeachingTopic(){
+  const topic=LESSON_STATE.tab;
+  if(topic==='monsoon'){
+    const compare=TEACHING.monsoonView==='compare';
+    document.getElementById('lesson-playbar').hidden=compare;
+    ['lesson-add-surface','lesson-surface','lesson-monsoon-season','lesson-region'].forEach(id=>{const e=document.getElementById(id);(e.closest('label')||e).hidden=compare;});
+    document.querySelector('#lesson-body .lesson-question').textContent=compare?'先预测：1月、7月哪一气压带被大陆气压中心改变？南半球为何相对连续？':LESSON_STATE.surface==='real'?'观察图中H和L：近地面风从哪里吹向哪里？改变季节后怎样变化？':LESSON_TOPICS.find(t=>t.id==='monsoon').question;
+    lessonText('teaching-monsoon-task',compare?'读图：1月、7月分别是哪一气压带被大陆气压中心改变？南半球为什么相对连续？':'推导：先找H（高压）与L（低压），由高压判断初始流向，再考虑偏转；南亚夏季还要判断跨赤道前后的方向。');
+    lessonText('lesson-explanation',compare?'1月大陆冷高压使副极地低气压带呈间断分布；7月大陆热低压使副热带高气压带呈间断分布。南半球海洋面积大，带状分布相对连续。':'H为高压，L为低压；比较近地面同一高度的气压，水平气压梯度力由高压指向低压，近地面风受偏向力与摩擦影响，斜穿等压线吹向低压。冬季海洋“较低压”是相对大陆冷高压而言，不能理解为整个海洋都是固定低压中心。东亚季风主要与海陆热力性质差异有关；南亚夏季还涉及气压带、风带北移，南半球东南信风跨赤道后在北半球向右偏，转为西南气流。季风是季节尺度的风向变化；海陆风是海岸地区的昼夜变化，二者不能混为一谈。');
+  }else document.getElementById('lesson-playbar').hidden=false;
+  if(topic==='pressure'){
+    const q=document.querySelector('#lesson-body .lesson-question');
+    const questions=['地球自转是水平风开始运动的直接原因吗？','忽略摩擦时，风最终与等压线怎样相交？两力怎样平衡？','加入摩擦后，为什么近地面风斜穿等压线吹向低压？'];
+    q.textContent='先预测：'+questions[LESSON_STATE.pressureStep];
+  }
+  if(topic==='season'||topic==='climate'){
+    const month=topic==='climate'?(LESSON_STATE.climateSeason==='winter'?1:7):LESSON_STATE.seasonValue>.5?7:LESSON_STATE.seasonValue<-.5?1:3;
+    const site=teachingSiteInfo(TEACHING.siteHemisphere,month);
+    lessonText('teaching-site-heading',`${Math.abs(site.latitude)}°${site.latitude>0?'N':'S'}附近大陆西岸 · ${month===3?'春秋过渡':month+'月'} · 当地${site.season}`);
+    lessonText('teaching-site-question','先根据半球和月份判断当地季节，再根据控制带解释降水。若换到另一半球，同一月份的判断怎样变化？');
+    lessonText('teaching-site-answer',`${site.belt}：${site.rain}。本例为典型大陆西岸情境，需结合海陆、水汽和实际季节移动。`);
+    if(topic==='climate')drawTeachingClimateChart();
+    if(topic==='season')drawTeachingSiteMarker();
+  }
+}
+
+function drawingControlsHTML(kind){return `<div class="lesson-controls drawing-tools"><button class="btn btn-sm" data-draw-tool="arrow" data-draw-kind="${kind}">画箭头</button><button class="btn btn-sm" data-draw-tool="pen" data-draw-kind="${kind}">自由画笔</button><button class="btn btn-sm" data-draw-tool="label" data-draw-kind="${kind}">放置文字</button><input id="${kind}-label" class="drawing-label" aria-label="自填图示文字" maxlength="20" placeholder="自主填写名称，无候选提示"><button class="btn btn-sm" id="${kind}-undo">撤销一笔</button><button class="btn btn-sm" id="${kind}-clear">清空作图</button><button class="btn btn-sm" id="${kind}-image">下载图示</button></div><p class="lesson-note">拖动绘制箭头或线条；输入文字后选“放置文字”，点击图中位置。先独立完成，再展开核对依据。</p>`;}
+function strokeList(kind){return kind==='section'?TEACHING.sectionStrokes:TEACHING.windStrokes;}
+function drawStudentStrokes(ctx,kind){
+  const strokes=[...strokeList(kind),...(TEACHING.activeStroke?.kind===kind?[TEACHING.activeStroke.stroke]:[])];
+  for(const stroke of strokes){const points=stroke.points;if(stroke.tool==='label'){lessonLabel(ctx,stroke.text,...points[0],'#f4f6ff',18);continue;}if(points.length<2)continue;
+    if(stroke.tool==='arrow')lessonArrow(ctx,...points[0],...points.at(-1),'#f4f6ff',3);
+    else{ctx.strokeStyle='#f4f6ff';ctx.lineWidth=3;ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(...p):ctx.moveTo(...p));ctx.stroke();}
+  }
+}
+function bindDrawing(kind,canvas){
+  canvas.classList.add('drawing-canvas');canvas.tabIndex=0;
+  const redraw=()=>kind==='section'?updateLessonView():drawWindTask();
+  const point=e=>{const r=canvas.getBoundingClientRect();return[(e.clientX-r.left)*960/r.width,(e.clientY-r.top)*360/r.height];};
+  canvas.onpointerdown=e=>{if(e.button!==0)return;e.preventDefault();if(TEACHING.tool==='label'){const text=document.getElementById(kind+'-label').value.trim();if(text){strokeList(kind).push({tool:'label',text,points:[point(e)]});redraw();}return;}canvas.setPointerCapture(e.pointerId);TEACHING.activeStroke={kind,stroke:{tool:TEACHING.tool,points:[point(e)]}};redraw();};
+  canvas.onpointermove=e=>{if(TEACHING.activeStroke?.kind!==kind)return;const points=TEACHING.activeStroke.stroke.points,p=point(e);if(TEACHING.tool==='arrow')points[1]=p;else points.push(p);redraw();};
+  canvas.onpointerup=e=>{if(TEACHING.activeStroke?.kind!==kind)return;const stroke=TEACHING.activeStroke.stroke,p=point(e);stroke.points.push(p);if(Math.hypot(p[0]-stroke.points[0][0],p[1]-stroke.points[0][1])>2||stroke.points.length>3)strokeList(kind).push(stroke);delete TEACHING.activeStroke;redraw();};
+  canvas.onpointercancel=()=>{delete TEACHING.activeStroke;redraw();};
+  document.querySelectorAll(`[data-draw-kind="${kind}"]`).forEach(b=>b.onclick=()=>{TEACHING.tool=b.dataset.drawTool;document.querySelectorAll('[data-draw-tool]').forEach(x=>x.classList.toggle('active',x.dataset.drawTool===TEACHING.tool));});
+  document.getElementById(kind+'-undo').onclick=()=>{strokeList(kind).pop();redraw();};
+  document.getElementById(kind+'-clear').onclick=()=>{strokeList(kind).length=0;redraw();};
+  document.getElementById(kind+'-image').onclick=()=>canvas.toBlob(blob=>teachingDownload(blob,kind==='section'?'三圈环流独立作图.png':'陌生气压图风向作图.png'));
+}
+function sectionAssessment(){return{mode:TEACHING.sectionMode,strokes:TEACHING.sectionStrokes.length,checked:TEACHING.sectionChecked,automaticScore:false};}
+function drawTeachingSection(ctx){
+  const x=lat=>480+lat*4.5,ground=260,upper=85,mode=TEACHING.sectionMode;
+  const names=mode==='full'||mode==='arrows',arrows=mode==='full'||mode==='names',paths=mode!=='blank';
+  const show=h=>LESSON_STATE.sectionH==='both'||(LESSON_STATE.sectionH==='north'?h===1:h===-1);
+  ctx.fillStyle='#233648';ctx.fillRect(55,264,850,42);lessonLabel(ctx,'近地面',915,270,'#b6c5d4',18);lessonLabel(ctx,'高空',915,88,'#b6c5d4',18);
+  for(const lat of [-90,-60,-30,0,30,60,90]){if(lat!==0&&!show(Math.sign(lat)))continue;
+    ctx.strokeStyle='#2f4760';ctx.setLineDash([4,6]);ctx.beginPath();ctx.moveTo(x(lat),72);ctx.lineTo(x(lat),260);ctx.stroke();ctx.setLineDash([]);
+    lessonLabel(ctx,lat===0?'0°':`${Math.abs(lat)}°${lat>0?'N':'S'}`,x(lat),333,'#d7e7f7',18);
+    if(names)lessonLabel(ctx,lat===0||Math.abs(lat)===60?'低压':'高压',x(lat),290,lat===0||Math.abs(lat)===60?'#ff9292':'#83bbff',18);
+  }
+  if(paths)for(const h of [-1,1]){if(!show(h))continue;
+    for(const [rise,sink,color,name] of [[0,30,'#ffaa55','低纬'],[60,30,'#ffd35c','中纬'],[60,90,'#88caff','高纬']]){
+      const a=x(rise*h),b=x(sink*h);ctx.strokeStyle=color;ctx.lineWidth=2;ctx.strokeRect(Math.min(a,b),upper,Math.abs(b-a),ground-upper);
+      if(arrows){lessonArrow(ctx,a,218,a,132,color);lessonArrow(ctx,b,128,b,221,color);lessonArrow(ctx,lerp(a,b,.3),upper,lerp(a,b,.7),upper,color);lessonArrow(ctx,lerp(b,a,.3),ground,lerp(b,a,.7),ground,color);}
+      if(names)lessonLabel(ctx,name+'环流',(a+b)/2,47,color,18);
+    }
+  }
+  drawStudentStrokes(ctx,'section');
+  const messages={0:'赤道：受热上升 → 热力性低压',30:'30°附近：高空积聚与下沉 → 动力性高压',60:'60°附近：冷暖辐合抬升 → 动力性低压',90:'极地：冷却下沉 → 热力性高压'};
+  lessonText('lesson-phase',mode==='full'?messages[LESSON_STATE.sectionLat]:mode==='blank'?'独立作图：先画垂直运动，再连接近地面与高空回流；不显示参考答案':'根据保留的信息推导隐藏部分，完成后显示参考核对');
+}
+
+function drawTeachingPressureMaps(ctx){
+  for(const [offset,winter] of [[0,true],[490,false]]){
+    const cx=offset+235;
+    ctx.fillStyle='#112b42';ctx.fillRect(offset+12,68,446,182);
+    lessonLabel(ctx,winter?'1月：大陆冷高压':'7月：大陆热低压',cx,28,'#d7e7f7',22);
+    lessonLabel(ctx,winter?'副极地低压带呈间断分布':'副热带高压带呈间断分布',cx,58,'#ffe2a0',18);
+    const y=winter?118:186,color=winter?'#74c0ee':'#ffd35c';
+    // 相对位置简图：亚欧大陆—北太平洋—北美大陆—北大西洋；纬线为参考。
+    ctx.fillStyle='#3f5b49';ctx.fillRect(offset+45,83,110,137);ctx.fillRect(offset+288,83,75,137);
+    for(const [yy,name,c] of [[118,'60°N','#74c0ee'],[186,'30°N','#ffd35c']]){
+      ctx.strokeStyle=c;ctx.globalAlpha=.35;ctx.lineWidth=10;ctx.beginPath();ctx.moveTo(offset+18,yy);ctx.lineTo(offset+450,yy);ctx.stroke();ctx.globalAlpha=1;lessonLabel(ctx,name,offset+30,yy-16,'#b4c9dd',18,'left');
+    }
+    if(TEACHING.pressureReference){ctx.save();ctx.setLineDash([8,7]);ctx.strokeStyle=color;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(offset+15,y);ctx.lineTo(offset+454,y);ctx.stroke();ctx.restore();}
+    // 大陆热力中心替代该纬度的理想带，海洋保留对应的低压/高压中心。
+    ctx.fillStyle='#3f5b49';ctx.fillRect(offset+60,y-11,84,22);ctx.fillRect(offset+290,y-11,72,22);
+    for(const [xx,text] of [[103,winter?'亚洲高压':'印度低压'],[228,winter?'阿留申低压':'夏威夷高压'],[400,winter?'冰岛低压':'亚速尔高压']]){
+      lessonDot(ctx,offset+xx,y,winter?(xx===103?'#ffd35c':'#ff7979'):(xx===103?'#ff7979':'#ffd35c'));
+      lessonLabel(ctx,text,offset+xx,y+28,xx===103?(winter?'#ffe2a0':'#ff9292'):(winter?'#ff9292':'#ffe2a0'),18);
+    }
+    lessonLabel(ctx,'亚欧大陆',offset+104,239,'#d7e7f7',18);lessonLabel(ctx,'北美',offset+325,239,'#d7e7f7',18);
+    lessonLabel(ctx,'南半球：海洋面积大，带状分布相对连续',cx,281,'#c8d7e6',18);
+    for(const [yy,c] of [[304,'#ffd35c'],[322,'#74c0ee']]){ctx.globalAlpha=.5;ctx.fillStyle=c;ctx.fillRect(offset+30,yy,400,7);ctx.globalAlpha=1;}
+  }
+  lessonLabel(ctx,'位置关系简图；中心位置、大小和带宽为示意，不是实测等压线图',480,350,'#a9bdd3',18);
+  lessonText('lesson-phase','读图任务：圈出大陆气压中心，说出被改变的气压带；再比较南北半球的连续性。');
+}
+function drawTeachingSiteMarker(){
+  const canvas=document.getElementById('lesson-canvas'),ctx=canvas.getContext('2d'),latitude=TEACHING.siteHemisphere==='north'?35:-35,y=180-latitude*1.55;
+  lessonDot(ctx,573,y,'#f4f6ff');lessonArrow(ctx,615,y,586,y,'#f4f6ff',2);
+  lessonLabel(ctx,`固定地点 ${Math.abs(latitude)}°${latitude>0?'N':'S'}`,716,y+22,'#f4f6ff',18);
+}
+function drawTeachingClimateChart(){
+  const canvas=document.getElementById('teaching-climate-chart');if(!canvas)return;
+  const ctx=canvas.getContext('2d');ctx.setTransform(2,0,0,2,0,0);ctx.clearRect(0,0,800,300);
+  const data=climateTeachingData(),x=i=>80+i*56,yRain=v=>235-v*1.5,yTemp=v=>235-v*5;
+  lessonLabel(ctx,'35°附近大陆西岸：气温与降水示意资料',400,26,'#d7e7f7',20);
+  for(let i=0;i<=4;i++){const y=235-i*40;ctx.strokeStyle='#2f4760';ctx.beginPath();ctx.moveTo(55,y);ctx.lineTo(735,y);ctx.stroke();lessonLabel(ctx,String(i*8),34,y+5,'#ff9292',16);lessonLabel(ctx,String(Math.round(i*40/1.5)),768,y+5,'#83bbff',16);}
+  lessonLabel(ctx,'°C',32,50,'#ff9292',18);lessonLabel(ctx,'mm',768,50,'#83bbff',18);
+  data.precipitation.forEach((v,i)=>{ctx.fillStyle='#4a98d8';ctx.fillRect(x(i)-13,yRain(v),26,235-yRain(v));lessonLabel(ctx,String(i+1),x(i),265,'#d7e7f7',16);});
+  ctx.strokeStyle='#ff9292';ctx.lineWidth=3;ctx.beginPath();data.temperature.forEach((v,i)=>i?ctx.lineTo(x(i),yTemp(v)):ctx.moveTo(x(i),yTemp(v)));ctx.stroke();data.temperature.forEach((v,i)=>lessonDot(ctx,x(i),yTemp(v),'#ff9292'));
+  const month=LESSON_STATE.climateSeason==='winter'?1:7;ctx.strokeStyle='#ffe2a0';ctx.setLineDash([5,5]);ctx.beginPath();ctx.moveTo(x(month-1),65);ctx.lineTo(x(month-1),242);ctx.stroke();ctx.setLineDash([]);lessonLabel(ctx,'月份',400,293,'#a9bdd3',18);
+}
+
+const TEACHING_QUIZ_LEVELS={foundation:['drive','arrowTrade','arrowWest','arrowPolar','right'],explain:['subtropical','subpolar','force','pole','upperWind','seaCut'],transfer:['june','eastWinter','southAsia','med','rain','southJuly']};
+function mountTeachingQuiz(){
+  const body=document.getElementById('lesson-body');
+  body.insertAdjacentHTML('afterbegin','<div class="lesson-controls"><label>练习层次 <select id="teaching-quiz-level"><option value="all">全部任务</option><option value="foundation">基础：名称与方向</option><option value="explain">解释：成因与条件</option><option value="transfer">迁移：月份与材料</option></select></label><button class="btn btn-sm" id="teaching-evidence">导出本次作答</button><button class="btn btn-sm" id="teaching-worksheet">下载可打印任务单</button></div>');
+  const select=document.getElementById('teaching-quiz-level');select.value=TEACHING.quizLevel;select.onchange=()=>{TEACHING.quizLevel=select.value;filterTeachingQuiz();};
+  body.insertAdjacentHTML('beforeend',`<div class="teaching-work"><strong>迁移作图：陌生气压场中的风向</strong><p>北半球同一水平面，等压线数值由西向东降低。请从白点画出气压梯度力，再画近地面风向；说明偏转依据。箭头为方向示意。</p><div class="lesson-visual"><canvas id="teaching-wind-task" width="1920" height="720" role="img" aria-label="陌生气压图风向作图"></canvas></div>${drawingControlsHTML('wind')}<details><summary>完成后查看核对依据</summary>气压梯度力垂直等压线，由西侧高压指向东侧低压。北半球向前进方向右偏，近地面风斜穿等压线，具有向东和向南的分量，吹向东南、来自西北。偏向力垂直于瞬时风向；自由作图由师生核对。</details></div>`);
+  bindDrawing('wind',document.getElementById('teaching-wind-task'));drawWindTask();filterTeachingQuiz();
+  document.getElementById('teaching-evidence').onclick=()=>teachingDownload(new Blob([JSON.stringify(teachingEvidence(),null,2)],{type:'application/json'}),'气压带风带课堂作答.json');
+  document.getElementById('teaching-worksheet').onclick=()=>teachingDownload(new Blob([teachingWorksheetHTML()],{type:'text/html;charset=utf-8'}),'气压带风带课堂任务单.html');
+  document.getElementById('lesson-quiz-reset').onclick=()=>{LESSON_STATE.answers={};LESSON_STATE.graded=false;LESSON_STATE.essay='';TEACHING.windStrokes=[];renderLessonQuiz();mountTeachingQuiz();};
+}
+function filterTeachingQuiz(){
+  const ids=TEACHING.quizLevel==='all'?LESSON_QUIZ.map(q=>q.id):TEACHING_QUIZ_LEVELS[TEACHING.quizLevel];
+  document.querySelectorAll('#lesson-body .lesson-grid article').forEach(article=>article.hidden=!ids.includes(article.querySelector('[data-quiz-id]').dataset.quizId));
+}
+function drawWindTask(){
+  const canvas=document.getElementById('teaching-wind-task');if(!canvas)return;const ctx=canvas.getContext('2d');ctx.setTransform(2,0,0,2,0,0);ctx.clearRect(0,0,960,360);
+  for(let i=0;i<5;i++){const x=170+i*140;ctx.strokeStyle='#3b5672';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,65);ctx.lineTo(x,295);ctx.stroke();lessonLabel(ctx,`${1016-i*4} hPa`,x,43,'#c8d7e6',20);}
+  lessonDot(ctx,425,205,'#f4f6ff');lessonLabel(ctx,'北 N ↑',875,85,'#c8d7e6',20);lessonLabel(ctx,'西 W',75,185,'#c8d7e6',20);lessonLabel(ctx,'东 E',890,185,'#c8d7e6',20);lessonLabel(ctx,'南 S ↓',875,285,'#c8d7e6',20);drawStudentStrokes(ctx,'wind');
+}
+function teachingEvidence(){return{recordedAt:new Date().toISOString(),answers:{...LESSON_STATE.answers},quiz:lessonQuizScore(),essay:LESSON_STATE.essay,section:JSON.parse(JSON.stringify(TEACHING.sectionStrokes)),wind:JSON.parse(JSON.stringify(TEACHING.windStrokes)),note:'课堂作答记录；自由作图和开放题由师生评议，不自动评分。'};}
+function teachingDownload(blob,name){if(!blob)return;const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),3000);}
+function teachingWorksheetHTML(){return `<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>气压带和风带课堂任务单</title><style>body{font:16px/1.8 sans-serif;max-width:800px;margin:24px auto;color:#111}h1{font-size:24px}section{break-inside:avoid;margin:20px 0}svg{width:100%;height:220px;border:1px solid #999}.line{border-bottom:1px solid #999;height:38px}button{padding:10px}@media print{button{display:none}body{margin:0}}</style><button onclick="window.print()">打印任务单</button><h1>气压带和风带：独立作图与解释</h1><p>班级：________ 日期：________　前测 / 后测（圈选）</p><section><strong>1. 同一水平面的风</strong><p>北半球，气压由西向东降低。从白点画气压梯度力与近地面风向，并解释依据。</p><svg viewBox="0 0 800 220"><g fill="none" stroke="#444">${[120,260,400,540,680].map(x=>`<path d="M${x},45V205"/>`).join('')}</g>${[1016,1012,1008,1004,1000].map((p,i)=>`<text x="${120+i*140}" y="25" text-anchor="middle">${p} hPa</text>`).join('')}<circle cx="330" cy="130" r="5" fill="white" stroke="black"/><text x="730" y="100">北↑</text></svg><div class="line"></div></section><section><strong>2. 三圈环流剖面</strong><p>先画垂直运动，再连接高空和近地面回流，最后标出气压带与三个风带。</p><svg viewBox="0 0 800 220"><path d="M60,180H730" stroke="#444"/>${[0,30,60,90].map((lat,i)=>`<path d="M${80+i*210},40V180" stroke="#bbb" stroke-dasharray="4 6"/><text x="${80+i*210}" y="210">${lat}°${lat?'N':''}</text>`).join('')}<text x="735" y="60">高空</text></svg></section><section><strong>3. 现实分布</strong><p>1月、7月北半球分别是哪一气压带被大陆气压中心改变？南半球为什么相对连续？</p><div class="line"></div><div class="line"></div></section><section><strong>4. 季节迁移</strong><p>35°S附近大陆西岸在7月处于什么季节？用控制带、空气运动和水汽解释降水条件。</p><div class="line"></div><div class="line"></div></section><section><strong>教师核对要点（可裁下）</strong><p>1. 气压梯度力向东，近地面风吹向东南；2. 0°/60°上升、30°/90°下沉，近地面从高压向低压；3. 1月副极地低压带，7月副热带高压带，南半球海洋广；4. 当地冬季，西风可输送海洋水汽。自由作图需结合实际箭头和解释评议。</p></section></html>`;}
 
 function showInitializationError(error) {
   console.error('教学模型初始化失败',error);

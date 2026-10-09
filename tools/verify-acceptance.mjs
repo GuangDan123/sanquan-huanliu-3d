@@ -37,6 +37,8 @@ try {
   const start=new URL(url);start.searchParams.set('state','explore');await send('Page.navigate',{url:start.href});
   check(await ready(1),'成品HTTP入口与第二步初始化');await sleep(3800);
   const state=()=>ev('window.__threeCellDebug.getDiagnostics()');
+  // 本脚本复核复习模式的连续运动；讲课逐节点停顿另由verify-teaching覆盖。
+  await ev("document.getElementById('mechanism-demo-mode').value='continuous';document.getElementById('mechanism-demo-mode').dispatchEvent(new Event('change',{bubbles:true}))");
   check((await state()).mechanismStage===0,'第二步从首环节开始');
   check(await ev("getComputedStyle(document.getElementById('mechanism-explanation')).display==='none'"),'解释初始收起');
   await click('#mechanism-reveal');

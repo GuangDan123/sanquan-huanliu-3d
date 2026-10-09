@@ -116,8 +116,8 @@ const main = async () => {
 
   let out = html;
   for (const [token, payload] of [['{{THREE_RUNTIME}}', runtime], ['{{EARTH_TEXTURE}}', earth],
-    ['{{LESSON_CSS}}', await read(join(ROOT,'src','lesson.css'))],
-    ['{{LESSON_JS}}', await read(join(ROOT,'src','lesson.js'))]]) {
+    ['{{LESSON_CSS}}', (await read(join(ROOT,'src','lesson.css'))) + '\n' + (await read(join(ROOT,'src','teaching.css')))],
+    ['{{LESSON_JS}}', (await read(join(ROOT,'src','lesson.js'))) + '\n' + (await read(join(ROOT,'src','teaching.js')))]]) {
     if (!out.includes(token)) throw new Error(`源码中未找到占位符 ${token}`);
     out = out.replace(token, () => guardScriptTag(payload)); // 函数形式，避免 $& 等替换模式误伤
   }

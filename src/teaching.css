@@ -1,0 +1,59 @@
+/* 主图、核心问题和操作区优先显示，投屏保留预测问题。 */
+body.lesson-open #lesson-panel{inset:12px 16px;max-width:1280px;}
+body.lesson-open #control-panel{visibility:hidden;}
+body.lesson-open #demo-overlay{display:none;}
+#teaching-routes{flex-shrink:0;margin:0;padding:7px 20px;border-bottom:1px solid #2d4059;font-size:12px;}
+#lesson-tabs .btn[hidden],#lesson-body article[hidden]{display:none!important;}
+#lesson-playbar[hidden],.lesson-controls [hidden]{display:none!important;}
+.model-assumptions{padding:7px 10px;border-left:3px solid #7ca9cf;background:#152237;color:#b9d0e4;font-size:13px;line-height:1.7;margin-bottom:8px;}
+.model-assumptions strong{color:#9ed5ff;}
+.demo-mode{display:flex;gap:6px;align-items:center;font-size:12px;}
+.demo-node-question{font-size:12px;line-height:1.5;color:#a6d8ff;padding:3px 0;}
+.demo-mode select{min-width:0;max-width:180px;background:#21344d;border:1px solid #54718f;border-radius:5px;padding:4px;color:#eef6ff;}
+.demo-node-actions .btn{flex:1;min-width:0;padding:5px 4px;font-size:12px;}
+.teaching-bridge,.teaching-work,.teaching-site-card{margin-top:14px;padding:12px;border:1px solid #54718f;border-radius:9px;background:#142033;line-height:1.8;}
+.teaching-bridge summary,.teaching-work summary{cursor:pointer;color:#a6d8ff;}
+.thermal-grid{display:grid;grid-template-columns:1fr 1.4fr 1.4fr;gap:1px;margin:12px 0;background:#3b5672;}
+.thermal-grid>div{background:#17283c;padding:8px;text-align:center;}
+.thermal-grid>div:nth-child(3n+2){color:#ffc29e;}.thermal-grid>div:nth-child(3n){color:#a4d6ff;}
+.drawing-canvas{touch-action:none;cursor:crosshair;}
+.drawing-label{background:#0e1826;border:1px solid #698bae;color:#eef6ff;padding:8px;border-radius:6px;width:230px;max-width:100%;font:inherit;}
+.lesson-visual canvas.drawing-canvas{height:auto;aspect-ratio:8/3;object-fit:fill;}
+.teaching-climate-chart canvas{height:auto;aspect-ratio:8/3;}
+.teaching-prompt{padding:8px;color:#ffe2a0;border-left:3px solid #8dc7f5;line-height:1.8;}
+.teaching-site-card p{margin:7px 0;}
+#lesson-body input[type="checkbox"]{width:18px;height:18px;accent-color:#8ecbff;}
+body.projection .model-assumptions,body.projection .teaching-site-card,body.projection .teaching-work{font-size:17px;}
+body.projection .lesson-stage{grid-template-columns:minmax(0,1fr) 260px;}
+body.projection .lesson-question{display:block;font-size:18px;padding:12px;}
+body.projection #lesson-panel .btn{font-size:16px;min-height:40px;}
+body.projection #teaching-routes{font-size:14px;}
+@media(max-width:768px){
+ body.lesson-open #lesson-panel{inset:8px;}
+ #teaching-routes{padding:5px 12px;flex-wrap:nowrap;overflow-x:auto;}
+ #teaching-routes .btn,#teaching-routes span{flex-shrink:0;}
+ .model-assumptions{font-size:12px;}
+ body.projection .lesson-stage{grid-template-columns:1fr;}
+ body.projection #lesson-panel .btn{font-size:12px;min-height:36px;}
+ .thermal-grid{font-size:12px;}
+}
+@media(max-width:600px){
+ .lesson-visual canvas.drawing-canvas,.teaching-climate-chart canvas{width:960px;height:360px;}
+ .teaching-work{padding:8px;}
+ .demo-mode select{max-width:150px;}
+}
+@media(max-height:600px){
+ #lesson-panel header{padding:6px 12px;}
+ #lesson-heading{font-size:14px;}
+ #teaching-routes{padding:4px 12px;flex-wrap:nowrap;overflow-x:auto;}
+ #teaching-routes .btn,#teaching-routes span{flex-shrink:0;font-size:11px;min-height:28px;padding:3px 6px;}
+ #lesson-tabs{padding:4px 12px;}
+ #lesson-tabs .btn{min-height:28px;}
+ #lesson-playbar{padding:4px 12px;gap:4px;}
+ #lesson-playbar .lesson-step-status{flex-basis:auto;font-size:11px;}
+ #lesson-playbar .btn{min-height:30px;padding:4px 7px;font-size:11px;}
+ #lesson-panel footer{padding:4px 12px;}
+ #lesson-panel footer .btn{min-height:30px;}
+ #lesson-body{padding:8px 12px;}
+ .demo-node-question{font-size:11px;}
+}

@@ -53,8 +53,7 @@ body.projection .lesson-intro,body.projection .lesson-phase,body.projection .les
 body.projection .lesson-note{font-size:14px;}
 body.projection .lesson-visual canvas{height:clamp(230px,36vh,330px);}
 body.projection .lesson-stage{grid-template-columns:1fr;}
-body.projection #lesson-panel:not([data-topic="quiz"]) .lesson-intro,
-body.projection #lesson-panel:not([data-topic="quiz"]) .lesson-question{display:none;}
+body.projection #lesson-panel:not([data-topic="quiz"]) .lesson-intro{display:none;}
 body.projection #custom-params{display:none!important;}
 @media(max-width:768px){
   #lesson-entry{left:150px;top:60px;}
