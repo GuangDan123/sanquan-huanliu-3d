@@ -1,0 +1,52 @@
+/* Normal flow and explicit dimensions for every teaching card prevent overlap. */
+#monsoon-climate-stage{grid-auto-rows:max-content;row-gap:18px;}
+.mc-map-card{contain:layout paint;align-self:start;min-height:0;}
+.mc-map-scroll{width:100%;overflow:auto;}
+.mc-map-wrap{height:auto;aspect-ratio:1440/620;}
+#monsoon-world-map{height:100%;width:100%;}
+.mc-climate-card{position:relative;z-index:1;min-height:0;}
+.mc-chart-heading{flex-wrap:wrap;}
+.mc-chart-heading label{font-size:13px;display:flex;align-items:center;gap:6px;}
+.mc-chart-heading select{background:#1c3045;color:#edf5fb;border:1px solid #5c829e;border-radius:5px;padding:6px;}
+.mc-data-source{font-size:12px;line-height:1.6;color:#bdd5e4;margin:7px 0;}
+.mc-data-source a,.evidence-task a,#independent-tasks a{color:#a8dcff;}
+@media(min-width:1101px){.mc-map-wrap{min-width:900px;}.mc-chart-pane{padding:16px;}.mc-climate-card{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);}}
+/* Reserve the legend's own column instead of placing it over the thermal diagrams. */
+body.landsea-active #landsea-legend{position:static;width:auto;max-width:none;margin:8px 12px;padding:10px;flex-shrink:0;}
+body.landsea-active .landsea-scale{height:120px;flex-shrink:0;}
+#landsea-formation{display:flex;flex-direction:column;max-height:calc(100vh - var(--controls-height,90px) - 132px);}
+#landsea-formation[hidden]{display:none;}
+#landsea-formation>details{flex-shrink:0;}
+#landsea-formation summary{font-size:15px;}
+#landsea-formation .landsea-plan-note{font-size:12px;line-height:1.7;padding:8px 12px;}
+.prediction-record{display:grid;gap:7px;margin:8px 0;}
+.prediction-record label{font-size:13px;color:#b9ddf5;}
+.prediction-record textarea,#independent-tasks textarea{width:100%;max-width:100%;min-height:62px;resize:vertical;background:#0c1b2a;color:#f1f7fb;border:1px solid #7192ab;border-radius:6px;padding:8px;font:inherit;}
+body.prediction-waiting #legend{display:none;}
+body.single-prediction-stage #legend{display:none!important;}
+body.single-prediction-stage #demo-overlay,body.classroom-route-active #demo-overlay{display:none;}
+.mc-reading{font-size:13px;line-height:1.7;color:#c6deed;}
+.mc-reading summary{cursor:pointer;}
+.mc-reading textarea{display:block;width:100%;background:#0c1b2a;color:#edf5fb;border:1px solid #7192ab;padding:8px;font:inherit;resize:vertical;}
+#landsea-mass-explanation{padding:10px 14px;font-size:14px;line-height:1.8;color:#d4e8f4;}
+body.projection #landsea-mass-explanation{font-size:16px;}
+.view-bridge{margin:8px 0;padding:10px;border:1px solid #54718f;border-radius:8px;background:#112436;line-height:1.7;}
+.view-bridge summary{cursor:pointer;color:#b9ddf5;}
+.view-bridge p{font-size:13px;}
+.view-bridge canvas{display:block;width:100%;height:auto;}
+.view-bridge select{background:#1c3045;color:#edf5fb;border:1px solid #5c829e;padding:5px;}
+.bridge-lat{outline:3px solid #ffe2a0;background:#503e19!important;color:#fff3cd!important;}
+.evidence-task{border-top:1px solid #476079;margin-top:16px;padding-top:12px;}
+.evidence-task h4{font-size:16px;margin:5px 0;}
+.evidence-task details{margin:10px 0;}
+.evidence-rubric{display:flex;align-items:center;justify-content:space-between;gap:12px;border-top:1px solid #324c65;padding:8px 0;}
+.evidence-rubric select,#evidence-phase{background:#1c3045;color:#edf5fb;border:1px solid #5c829e;padding:6px;border-radius:5px;flex-shrink:0;}
+#independent-tasks [data-classroom]{display:block;width:100%;padding:7px;background:#0c1b2a;color:#edf5fb;border:1px solid #5c829e;border-radius:5px;}
+body.classroom-route-active #lesson-panel footer{display:none;}
+body.classroom-route-active #control-panel .ctrl-group:has(.step-indicator){display:none;}
+body.classroom-route-active #classroom-route .classroom-route-head strong:after{content:'（学习主线）';font-size:11px;font-weight:normal;}
+body.projection .mc-data-source,body.projection .landsea-plan-note{font-size:15px;}
+body.projection .prediction-record{font-size:15px;}
+body.projection #classroom-route .btn,body.projection #mechanism-navigation .btn{font-size:13px;}
+@media(max-width:1100px){#landsea-formation{max-height:280px;}body.landsea-active #landsea-formation #landsea-legend{display:block;}#landsea-formation #landsea-legend .landsea-scale{height:120px;}}
+@media(max-width:600px){#landsea-formation{max-height:23vh;}.mc-map-wrap{min-width:880px;}.evidence-rubric{display:block;}.evidence-rubric select{display:block;margin:6px 0;}.prediction-record textarea{min-height:48px;}#classroom-route .classroom-route-actions .btn{font-size:10px;}.view-bridge{overflow:auto;}.view-bridge canvas{min-width:640px;}.mc-climate-card{grid-template-columns:minmax(0,1fr);}}

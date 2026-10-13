@@ -1,0 +1,1730 @@
+{
+  "checks": [
+    {
+      "ok": true,
+      "name": "All seven pressure belts use yellow, green, blue and purple by latitude"
+    },
+    {
+      "ok": true,
+      "name": "Formation pressure belts match the third-step colors with clearly visible solid fill"
+    },
+    {
+      "ok": true,
+      "name": "Pressure belts use the reference width of five degrees and eight degrees at the poles"
+    },
+    {
+      "ok": true,
+      "name": "Pressure names have contrasting backgrounds, colored borders and ascent/descent arrows"
+    },
+    {
+      "ok": true,
+      "name": "Raised ascent and descent routes retain their height around the rounded corners and remain inside the atmosphere"
+    },
+    {
+      "ok": true,
+      "name": "Both hemispheres have anchored explanations for pressure formation, vertical motion and wind direction"
+    },
+    {
+      "ok": true,
+      "name": "Northern and southern hemisphere wind explanations have the correct deflection and wind names"
+    },
+    {
+      "ok": true,
+      "name": "1366: position explanations stay readable and within the scene at 2s",
+      "evidence": [
+        {
+          "kind": "equator-rise",
+          "left": 926.328125,
+          "right": 1116.328125,
+          "top": 486.8125,
+          "bottom": 529.8125,
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "name": "1366: explanation labels do not overlap at 2s"
+    },
+    {
+      "ok": true,
+      "name": "1366: the current explanation fits or leaves an accessible marker when space is limited at 2s",
+      "evidence": {
+        "kind": "equator-rise",
+        "visible": true,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 赤道受热，空气上升",
+        "leaderHidden": false,
+        "text": "上升后从高空流出，地面空气减少"
+      }
+    },
+    {
+      "ok": true,
+      "name": "1366: close-up shows a clearly enlarged vertical path at 2s",
+      "evidence": 106.79404087045577
+    },
+    {
+      "ok": true,
+      "name": "1366: the canvas contains visible Earth and airflow pixels at 2s",
+      "evidence": {
+        "visible": 836,
+        "samples": 2368
+      }
+    },
+    {
+      "ok": true,
+      "name": "1366: position explanations stay readable and within the scene at 8s",
+      "evidence": [
+        {
+          "kind": "upper",
+          "left": 756.15625,
+          "right": 946.15625,
+          "top": 251.921875,
+          "bottom": 294.921875,
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "name": "1366: explanation labels do not overlap at 8s"
+    },
+    {
+      "ok": true,
+      "name": "1366: the current explanation fits or leaves an accessible marker when space is limited at 8s",
+      "evidence": {
+        "kind": "upper",
+        "visible": true,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 地转偏向力：北半球向右偏",
+        "leaderHidden": false,
+        "text": "向北运动，逐渐转向东"
+      }
+    },
+    {
+      "ok": true,
+      "name": "1366: close-up shows a clearly enlarged vertical path at 8s",
+      "evidence": 395.7897589596877
+    },
+    {
+      "ok": true,
+      "name": "1366: position explanations stay readable and within the scene at 17s",
+      "evidence": [
+        {
+          "kind": "sink",
+          "left": 738.1875,
+          "right": 928.1875,
+          "top": 401.484375,
+          "bottom": 444.484375,
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "name": "1366: explanation labels do not overlap at 17s"
+    },
+    {
+      "ok": true,
+      "name": "1366: the current explanation fits or leaves an accessible marker when space is limited at 17s",
+      "evidence": {
+        "kind": "sink",
+        "visible": true,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 30°空气下沉，形成高压",
+        "leaderHidden": false,
+        "text": "下沉补充空气，地面空气增多"
+      }
+    },
+    {
+      "ok": true,
+      "name": "1366: close-up shows a clearly enlarged vertical path at 17s",
+      "evidence": 114.45857103623415
+    },
+    {
+      "ok": true,
+      "name": "1366: position explanations stay readable and within the scene at 28.5s",
+      "evidence": [
+        {
+          "kind": "subpolar-rise",
+          "left": 607.453125,
+          "right": 797.453125,
+          "top": 349.75,
+          "bottom": 392.75,
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "name": "1366: explanation labels do not overlap at 28.5s"
+    },
+    {
+      "ok": true,
+      "name": "1366: the current explanation fits or leaves an accessible marker when space is limited at 28.5s",
+      "evidence": {
+        "kind": "subpolar-rise",
+        "visible": true,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 60°冷暖相遇，暖气流抬升",
+        "leaderHidden": false,
+        "text": "暖空气沿冷空气上方持续爬升"
+      }
+    },
+    {
+      "ok": true,
+      "name": "1366: close-up shows a clearly enlarged vertical path at 28.5s",
+      "evidence": 212.71349725129357
+    },
+    {
+      "ok": true,
+      "name": "1366: position explanations stay readable and within the scene at 32s",
+      "evidence": [
+        {
+          "kind": "polar-sink",
+          "left": 841.21875,
+          "right": 1031.21875,
+          "top": 349.1875,
+          "bottom": 392.1875,
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "name": "1366: explanation labels do not overlap at 32s"
+    },
+    {
+      "ok": true,
+      "name": "1366: the current explanation fits or leaves an accessible marker when space is limited at 32s",
+      "evidence": {
+        "kind": "polar-sink",
+        "visible": true,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 两极冷却，空气下沉",
+        "leaderHidden": false,
+        "text": "下沉补充空气，地面空气增多"
+      }
+    },
+    {
+      "ok": true,
+      "name": "1366: close-up shows a clearly enlarged vertical path at 32s",
+      "evidence": 103.6820814715569
+    },
+    {
+      "ok": true,
+      "name": "1366: position explanations stay readable and within the scene at 40s",
+      "evidence": []
+    },
+    {
+      "ok": true,
+      "name": "1366: explanation labels do not overlap at 40s"
+    },
+    {
+      "ok": true,
+      "name": "1366: the canvas contains visible Earth and airflow pixels at 40s",
+      "evidence": {
+        "visible": 789,
+        "samples": 2368
+      }
+    },
+    {
+      "ok": true,
+      "name": "1366: completed pressure names remain fully inside the viewport"
+    },
+    {
+      "ok": true,
+      "name": "1366: next-step button is fully visible inside the teaching panel"
+    },
+    {
+      "ok": true,
+      "name": "1600: position explanations stay readable and within the scene at 2s",
+      "evidence": [
+        {
+          "kind": "equator-rise",
+          "left": 1043.71875,
+          "right": 1233.71875,
+          "top": 484.4375,
+          "bottom": 527.4375,
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "name": "1600: explanation labels do not overlap at 2s"
+    },
+    {
+      "ok": true,
+      "name": "1600: the current explanation fits or leaves an accessible marker when space is limited at 2s",
+      "evidence": {
+        "kind": "equator-rise",
+        "visible": true,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 赤道受热，空气上升",
+        "leaderHidden": false,
+        "text": "上升后从高空流出，地面空气减少"
+      }
+    },
+    {
+      "ok": true,
+      "name": "1600: close-up shows a clearly enlarged vertical path at 2s",
+      "evidence": 139.05473852507495
+    },
+    {
+      "ok": true,
+      "name": "1600: the canvas contains visible Earth and airflow pixels at 2s",
+      "evidence": {
+        "visible": 1453,
+        "samples": 4056
+      }
+    },
+    {
+      "ok": true,
+      "name": "1600: position explanations stay readable and within the scene at 8s",
+      "evidence": [
+        {
+          "kind": "upper",
+          "left": 837.890625,
+          "right": 1027.890625,
+          "top": 331,
+          "bottom": 374,
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "name": "1600: explanation labels do not overlap at 8s"
+    },
+    {
+      "ok": true,
+      "name": "1600: the current explanation fits or leaves an accessible marker when space is limited at 8s",
+      "evidence": {
+        "kind": "upper",
+        "visible": true,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 地转偏向力：北半球向右偏",
+        "leaderHidden": false,
+        "text": "向北运动，逐渐转向东"
+      }
+    },
+    {
+      "ok": true,
+      "name": "1600: close-up shows a clearly enlarged vertical path at 8s",
+      "evidence": 537.5932301832752
+    },
+    {
+      "ok": true,
+      "name": "1600: position explanations stay readable and within the scene at 17s",
+      "evidence": [
+        {
+          "kind": "sink",
+          "left": 982.671875,
+          "right": 1172.671875,
+          "top": 464.46875,
+          "bottom": 507.46875,
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "name": "1600: explanation labels do not overlap at 17s"
+    },
+    {
+      "ok": true,
+      "name": "1600: the current explanation fits or leaves an accessible marker when space is limited at 17s",
+      "evidence": {
+        "kind": "sink",
+        "visible": true,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 30°空气下沉，形成高压",
+        "leaderHidden": false,
+        "text": "下沉补充空气，地面空气增多"
+      }
+    },
+    {
+      "ok": true,
+      "name": "1600: close-up shows a clearly enlarged vertical path at 17s",
+      "evidence": 149.03459053459306
+    },
+    {
+      "ok": true,
+      "name": "1600: position explanations stay readable and within the scene at 28.5s",
+      "evidence": [
+        {
+          "kind": "subpolar-rise",
+          "left": 725.171875,
+          "right": 915.171875,
+          "top": 464.09375,
+          "bottom": 507.09375,
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "name": "1600: explanation labels do not overlap at 28.5s"
+    },
+    {
+      "ok": true,
+      "name": "1600: the current explanation fits or leaves an accessible marker when space is limited at 28.5s",
+      "evidence": {
+        "kind": "subpolar-rise",
+        "visible": true,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 60°冷暖相遇，暖气流抬升",
+        "leaderHidden": false,
+        "text": "暖空气沿冷空气上方持续爬升"
+      }
+    },
+    {
+      "ok": true,
+      "name": "1600: close-up shows a clearly enlarged vertical path at 28.5s",
+      "evidence": 276.9803245422639
+    },
+    {
+      "ok": true,
+      "name": "1600: position explanations stay readable and within the scene at 32s",
+      "evidence": [
+        {
+          "kind": "polar-sink",
+          "left": 954.546875,
+          "right": 1144.546875,
+          "top": 463.40625,
+          "bottom": 506.40625,
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "name": "1600: explanation labels do not overlap at 32s"
+    },
+    {
+      "ok": true,
+      "name": "1600: the current explanation fits or leaves an accessible marker when space is limited at 32s",
+      "evidence": {
+        "kind": "polar-sink",
+        "visible": true,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 两极冷却，空气下沉",
+        "leaderHidden": false,
+        "text": "下沉补充空气，地面空气增多"
+      }
+    },
+    {
+      "ok": true,
+      "name": "1600: close-up shows a clearly enlarged vertical path at 32s",
+      "evidence": 135.06851935995815
+    },
+    {
+      "ok": true,
+      "name": "1600: position explanations stay readable and within the scene at 40s",
+      "evidence": []
+    },
+    {
+      "ok": true,
+      "name": "1600: explanation labels do not overlap at 40s"
+    },
+    {
+      "ok": true,
+      "name": "1600: the canvas contains visible Earth and airflow pixels at 40s",
+      "evidence": {
+        "visible": 1459,
+        "samples": 4056
+      }
+    },
+    {
+      "ok": true,
+      "name": "1600: completed pressure names remain fully inside the viewport"
+    },
+    {
+      "ok": true,
+      "name": "1600: next-step button is fully visible inside the teaching panel"
+    },
+    {
+      "ok": true,
+      "name": "760: position explanations stay readable and within the scene at 2s",
+      "evidence": [
+        {
+          "kind": "equator-rise",
+          "left": 408.390625,
+          "right": 598.390625,
+          "top": 544.25,
+          "bottom": 587.25,
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "name": "760: explanation labels do not overlap at 2s"
+    },
+    {
+      "ok": true,
+      "name": "760: the current explanation fits or leaves an accessible marker when space is limited at 2s",
+      "evidence": {
+        "kind": "equator-rise",
+        "visible": true,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 赤道受热，空气上升",
+        "leaderHidden": false,
+        "text": "上升后从高空流出，地面空气减少"
+      }
+    },
+    {
+      "ok": true,
+      "name": "760: close-up shows a clearly enlarged vertical path at 2s",
+      "evidence": 111.24380820106919
+    },
+    {
+      "ok": true,
+      "name": "760: the canvas contains visible Earth and airflow pixels at 2s",
+      "evidence": {
+        "visible": 341,
+        "samples": 1036
+      }
+    },
+    {
+      "ok": true,
+      "name": "760: position explanations stay readable and within the scene at 8s",
+      "evidence": [
+        {
+          "kind": "upper",
+          "left": 332.59375,
+          "right": 522.59375,
+          "top": 223.671875,
+          "bottom": 266.671875,
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "name": "760: explanation labels do not overlap at 8s"
+    },
+    {
+      "ok": true,
+      "name": "760: the current explanation fits or leaves an accessible marker when space is limited at 8s",
+      "evidence": {
+        "kind": "upper",
+        "visible": true,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 地转偏向力：北半球向右偏",
+        "leaderHidden": false,
+        "text": "向北运动，逐渐转向东"
+      }
+    },
+    {
+      "ok": true,
+      "name": "760: close-up shows a clearly enlarged vertical path at 8s",
+      "evidence": 295.7307022416865
+    },
+    {
+      "ok": true,
+      "name": "760: position explanations stay readable and within the scene at 17s",
+      "evidence": [
+        {
+          "kind": "sink",
+          "left": 415.5,
+          "right": 605.5,
+          "top": 428.28125,
+          "bottom": 471.28125,
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "name": "760: explanation labels do not overlap at 17s"
+    },
+    {
+      "ok": true,
+      "name": "760: the current explanation fits or leaves an accessible marker when space is limited at 17s",
+      "evidence": {
+        "kind": "sink",
+        "visible": true,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 30°空气下沉，形成高压",
+        "leaderHidden": false,
+        "text": "下沉补充空气，地面空气增多"
+      }
+    },
+    {
+      "ok": true,
+      "name": "760: close-up shows a clearly enlarged vertical path at 17s",
+      "evidence": 119.2277299250783
+    },
+    {
+      "ok": true,
+      "name": "760: position explanations stay readable and within the scene at 28.5s",
+      "evidence": [
+        {
+          "kind": "subpolar-rise",
+          "left": 284.546875,
+          "right": 474.546875,
+          "top": 347.328125,
+          "bottom": 390.328125,
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "name": "760: explanation labels do not overlap at 28.5s"
+    },
+    {
+      "ok": true,
+      "name": "760: the current explanation fits or leaves an accessible marker when space is limited at 28.5s",
+      "evidence": {
+        "kind": "subpolar-rise",
+        "visible": true,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 60°冷暖相遇，暖气流抬升",
+        "leaderHidden": false,
+        "text": "暖空气沿冷空气上方持续爬升"
+      }
+    },
+    {
+      "ok": true,
+      "name": "760: close-up shows a clearly enlarged vertical path at 28.5s",
+      "evidence": 208.8232493997373
+    },
+    {
+      "ok": true,
+      "name": "760: position explanations stay readable and within the scene at 32s",
+      "evidence": [
+        {
+          "kind": "polar-sink",
+          "left": 514.421875,
+          "right": 704.421875,
+          "top": 346.203125,
+          "bottom": 389.203125,
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "name": "760: explanation labels do not overlap at 32s"
+    },
+    {
+      "ok": true,
+      "name": "760: the current explanation fits or leaves an accessible marker when space is limited at 32s",
+      "evidence": {
+        "kind": "polar-sink",
+        "visible": true,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 两极冷却，空气下沉",
+        "leaderHidden": false,
+        "text": "下沉补充空气，地面空气增多"
+      }
+    },
+    {
+      "ok": true,
+      "name": "760: close-up shows a clearly enlarged vertical path at 32s",
+      "evidence": 107.49817806402275
+    },
+    {
+      "ok": true,
+      "name": "760: position explanations stay readable and within the scene at 40s",
+      "evidence": []
+    },
+    {
+      "ok": true,
+      "name": "760: explanation labels do not overlap at 40s"
+    },
+    {
+      "ok": true,
+      "name": "760: the canvas contains visible Earth and airflow pixels at 40s",
+      "evidence": {
+        "visible": 430,
+        "samples": 1036
+      }
+    },
+    {
+      "ok": true,
+      "name": "760: completed pressure names remain fully inside the viewport"
+    },
+    {
+      "ok": true,
+      "name": "760: next-step button is fully visible inside the teaching panel"
+    },
+    {
+      "ok": true,
+      "name": "390: position explanations stay readable and within the scene at 2s",
+      "evidence": []
+    },
+    {
+      "ok": true,
+      "name": "390: explanation labels do not overlap at 2s"
+    },
+    {
+      "ok": true,
+      "name": "390: the current explanation fits or leaves an accessible marker when space is limited at 2s",
+      "evidence": {
+        "kind": "equator-rise",
+        "visible": false,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 赤道受热，空气上升",
+        "leaderHidden": true,
+        "text": "上升后从高空流出，地面空气减少"
+      }
+    },
+    {
+      "ok": true,
+      "name": "390: close-up shows a clearly enlarged vertical path at 2s",
+      "evidence": 59.30337431810092
+    },
+    {
+      "ok": true,
+      "name": "390: the canvas contains visible Earth and airflow pixels at 2s",
+      "evidence": {
+        "visible": 79,
+        "samples": 231
+      }
+    },
+    {
+      "ok": true,
+      "name": "390: position explanations stay readable and within the scene at 8s",
+      "evidence": [
+        {
+          "kind": "upper",
+          "left": 185.578125,
+          "right": 333.578125,
+          "top": 105.15625,
+          "bottom": 145.15625,
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "name": "390: explanation labels do not overlap at 8s"
+    },
+    {
+      "ok": true,
+      "name": "390: the current explanation fits or leaves an accessible marker when space is limited at 8s",
+      "evidence": {
+        "kind": "upper",
+        "visible": true,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 地转偏向力：北半球向右偏",
+        "leaderHidden": false,
+        "text": "向北运动，逐渐转向东"
+      }
+    },
+    {
+      "ok": true,
+      "name": "390: close-up shows a clearly enlarged vertical path at 8s",
+      "evidence": 137.98515705360157
+    },
+    {
+      "ok": true,
+      "name": "390: position explanations stay readable and within the scene at 17s",
+      "evidence": [
+        {
+          "kind": "sink",
+          "left": 121.5,
+          "right": 269.5,
+          "top": 267.34375,
+          "bottom": 307.34375,
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "name": "390: explanation labels do not overlap at 17s"
+    },
+    {
+      "ok": true,
+      "name": "390: the current explanation fits or leaves an accessible marker when space is limited at 17s",
+      "evidence": {
+        "kind": "sink",
+        "visible": true,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 30°空气下沉，形成高压",
+        "leaderHidden": false,
+        "text": "下沉补充空气，地面空气增多"
+      }
+    },
+    {
+      "ok": true,
+      "name": "390: close-up shows a clearly enlarged vertical path at 17s",
+      "evidence": 63.75199335425881
+    },
+    {
+      "ok": true,
+      "name": "390: position explanations stay readable and within the scene at 28.5s",
+      "evidence": [
+        {
+          "kind": "subpolar-rise",
+          "left": 22,
+          "right": 170,
+          "top": 109.125,
+          "bottom": 149.125,
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "name": "390: explanation labels do not overlap at 28.5s"
+    },
+    {
+      "ok": true,
+      "name": "390: the current explanation fits or leaves an accessible marker when space is limited at 28.5s",
+      "evidence": {
+        "kind": "subpolar-rise",
+        "visible": true,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 60°冷暖相遇，暖气流抬升",
+        "leaderHidden": false,
+        "text": "暖空气沿冷空气上方持续爬升"
+      }
+    },
+    {
+      "ok": true,
+      "name": "390: close-up shows a clearly enlarged vertical path at 28.5s",
+      "evidence": 103.23694141694021
+    },
+    {
+      "ok": true,
+      "name": "390: position explanations stay readable and within the scene at 32s",
+      "evidence": [
+        {
+          "kind": "polar-sink",
+          "left": 199.65625,
+          "right": 347.65625,
+          "top": 186.890625,
+          "bottom": 226.890625,
+          "overflow": false
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "name": "390: explanation labels do not overlap at 32s"
+    },
+    {
+      "ok": true,
+      "name": "390: the current explanation fits or leaves an accessible marker when space is limited at 32s",
+      "evidence": {
+        "kind": "polar-sink",
+        "visible": true,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 两极冷却，空气下沉",
+        "leaderHidden": false,
+        "text": "下沉补充空气，地面空气增多"
+      }
+    },
+    {
+      "ok": true,
+      "name": "390: close-up shows a clearly enlarged vertical path at 32s",
+      "evidence": 57.375027484667896
+    },
+    {
+      "ok": true,
+      "name": "390: position explanations stay readable and within the scene at 40s",
+      "evidence": []
+    },
+    {
+      "ok": true,
+      "name": "390: explanation labels do not overlap at 40s"
+    },
+    {
+      "ok": true,
+      "name": "390: the canvas contains visible Earth and airflow pixels at 40s",
+      "evidence": {
+        "visible": 87,
+        "samples": 231
+      }
+    },
+    {
+      "ok": true,
+      "name": "390: completed pressure names remain fully inside the viewport"
+    },
+    {
+      "ok": true,
+      "name": "390: next-step button is fully visible inside the teaching panel"
+    },
+    {
+      "ok": true,
+      "name": "Clicking the actual sinking position pauses and opens its mass-and-pressure explanation"
+    },
+    {
+      "ok": true,
+      "name": "equator-rise: local near-surface air mass changes in the correct pressure-forming direction"
+    },
+    {
+      "ok": true,
+      "name": "sink: local near-surface air mass changes in the correct pressure-forming direction"
+    },
+    {
+      "ok": true,
+      "name": "subpolar-rise: local near-surface air mass changes in the correct pressure-forming direction"
+    },
+    {
+      "ok": true,
+      "name": "polar-sink: local near-surface air mass changes in the correct pressure-forming direction"
+    },
+    {
+      "ok": true,
+      "name": "Leaving the formation view hides its explanations and keeps the pressure palette in the completed model"
+    },
+    {
+      "ok": true,
+      "name": "No browser errors",
+      "evidence": []
+    }
+  ],
+  "errors": [],
+  "views": [
+    {
+      "width": 1366,
+      "height": 768,
+      "time": 2,
+      "kind": "equator-rise",
+      "eye": 4.415611211232111,
+      "routeSpan": 106.79404087045577,
+      "frame": {
+        "w": 1366,
+        "h": 768,
+        "left": 308,
+        "availableW": 1034,
+        "availableH": 637,
+        "top": 58,
+        "centerX": 825,
+        "centerY": 376.5,
+        "distance": 15.91543935606973
+      },
+      "rects": [
+        {
+          "kind": "equator-rise",
+          "left": 926.328125,
+          "right": 1116.328125,
+          "top": 486.8125,
+          "bottom": 529.8125,
+          "overflow": false
+        }
+      ],
+      "current": {
+        "kind": "equator-rise",
+        "visible": true,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 赤道受热，空气上升",
+        "leaderHidden": false,
+        "text": "上升后从高空流出，地面空气减少"
+      }
+    },
+    {
+      "width": 1366,
+      "height": 768,
+      "time": 8,
+      "kind": "upper",
+      "eye": 8.80475357881385,
+      "routeSpan": 395.7897589596877,
+      "frame": {
+        "w": 1366,
+        "h": 768,
+        "left": 308,
+        "availableW": 1034,
+        "availableH": 637,
+        "top": 58,
+        "centerX": 825,
+        "centerY": 376.5,
+        "distance": 15.91543935606973
+      },
+      "rects": [
+        {
+          "kind": "upper",
+          "left": 756.15625,
+          "right": 946.15625,
+          "top": 251.921875,
+          "bottom": 294.921875,
+          "overflow": false
+        }
+      ],
+      "current": {
+        "kind": "upper",
+        "visible": true,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 地转偏向力：北半球向右偏",
+        "leaderHidden": false,
+        "text": "向北运动，逐渐转向东"
+      }
+    },
+    {
+      "width": 1366,
+      "height": 768,
+      "time": 17,
+      "kind": "sink",
+      "eye": 4.438446484615051,
+      "routeSpan": 114.45857103623415,
+      "frame": {
+        "w": 1366,
+        "h": 768,
+        "left": 308,
+        "availableW": 1034,
+        "availableH": 637,
+        "top": 58,
+        "centerX": 825,
+        "centerY": 376.5,
+        "distance": 15.91543935606973
+      },
+      "rects": [
+        {
+          "kind": "sink",
+          "left": 738.1875,
+          "right": 928.1875,
+          "top": 401.484375,
+          "bottom": 444.484375,
+          "overflow": false
+        }
+      ],
+      "current": {
+        "kind": "sink",
+        "visible": true,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 30°空气下沉，形成高压",
+        "leaderHidden": false,
+        "text": "下沉补充空气，地面空气增多"
+      }
+    },
+    {
+      "width": 1366,
+      "height": 768,
+      "time": 28.5,
+      "kind": "subpolar-rise",
+      "eye": 4.44107342783475,
+      "routeSpan": 212.71349725129357,
+      "frame": {
+        "w": 1366,
+        "h": 768,
+        "left": 308,
+        "availableW": 1034,
+        "availableH": 637,
+        "top": 58,
+        "centerX": 825,
+        "centerY": 376.5,
+        "distance": 15.91543935606973
+      },
+      "rects": [
+        {
+          "kind": "subpolar-rise",
+          "left": 607.453125,
+          "right": 797.453125,
+          "top": 349.75,
+          "bottom": 392.75,
+          "overflow": false
+        }
+      ],
+      "current": {
+        "kind": "subpolar-rise",
+        "visible": true,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 60°冷暖相遇，暖气流抬升",
+        "leaderHidden": false,
+        "text": "暖空气沿冷空气上方持续爬升"
+      }
+    },
+    {
+      "width": 1366,
+      "height": 768,
+      "time": 32,
+      "kind": "polar-sink",
+      "eye": 4.483639249802743,
+      "routeSpan": 103.6820814715569,
+      "frame": {
+        "w": 1366,
+        "h": 768,
+        "left": 308,
+        "availableW": 1034,
+        "availableH": 637,
+        "top": 58,
+        "centerX": 825,
+        "centerY": 376.5,
+        "distance": 15.91543935606973
+      },
+      "rects": [
+        {
+          "kind": "polar-sink",
+          "left": 841.21875,
+          "right": 1031.21875,
+          "top": 349.1875,
+          "bottom": 392.1875,
+          "overflow": false
+        }
+      ],
+      "current": {
+        "kind": "polar-sink",
+        "visible": true,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 两极冷却，空气下沉",
+        "leaderHidden": false,
+        "text": "下沉补充空气，地面空气增多"
+      }
+    },
+    {
+      "width": 1366,
+      "height": 768,
+      "time": 40,
+      "kind": "ferrel-upper",
+      "eye": 10.874613380493264,
+      "routeSpan": 135.5278103902449,
+      "frame": {
+        "w": 1366,
+        "h": 768,
+        "left": 308,
+        "availableW": 1034,
+        "availableH": 637,
+        "top": 58,
+        "centerX": 825,
+        "centerY": 376.5,
+        "distance": 15.91543935606973
+      },
+      "rects": [],
+      "current": {
+        "kind": "ferrel-upper",
+        "visible": false,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 中纬高空：返回30°",
+        "leaderHidden": true,
+        "text": "抬升后的空气返回30°附近，再下沉"
+      }
+    },
+    {
+      "width": 1600,
+      "height": 1000,
+      "time": 2,
+      "kind": "equator-rise",
+      "eye": 4.415611211232111,
+      "routeSpan": 139.05473852507495,
+      "frame": {
+        "w": 1600,
+        "h": 1000,
+        "left": 308,
+        "availableW": 1268,
+        "availableH": 869,
+        "top": 58,
+        "centerX": 942,
+        "centerY": 492.5,
+        "distance": 15.34179018559672
+      },
+      "rects": [
+        {
+          "kind": "equator-rise",
+          "left": 1043.71875,
+          "right": 1233.71875,
+          "top": 484.4375,
+          "bottom": 527.4375,
+          "overflow": false
+        }
+      ],
+      "current": {
+        "kind": "equator-rise",
+        "visible": true,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 赤道受热，空气上升",
+        "leaderHidden": false,
+        "text": "上升后从高空流出，地面空气减少"
+      }
+    },
+    {
+      "width": 1600,
+      "height": 1000,
+      "time": 8,
+      "kind": "upper",
+      "eye": 8.46581378925818,
+      "routeSpan": 537.5932301832752,
+      "frame": {
+        "w": 1600,
+        "h": 1000,
+        "left": 308,
+        "availableW": 1268,
+        "availableH": 869,
+        "top": 58,
+        "centerX": 942,
+        "centerY": 492.5,
+        "distance": 15.34179018559672
+      },
+      "rects": [
+        {
+          "kind": "upper",
+          "left": 837.890625,
+          "right": 1027.890625,
+          "top": 331,
+          "bottom": 374,
+          "overflow": false
+        }
+      ],
+      "current": {
+        "kind": "upper",
+        "visible": true,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 地转偏向力：北半球向右偏",
+        "leaderHidden": false,
+        "text": "向北运动，逐渐转向东"
+      }
+    },
+    {
+      "width": 1600,
+      "height": 1000,
+      "time": 17,
+      "kind": "sink",
+      "eye": 4.438446484615051,
+      "routeSpan": 149.03459053459306,
+      "frame": {
+        "w": 1600,
+        "h": 1000,
+        "left": 308,
+        "availableW": 1268,
+        "availableH": 869,
+        "top": 58,
+        "centerX": 942,
+        "centerY": 492.5,
+        "distance": 15.34179018559672
+      },
+      "rects": [
+        {
+          "kind": "sink",
+          "left": 982.671875,
+          "right": 1172.671875,
+          "top": 464.46875,
+          "bottom": 507.46875,
+          "overflow": false
+        }
+      ],
+      "current": {
+        "kind": "sink",
+        "visible": true,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 30°空气下沉，形成高压",
+        "leaderHidden": false,
+        "text": "下沉补充空气，地面空气增多"
+      }
+    },
+    {
+      "width": 1600,
+      "height": 1000,
+      "time": 28.5,
+      "kind": "subpolar-rise",
+      "eye": 4.440917245292716,
+      "routeSpan": 276.9803245422639,
+      "frame": {
+        "w": 1600,
+        "h": 1000,
+        "left": 308,
+        "availableW": 1268,
+        "availableH": 869,
+        "top": 58,
+        "centerX": 942,
+        "centerY": 492.5,
+        "distance": 15.34179018559672
+      },
+      "rects": [
+        {
+          "kind": "subpolar-rise",
+          "left": 725.171875,
+          "right": 915.171875,
+          "top": 464.09375,
+          "bottom": 507.09375,
+          "overflow": false
+        }
+      ],
+      "current": {
+        "kind": "subpolar-rise",
+        "visible": true,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 60°冷暖相遇，暖气流抬升",
+        "leaderHidden": false,
+        "text": "暖空气沿冷空气上方持续爬升"
+      }
+    },
+    {
+      "width": 1600,
+      "height": 1000,
+      "time": 32,
+      "kind": "polar-sink",
+      "eye": 4.481594495375817,
+      "routeSpan": 135.06851935995815,
+      "frame": {
+        "w": 1600,
+        "h": 1000,
+        "left": 308,
+        "availableW": 1268,
+        "availableH": 869,
+        "top": 58,
+        "centerX": 942,
+        "centerY": 492.5,
+        "distance": 15.34179018559672
+      },
+      "rects": [
+        {
+          "kind": "polar-sink",
+          "left": 954.546875,
+          "right": 1144.546875,
+          "top": 463.40625,
+          "bottom": 506.40625,
+          "overflow": false
+        }
+      ],
+      "current": {
+        "kind": "polar-sink",
+        "visible": true,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 两极冷却，空气下沉",
+        "leaderHidden": false,
+        "text": "下沉补充空气，地面空气增多"
+      }
+    },
+    {
+      "width": 1600,
+      "height": 1000,
+      "time": 40,
+      "kind": "ferrel-upper",
+      "eye": 10.34219207071952,
+      "routeSpan": 183.60469672381402,
+      "frame": {
+        "w": 1600,
+        "h": 1000,
+        "left": 308,
+        "availableW": 1268,
+        "availableH": 869,
+        "top": 58,
+        "centerX": 942,
+        "centerY": 492.5,
+        "distance": 15.34179018559672
+      },
+      "rects": [],
+      "current": {
+        "kind": "ferrel-upper",
+        "visible": false,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 中纬高空：返回30°",
+        "leaderHidden": true,
+        "text": "抬升后的空气返回30°附近，再下沉"
+      }
+    },
+    {
+      "width": 760,
+      "height": 800,
+      "time": 2,
+      "kind": "equator-rise",
+      "eye": 4.415611211232111,
+      "routeSpan": 111.24380820106919,
+      "frame": {
+        "w": 760,
+        "h": 800,
+        "left": 268,
+        "availableW": 468,
+        "availableH": 631,
+        "top": 58,
+        "centerX": 502,
+        "centerY": 373.5,
+        "distance": 21.373403608759276
+      },
+      "rects": [
+        {
+          "kind": "equator-rise",
+          "left": 408.390625,
+          "right": 598.390625,
+          "top": 544.25,
+          "bottom": 587.25,
+          "overflow": false
+        }
+      ],
+      "current": {
+        "kind": "equator-rise",
+        "visible": true,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 赤道受热，空气上升",
+        "leaderHidden": false,
+        "text": "上升后从高空流出，地面空气减少"
+      }
+    },
+    {
+      "width": 760,
+      "height": 800,
+      "time": 8,
+      "kind": "upper",
+      "eye": 12.067055096646776,
+      "routeSpan": 295.7307022416865,
+      "frame": {
+        "w": 760,
+        "h": 800,
+        "left": 268,
+        "availableW": 468,
+        "availableH": 631,
+        "top": 58,
+        "centerX": 502,
+        "centerY": 373.5,
+        "distance": 21.373403608759276
+      },
+      "rects": [
+        {
+          "kind": "upper",
+          "left": 332.59375,
+          "right": 522.59375,
+          "top": 223.671875,
+          "bottom": 266.671875,
+          "overflow": false
+        }
+      ],
+      "current": {
+        "kind": "upper",
+        "visible": true,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 地转偏向力：北半球向右偏",
+        "leaderHidden": false,
+        "text": "向北运动，逐渐转向东"
+      }
+    },
+    {
+      "width": 760,
+      "height": 800,
+      "time": 17,
+      "kind": "sink",
+      "eye": 4.438446484615051,
+      "routeSpan": 119.2277299250783,
+      "frame": {
+        "w": 760,
+        "h": 800,
+        "left": 268,
+        "availableW": 468,
+        "availableH": 631,
+        "top": 58,
+        "centerX": 502,
+        "centerY": 373.5,
+        "distance": 21.373403608759276
+      },
+      "rects": [
+        {
+          "kind": "sink",
+          "left": 415.5,
+          "right": 605.5,
+          "top": 428.28125,
+          "bottom": 471.28125,
+          "overflow": false
+        }
+      ],
+      "current": {
+        "kind": "sink",
+        "visible": true,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 30°空气下沉，形成高压",
+        "leaderHidden": false,
+        "text": "下沉补充空气，地面空气增多"
+      }
+    },
+    {
+      "width": 760,
+      "height": 800,
+      "time": 28.5,
+      "kind": "subpolar-rise",
+      "eye": 4.710658890514693,
+      "routeSpan": 208.8232493997373,
+      "frame": {
+        "w": 760,
+        "h": 800,
+        "left": 268,
+        "availableW": 468,
+        "availableH": 631,
+        "top": 58,
+        "centerX": 502,
+        "centerY": 373.5,
+        "distance": 21.373403608759276
+      },
+      "rects": [
+        {
+          "kind": "subpolar-rise",
+          "left": 284.546875,
+          "right": 474.546875,
+          "top": 347.328125,
+          "bottom": 390.328125,
+          "overflow": false
+        }
+      ],
+      "current": {
+        "kind": "subpolar-rise",
+        "visible": true,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 60°冷暖相遇，暖气流抬升",
+        "leaderHidden": false,
+        "text": "暖空气沿冷空气上方持续爬升"
+      }
+    },
+    {
+      "width": 760,
+      "height": 800,
+      "time": 32,
+      "kind": "polar-sink",
+      "eye": 4.503157099899627,
+      "routeSpan": 107.49817806402275,
+      "frame": {
+        "w": 760,
+        "h": 800,
+        "left": 268,
+        "availableW": 468,
+        "availableH": 631,
+        "top": 58,
+        "centerX": 502,
+        "centerY": 373.5,
+        "distance": 21.373403608759276
+      },
+      "rects": [
+        {
+          "kind": "polar-sink",
+          "left": 514.421875,
+          "right": 704.421875,
+          "top": 346.203125,
+          "bottom": 389.203125,
+          "overflow": false
+        }
+      ],
+      "current": {
+        "kind": "polar-sink",
+        "visible": true,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 两极冷却，空气下沉",
+        "leaderHidden": false,
+        "text": "下沉补充空气，地面空气增多"
+      }
+    },
+    {
+      "width": 760,
+      "height": 800,
+      "time": 40,
+      "kind": "ferrel-upper",
+      "eye": 16.046282203154888,
+      "routeSpan": 103.23012425882116,
+      "frame": {
+        "w": 760,
+        "h": 800,
+        "left": 268,
+        "availableW": 468,
+        "availableH": 631,
+        "top": 58,
+        "centerX": 502,
+        "centerY": 373.5,
+        "distance": 21.373403608759276
+      },
+      "rects": [],
+      "current": {
+        "kind": "ferrel-upper",
+        "visible": false,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 中纬高空：返回30°",
+        "leaderHidden": true,
+        "text": "抬升后的空气返回30°附近，再下沉"
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "time": 2,
+      "kind": "equator-rise",
+      "eye": 8.66899138867811,
+      "routeSpan": 59.30337431810092,
+      "frame": {
+        "w": 390,
+        "h": 844,
+        "left": 16,
+        "availableW": 350,
+        "availableH": 220.28125,
+        "top": 100,
+        "centerX": 191,
+        "centerY": 210.140625,
+        "distance": 45.67749643184968
+      },
+      "rects": [],
+      "current": {
+        "kind": "equator-rise",
+        "visible": false,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 赤道受热，空气上升",
+        "leaderHidden": true,
+        "text": "上升后从高空流出，地面空气减少"
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "time": 8,
+      "kind": "upper",
+      "eye": 26.86059194102418,
+      "routeSpan": 137.98515705360157,
+      "frame": {
+        "w": 390,
+        "h": 844,
+        "left": 16,
+        "availableW": 350,
+        "availableH": 220.28125,
+        "top": 100,
+        "centerX": 191,
+        "centerY": 210.140625,
+        "distance": 45.67749643184968
+      },
+      "rects": [
+        {
+          "kind": "upper",
+          "left": 185.578125,
+          "right": 333.578125,
+          "top": 105.15625,
+          "bottom": 145.15625,
+          "overflow": false
+        }
+      ],
+      "current": {
+        "kind": "upper",
+        "visible": true,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 地转偏向力：北半球向右偏",
+        "leaderHidden": false,
+        "text": "向北运动，逐渐转向东"
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "time": 17,
+      "kind": "sink",
+      "eye": 8.69171482989468,
+      "routeSpan": 63.75199335425881,
+      "frame": {
+        "w": 390,
+        "h": 844,
+        "left": 16,
+        "availableW": 350,
+        "availableH": 220.28125,
+        "top": 100,
+        "centerX": 191,
+        "centerY": 210.140625,
+        "distance": 45.67749643184968
+      },
+      "rects": [
+        {
+          "kind": "sink",
+          "left": 121.5,
+          "right": 269.5,
+          "top": 267.34375,
+          "bottom": 307.34375,
+          "overflow": false
+        }
+      ],
+      "current": {
+        "kind": "sink",
+        "visible": true,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 30°空气下沉，形成高压",
+        "leaderHidden": false,
+        "text": "下沉补充空气，地面空气增多"
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "time": 28.5,
+      "kind": "subpolar-rise",
+      "eye": 10.026633947006172,
+      "routeSpan": 103.23694141694021,
+      "frame": {
+        "w": 390,
+        "h": 844,
+        "left": 16,
+        "availableW": 350,
+        "availableH": 220.28125,
+        "top": 100,
+        "centerX": 191,
+        "centerY": 210.140625,
+        "distance": 45.67749643184968
+      },
+      "rects": [
+        {
+          "kind": "subpolar-rise",
+          "left": 22,
+          "right": 170,
+          "top": 109.125,
+          "bottom": 149.125,
+          "overflow": false
+        }
+      ],
+      "current": {
+        "kind": "subpolar-rise",
+        "visible": true,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 60°冷暖相遇，暖气流抬升",
+        "leaderHidden": false,
+        "text": "暖空气沿冷空气上方持续爬升"
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "time": 32,
+      "kind": "polar-sink",
+      "eye": 8.808695720929123,
+      "routeSpan": 57.375027484667896,
+      "frame": {
+        "w": 390,
+        "h": 844,
+        "left": 16,
+        "availableW": 350,
+        "availableH": 220.28125,
+        "top": 100,
+        "centerX": 191,
+        "centerY": 210.140625,
+        "distance": 45.67749643184968
+      },
+      "rects": [
+        {
+          "kind": "polar-sink",
+          "left": 199.65625,
+          "right": 347.65625,
+          "top": 186.890625,
+          "bottom": 226.890625,
+          "overflow": false
+        }
+      ],
+      "current": {
+        "kind": "polar-sink",
+        "visible": true,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 两极冷却，空气下沉",
+        "leaderHidden": false,
+        "text": "下沉补充空气，地面空气增多"
+      }
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "time": 40,
+      "kind": "ferrel-upper",
+      "eye": 39.713227702081426,
+      "routeSpan": 49.43950700267476,
+      "frame": {
+        "w": 390,
+        "h": 844,
+        "left": 16,
+        "availableW": 350,
+        "availableH": 220.28125,
+        "top": 100,
+        "centerX": 191,
+        "centerY": 210.140625,
+        "distance": 45.67749643184968
+      },
+      "rects": [],
+      "current": {
+        "kind": "ferrel-upper",
+        "visible": false,
+        "markerVisible": true,
+        "markerLabel": "北半球 · 中纬高空：返回30°",
+        "leaderHidden": true,
+        "text": "抬升后的空气返回30°附近，再下沉"
+      }
+    }
+  ]
+}

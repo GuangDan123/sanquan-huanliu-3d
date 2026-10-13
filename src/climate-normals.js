@@ -1,0 +1,178 @@
+/* JMA/TCC ClimatView monthly normals, 1991–2020. Retrieved 2026-10-11. */
+const CLIMATE_NORMALS = {
+  "darwin": {
+    "station": "94120",
+    "name": "DARWIN AIRPORT -AUSTRALIA",
+    "source": "日本气象厅东京气候中心（JMA/TCC）ClimatView",
+    "period": "1991–2020",
+    "url": "https://ds.data.jma.go.jp/tcc/tcc/products/climate/climatview/graph_mkhtml.php?n=94120&y=2025&m=12",
+    "temperature": [
+      28.3,
+      28.2,
+      28.3,
+      28.3,
+      27,
+      25.2,
+      24.8,
+      25.5,
+      27.7,
+      29,
+      29.3,
+      28.9
+    ],
+    "rain": [
+      468,
+      412.1,
+      317.9,
+      106.4,
+      21.5,
+      0.4,
+      0,
+      0.7,
+      14.3,
+      70.4,
+      145.1,
+      270.4
+    ]
+  },
+  "chennai": {
+    "station": "43279",
+    "name": "CHENNAI/MINAMBAKKAM -INDIA (STATIONS SOUTH OF LATITUDE 20~N)",
+    "source": "日本气象厅东京气候中心（JMA/TCC）ClimatView",
+    "period": "1991–2020",
+    "url": "https://ds.data.jma.go.jp/tcc/tcc/products/climate/climatview/graph_mkhtml.php?n=43279&y=2025&m=12",
+    "temperature": [
+      25.4,
+      26.7,
+      28.7,
+      31,
+      33,
+      32.3,
+      31,
+      30.3,
+      29.8,
+      28.5,
+      26.7,
+      25.6
+    ],
+    "rain": [
+      19.7,
+      5.4,
+      3.6,
+      22.4,
+      49.7,
+      75.7,
+      104.3,
+      141.5,
+      142.5,
+      291.5,
+      381.1,
+      189.8
+    ]
+  },
+  "shanghai": {
+    "station": "58362",
+    "name": "SHANGHAI (BAOSHAN) -CHINA",
+    "source": "日本气象厅东京气候中心（JMA/TCC）ClimatView",
+    "period": "1991–2020",
+    "url": "https://ds.data.jma.go.jp/tcc/tcc/products/climate/climatview/graph_mkhtml.php?n=58362&y=2025&m=12",
+    "temperature": [
+      5,
+      6.5,
+      10.3,
+      15.7,
+      20.9,
+      24.4,
+      28.8,
+      28.5,
+      24.8,
+      19.7,
+      13.9,
+      7.5
+    ],
+    "rain": [
+      67.5,
+      62.9,
+      81,
+      77.2,
+      90.6,
+      181.5,
+      144.1,
+      215.5,
+      122.2,
+      61.5,
+      60.5,
+      47.4
+    ]
+  },
+  "mumbai": {
+    "station": "43057",
+    "name": "BOMBAY / COLABA -INDIA (STATIONS SOUTH OF LATITUDE 20~N)",
+    "source": "日本气象厅东京气候中心（JMA/TCC）ClimatView",
+    "period": "1991–2020",
+    "url": "https://ds.data.jma.go.jp/tcc/tcc/products/climate/climatview/graph_mkhtml.php?n=43057&y=2025&m=12",
+    "temperature": [
+      24.9,
+      25.5,
+      27.3,
+      29.2,
+      30.7,
+      29.3,
+      27.7,
+      27.5,
+      27.9,
+      29.1,
+      28.7,
+      26.7
+    ],
+    "rain": [
+      0.6,
+      1,
+      1.3,
+      0.8,
+      6,
+      516.5,
+      790.5,
+      483.3,
+      352.8,
+      86.3,
+      8.8,
+      2.8
+    ]
+  },
+  "beijing": {
+    "station": "54511",
+    "name": "BEIJING -CHINA",
+    "source": "日本气象厅东京气候中心（JMA/TCC）ClimatView",
+    "period": "1991–2020",
+    "url": "https://ds.data.jma.go.jp/tcc/tcc/products/climate/climatview/graph_mkhtml.php?n=54511&y=2025&m=12",
+    "temperature": [
+      -2.8,
+      0.6,
+      7.5,
+      15.1,
+      21.3,
+      25.3,
+      27.2,
+      26,
+      21.2,
+      13.8,
+      5.2,
+      -1
+    ],
+    "rain": [
+      2.1,
+      5.6,
+      8.5,
+      21.9,
+      36.5,
+      72.7,
+      170.6,
+      114.1,
+      53.3,
+      29.3,
+      13.7,
+      2.5
+    ]
+  }
+};

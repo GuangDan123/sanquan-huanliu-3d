@@ -1,0 +1,3078 @@
+{
+  "checks": [
+    {
+      "ok": true,
+      "name": "ride 3.8s: no low-latitude segment appears before airflow reaches it",
+      "data": [
+        [
+          {
+            "h": 1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 95,
+            "core": 95,
+            "particleMax": 1.1405944479154972
+          },
+          {
+            "h": 1,
+            "kind": "upper",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.9953403953230137e-7
+          },
+          {
+            "h": 1,
+            "kind": "parallel",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.1568206135316998e-7
+          },
+          {
+            "h": 1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2959076717184042e-7
+          },
+          {
+            "h": 1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.6109042897391794e-7
+          }
+        ],
+        [
+          {
+            "h": -1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 95,
+            "core": 95,
+            "particleMax": 1.1406390653045835
+          },
+          {
+            "h": -1,
+            "kind": "upper",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.203968575075517e-7
+          },
+          {
+            "h": -1,
+            "kind": "parallel",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.3892406142012322e-7
+          },
+          {
+            "h": -1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.4100160253322632e-7
+          },
+          {
+            "h": -1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2327310867238826e-7
+          }
+        ]
+      ]
+    },
+    {
+      "ok": true,
+      "name": "ride 3.8s: ribbon and core share one advancing front"
+    },
+    {
+      "ok": true,
+      "name": "ride 3.8s: the 30-degree horizontal segment stays hidden before arrival"
+    },
+    {
+      "ok": true,
+      "name": "ride 4.1s: no low-latitude segment appears before airflow reaches it",
+      "data": [
+        [
+          {
+            "h": 1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1886097040419754
+          },
+          {
+            "h": 1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 1,
+            "core": 1,
+            "particleMax": 0.05402104986667595
+          },
+          {
+            "h": 1,
+            "kind": "parallel",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.1568206135316998e-7
+          },
+          {
+            "h": 1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2959076717184042e-7
+          },
+          {
+            "h": 1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.6109042897391794e-7
+          }
+        ],
+        [
+          {
+            "h": -1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1887157838848834
+          },
+          {
+            "h": -1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 1,
+            "core": 1,
+            "particleMax": 0.054192207754233696
+          },
+          {
+            "h": -1,
+            "kind": "parallel",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.3892406142012322e-7
+          },
+          {
+            "h": -1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.4100160253322632e-7
+          },
+          {
+            "h": -1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2327310867238826e-7
+          }
+        ]
+      ]
+    },
+    {
+      "ok": true,
+      "name": "ride 4.1s: ribbon and core share one advancing front"
+    },
+    {
+      "ok": true,
+      "name": "ride 4.1s: the 30-degree horizontal segment stays hidden before arrival"
+    },
+    {
+      "ok": true,
+      "name": "ride 9.8s: no low-latitude segment appears before airflow reaches it",
+      "data": [
+        [
+          {
+            "h": 1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1821699393397902
+          },
+          {
+            "h": 1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 72,
+            "core": 72,
+            "particleMax": 3.6324410287150295
+          },
+          {
+            "h": 1,
+            "kind": "parallel",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.1568206135316998e-7
+          },
+          {
+            "h": 1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2959076717184042e-7
+          },
+          {
+            "h": 1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.6109042897391794e-7
+          }
+        ],
+        [
+          {
+            "h": -1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1822671695585083
+          },
+          {
+            "h": -1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 72,
+            "core": 72,
+            "particleMax": 4.385596766520176
+          },
+          {
+            "h": -1,
+            "kind": "parallel",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.3892406142012322e-7
+          },
+          {
+            "h": -1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.4100160253322632e-7
+          },
+          {
+            "h": -1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2327310867238826e-7
+          }
+        ]
+      ]
+    },
+    {
+      "ok": true,
+      "name": "ride 9.8s: ribbon and core share one advancing front"
+    },
+    {
+      "ok": true,
+      "name": "ride 9.8s: the 30-degree horizontal segment stays hidden before arrival"
+    },
+    {
+      "ok": true,
+      "name": "ride 10.2s: no low-latitude segment appears before airflow reaches it",
+      "data": [
+        [
+          {
+            "h": 1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1755250477502042
+          },
+          {
+            "h": 1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 77,
+            "core": 77,
+            "particleMax": 3.8965215648268927
+          },
+          {
+            "h": 1,
+            "kind": "parallel",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.1568206135316998e-7
+          },
+          {
+            "h": 1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2959076717184042e-7
+          },
+          {
+            "h": 1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.6109042897391794e-7
+          }
+        ],
+        [
+          {
+            "h": -1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.175613257489859
+          },
+          {
+            "h": -1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 77,
+            "core": 77,
+            "particleMax": 4.712794535955656
+          },
+          {
+            "h": -1,
+            "kind": "parallel",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.3892406142012322e-7
+          },
+          {
+            "h": -1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.4100160253322632e-7
+          },
+          {
+            "h": -1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2327310867238826e-7
+          }
+        ]
+      ]
+    },
+    {
+      "ok": true,
+      "name": "ride 10.2s: ribbon and core share one advancing front"
+    },
+    {
+      "ok": true,
+      "name": "ride 10.2s: the 30-degree horizontal segment stays hidden before arrival"
+    },
+    {
+      "ok": true,
+      "name": "ride 11s: no low-latitude segment appears before airflow reaches it",
+      "data": [
+        [
+          {
+            "h": 1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.187295338559282
+          },
+          {
+            "h": 1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 87,
+            "core": 87,
+            "particleMax": 4.638641956118478
+          },
+          {
+            "h": 1,
+            "kind": "parallel",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.1568206135316998e-7
+          },
+          {
+            "h": 1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2959076717184042e-7
+          },
+          {
+            "h": 1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.6109042897391794e-7
+          }
+        ],
+        [
+          {
+            "h": -1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1873996052460527
+          },
+          {
+            "h": -1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 87,
+            "core": 87,
+            "particleMax": 5.581968193179461
+          },
+          {
+            "h": -1,
+            "kind": "parallel",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.3892406142012322e-7
+          },
+          {
+            "h": -1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.4100160253322632e-7
+          },
+          {
+            "h": -1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2327310867238826e-7
+          }
+        ]
+      ]
+    },
+    {
+      "ok": true,
+      "name": "ride 11s: ribbon and core share one advancing front"
+    },
+    {
+      "ok": true,
+      "name": "ride 11s: the 30-degree horizontal segment stays hidden before arrival"
+    },
+    {
+      "ok": true,
+      "name": "ride 11.9s: no low-latitude segment appears before airflow reaches it",
+      "data": [
+        [
+          {
+            "h": 1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1849910736698024
+          },
+          {
+            "h": 1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 98,
+            "core": 98,
+            "particleMax": 5.4469934116745025
+          },
+          {
+            "h": 1,
+            "kind": "parallel",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.1568206135316998e-7
+          },
+          {
+            "h": 1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2959076717184042e-7
+          },
+          {
+            "h": 1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.6109042897391794e-7
+          }
+        ],
+        [
+          {
+            "h": -1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1850921693424559
+          },
+          {
+            "h": -1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 98,
+            "core": 98,
+            "particleMax": 6.443499297968238
+          },
+          {
+            "h": -1,
+            "kind": "parallel",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.3892406142012322e-7
+          },
+          {
+            "h": -1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.4100160253322632e-7
+          },
+          {
+            "h": -1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2327310867238826e-7
+          }
+        ]
+      ]
+    },
+    {
+      "ok": true,
+      "name": "ride 11.9s: ribbon and core share one advancing front"
+    },
+    {
+      "ok": true,
+      "name": "ride 11.9s: the 30-degree horizontal segment stays hidden before arrival"
+    },
+    {
+      "ok": true,
+      "name": "ride 12s: no low-latitude segment appears before airflow reaches it",
+      "data": [
+        [
+          {
+            "h": 1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1706992582598634
+          },
+          {
+            "h": 1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 5.400921138112768
+          },
+          {
+            "h": 1,
+            "kind": "parallel",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.1568206135316998e-7
+          },
+          {
+            "h": 1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2959076717184042e-7
+          },
+          {
+            "h": 1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.6109042897391794e-7
+          }
+        ],
+        [
+          {
+            "h": -1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1707810036762432
+          },
+          {
+            "h": -1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 6.396680813413128
+          },
+          {
+            "h": -1,
+            "kind": "parallel",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.3892406142012322e-7
+          },
+          {
+            "h": -1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.4100160253322632e-7
+          },
+          {
+            "h": -1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2327310867238826e-7
+          }
+        ]
+      ]
+    },
+    {
+      "ok": true,
+      "name": "ride 12s: ribbon and core share one advancing front"
+    },
+    {
+      "ok": true,
+      "name": "ride 12.1s: no low-latitude segment appears before airflow reaches it",
+      "data": [
+        [
+          {
+            "h": 1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1817219349559125
+          },
+          {
+            "h": 1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 5.510627913330011
+          },
+          {
+            "h": 1,
+            "kind": "parallel",
+            "visible": true,
+            "ribbon": 3,
+            "core": 3,
+            "particleMax": 0.05870277956003222
+          },
+          {
+            "h": 1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2959076717184042e-7
+          },
+          {
+            "h": 1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.6109042897391794e-7
+          }
+        ],
+        [
+          {
+            "h": -1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1818180771594273
+          },
+          {
+            "h": -1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 6.5077285140635475
+          },
+          {
+            "h": -1,
+            "kind": "parallel",
+            "visible": true,
+            "ribbon": 3,
+            "core": 3,
+            "particleMax": 0.0587026583765476
+          },
+          {
+            "h": -1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.4100160253322632e-7
+          },
+          {
+            "h": -1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2327310867238826e-7
+          }
+        ]
+      ]
+    },
+    {
+      "ok": true,
+      "name": "ride 12.1s: ribbon and core share one advancing front"
+    },
+    {
+      "ok": true,
+      "name": "ride 13.5s: no low-latitude segment appears before airflow reaches it",
+      "data": [
+        [
+          {
+            "h": 1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1836089935593235
+          },
+          {
+            "h": 1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 5.529980662215804
+          },
+          {
+            "h": 1,
+            "kind": "parallel",
+            "visible": true,
+            "ribbon": 50,
+            "core": 50,
+            "particleMax": 0.8818555716942248
+          },
+          {
+            "h": 1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2959076717184042e-7
+          },
+          {
+            "h": 1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.6109042897391794e-7
+          }
+        ],
+        [
+          {
+            "h": -1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1837081940904608
+          },
+          {
+            "h": -1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 6.527162435565126
+          },
+          {
+            "h": -1,
+            "kind": "parallel",
+            "visible": true,
+            "ribbon": 50,
+            "core": 50,
+            "particleMax": 0.88185545194743
+          },
+          {
+            "h": -1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.4100160253322632e-7
+          },
+          {
+            "h": -1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2327310867238826e-7
+          }
+        ]
+      ]
+    },
+    {
+      "ok": true,
+      "name": "ride 13.5s: ribbon and core share one advancing front"
+    },
+    {
+      "ok": true,
+      "name": "ride 14.9s: no low-latitude segment appears before airflow reaches it",
+      "data": [
+        [
+          {
+            "h": 1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1854829001357274
+          },
+          {
+            "h": 1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 5.549374960292879
+          },
+          {
+            "h": 1,
+            "kind": "parallel",
+            "visible": true,
+            "ribbon": 96,
+            "core": 96,
+            "particleMax": 1.641528565038175
+          },
+          {
+            "h": 1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2959076717184042e-7
+          },
+          {
+            "h": 1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.6109042897391794e-7
+          }
+        ],
+        [
+          {
+            "h": -1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.185584672791617
+          },
+          {
+            "h": -1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 6.546592054793964
+          },
+          {
+            "h": -1,
+            "kind": "parallel",
+            "visible": true,
+            "ribbon": 96,
+            "core": 96,
+            "particleMax": 1.6415286215875287
+          },
+          {
+            "h": -1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.4100160253322632e-7
+          },
+          {
+            "h": -1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2327310867238826e-7
+          }
+        ]
+      ]
+    },
+    {
+      "ok": true,
+      "name": "ride 14.9s: ribbon and core share one advancing front"
+    },
+    {
+      "ok": true,
+      "name": "ride 15s: no low-latitude segment appears before airflow reaches it",
+      "data": [
+        [
+          {
+            "h": 1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1712163871074024
+          },
+          {
+            "h": 1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 5.405946464071734
+          },
+          {
+            "h": 1,
+            "kind": "parallel",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.6565634374735243
+          },
+          {
+            "h": 1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2959076717184042e-7
+          },
+          {
+            "h": 1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.6109042897391794e-7
+          }
+        ],
+        [
+          {
+            "h": -1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1712988216933853
+          },
+          {
+            "h": -1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 6.401800523472894
+          },
+          {
+            "h": -1,
+            "kind": "parallel",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.6565634597964316
+          },
+          {
+            "h": -1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.4100160253322632e-7
+          },
+          {
+            "h": -1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2327310867238826e-7
+          }
+        ]
+      ]
+    },
+    {
+      "ok": true,
+      "name": "ride 15s: ribbon and core share one advancing front"
+    },
+    {
+      "ok": true,
+      "name": "ride 15.1s: no low-latitude segment appears before airflow reaches it",
+      "data": [
+        [
+          {
+            "h": 1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.182219515716045
+          },
+          {
+            "h": 1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 5.515716760815428
+          },
+          {
+            "h": 1,
+            "kind": "parallel",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.67008279446299
+          },
+          {
+            "h": 1,
+            "kind": "sink",
+            "visible": true,
+            "ribbon": 2,
+            "core": 2,
+            "particleMax": 0.025777741567012128
+          },
+          {
+            "h": 1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.6109042897391794e-7
+          }
+        ],
+        [
+          {
+            "h": -1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1823168144356546
+          },
+          {
+            "h": -1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 6.512843156184647
+          },
+          {
+            "h": -1,
+            "kind": "parallel",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.6700826796314023
+          },
+          {
+            "h": -1,
+            "kind": "sink",
+            "visible": true,
+            "ribbon": 2,
+            "core": 2,
+            "particleMax": 0.025777742082190313
+          },
+          {
+            "h": -1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2327310867238826e-7
+          }
+        ]
+      ]
+    },
+    {
+      "ok": true,
+      "name": "ride 15.1s: ribbon and core share one advancing front"
+    },
+    {
+      "ok": true,
+      "name": "ride 18.9s: no low-latitude segment appears before airflow reaches it",
+      "data": [
+        [
+          {
+            "h": 1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1692985977348929
+          },
+          {
+            "h": 1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 5.38736706909964
+          },
+          {
+            "h": 1,
+            "kind": "parallel",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.6541814457962685
+          },
+          {
+            "h": 1,
+            "kind": "sink",
+            "visible": true,
+            "ribbon": 97,
+            "core": 97,
+            "particleMax": 1.1507216044018223
+          },
+          {
+            "h": 1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.6109042897391794e-7
+          }
+        ],
+        [
+          {
+            "h": -1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1693789599740871
+          },
+          {
+            "h": -1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 6.382856414735111
+          },
+          {
+            "h": -1,
+            "kind": "parallel",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.6541815022388142
+          },
+          {
+            "h": -1,
+            "kind": "sink",
+            "visible": true,
+            "ribbon": 97,
+            "core": 97,
+            "particleMax": 1.1504995599762207
+          },
+          {
+            "h": -1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2327310867238826e-7
+          }
+        ]
+      ]
+    },
+    {
+      "ok": true,
+      "name": "ride 18.9s: ribbon and core share one advancing front"
+    },
+    {
+      "ok": true,
+      "name": "ride 19.1s: no low-latitude segment appears before airflow reaches it",
+      "data": [
+        [
+          {
+            "h": 1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1910267171912505
+          },
+          {
+            "h": 1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 5.607809583426979
+          },
+          {
+            "h": 1,
+            "kind": "parallel",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.680701806468372
+          },
+          {
+            "h": 1,
+            "kind": "sink",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1946600440535284
+          },
+          {
+            "h": 1,
+            "kind": "trade",
+            "visible": true,
+            "ribbon": 2,
+            "core": 2,
+            "particleMax": 0.05464276399081517
+          }
+        ],
+        [
+          {
+            "h": -1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1911361401589187
+          },
+          {
+            "h": -1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 6.604853697706126
+          },
+          {
+            "h": -1,
+            "kind": "parallel",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.6807016031000197
+          },
+          {
+            "h": -1,
+            "kind": "sink",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1942940984120471
+          },
+          {
+            "h": -1,
+            "kind": "trade",
+            "visible": true,
+            "ribbon": 2,
+            "core": 2,
+            "particleMax": 0.05701406382948536
+          }
+        ]
+      ]
+    },
+    {
+      "ok": true,
+      "name": "ride 19.1s: ribbon and core share one advancing front"
+    },
+    {
+      "ok": true,
+      "name": "ride 23s: no low-latitude segment appears before airflow reaches it",
+      "data": [
+        [
+          {
+            "h": 1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.189240402295419
+          },
+          {
+            "h": 1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 5.588802681323537
+          },
+          {
+            "h": 1,
+            "kind": "parallel",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.678563679883253
+          },
+          {
+            "h": 1,
+            "kind": "sink",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1927647688539147
+          },
+          {
+            "h": 1,
+            "kind": "trade",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 5.66995151973296
+          }
+        ],
+        [
+          {
+            "h": -1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.189347353394713
+          },
+          {
+            "h": -1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 6.585949058115477
+          },
+          {
+            "h": -1,
+            "kind": "parallel",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.6785636058656028
+          },
+          {
+            "h": -1,
+            "kind": "sink",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1924059991164384
+          },
+          {
+            "h": -1,
+            "kind": "trade",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 6.438116064528397
+          }
+        ]
+      ]
+    },
+    {
+      "ok": true,
+      "name": "ride 23s: ribbon and core share one advancing front"
+    },
+    {
+      "ok": true,
+      "name": "ride 40s: no low-latitude segment appears before airflow reaches it",
+      "data": [
+        [
+          {
+            "h": 1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.171372442627002
+          },
+          {
+            "h": 1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 5.407465826130928
+          },
+          {
+            "h": 1,
+            "kind": "parallel",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.6567571632766407
+          },
+          {
+            "h": 1,
+            "kind": "sink",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1739096844304249
+          },
+          {
+            "h": 1,
+            "kind": "trade",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 5.622773472865273
+          }
+        ],
+        [
+          {
+            "h": -1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.171455085043662
+          },
+          {
+            "h": -1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 6.403347656715606
+          },
+          {
+            "h": -1,
+            "kind": "parallel",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.6567571109962413
+          },
+          {
+            "h": -1,
+            "kind": "sink",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1736180515106518
+          },
+          {
+            "h": -1,
+            "kind": "trade",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 6.387558245646762
+          }
+        ]
+      ]
+    },
+    {
+      "ok": true,
+      "name": "ride 40s: ribbon and core share one advancing front"
+    },
+    {
+      "ok": true,
+      "name": "overview 3.8s: no low-latitude segment appears before airflow reaches it",
+      "data": [
+        [
+          {
+            "h": 1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 95,
+            "core": 95,
+            "particleMax": 1.1405944479154972
+          },
+          {
+            "h": 1,
+            "kind": "upper",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.9953403953230137e-7
+          },
+          {
+            "h": 1,
+            "kind": "parallel",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.1568206135316998e-7
+          },
+          {
+            "h": 1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2959076717184042e-7
+          },
+          {
+            "h": 1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.6109042897391794e-7
+          }
+        ],
+        [
+          {
+            "h": -1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 95,
+            "core": 95,
+            "particleMax": 1.1406390653045835
+          },
+          {
+            "h": -1,
+            "kind": "upper",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.203968575075517e-7
+          },
+          {
+            "h": -1,
+            "kind": "parallel",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.3892406142012322e-7
+          },
+          {
+            "h": -1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.4100160253322632e-7
+          },
+          {
+            "h": -1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2327310867238826e-7
+          }
+        ]
+      ]
+    },
+    {
+      "ok": true,
+      "name": "overview 3.8s: ribbon and core share one advancing front"
+    },
+    {
+      "ok": true,
+      "name": "overview 3.8s: the 30-degree horizontal segment stays hidden before arrival"
+    },
+    {
+      "ok": true,
+      "name": "overview 4.1s: no low-latitude segment appears before airflow reaches it",
+      "data": [
+        [
+          {
+            "h": 1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1886097040419754
+          },
+          {
+            "h": 1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 1,
+            "core": 1,
+            "particleMax": 0.05402104986667595
+          },
+          {
+            "h": 1,
+            "kind": "parallel",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.1568206135316998e-7
+          },
+          {
+            "h": 1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2959076717184042e-7
+          },
+          {
+            "h": 1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.6109042897391794e-7
+          }
+        ],
+        [
+          {
+            "h": -1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1887157838848834
+          },
+          {
+            "h": -1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 1,
+            "core": 1,
+            "particleMax": 0.054192207754233696
+          },
+          {
+            "h": -1,
+            "kind": "parallel",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.3892406142012322e-7
+          },
+          {
+            "h": -1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.4100160253322632e-7
+          },
+          {
+            "h": -1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2327310867238826e-7
+          }
+        ]
+      ]
+    },
+    {
+      "ok": true,
+      "name": "overview 4.1s: ribbon and core share one advancing front"
+    },
+    {
+      "ok": true,
+      "name": "overview 4.1s: the 30-degree horizontal segment stays hidden before arrival"
+    },
+    {
+      "ok": true,
+      "name": "overview 9.8s: no low-latitude segment appears before airflow reaches it",
+      "data": [
+        [
+          {
+            "h": 1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1821699393397902
+          },
+          {
+            "h": 1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 72,
+            "core": 72,
+            "particleMax": 3.6324410287150295
+          },
+          {
+            "h": 1,
+            "kind": "parallel",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.1568206135316998e-7
+          },
+          {
+            "h": 1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2959076717184042e-7
+          },
+          {
+            "h": 1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.6109042897391794e-7
+          }
+        ],
+        [
+          {
+            "h": -1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1822671695585083
+          },
+          {
+            "h": -1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 72,
+            "core": 72,
+            "particleMax": 4.385596766520176
+          },
+          {
+            "h": -1,
+            "kind": "parallel",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.3892406142012322e-7
+          },
+          {
+            "h": -1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.4100160253322632e-7
+          },
+          {
+            "h": -1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2327310867238826e-7
+          }
+        ]
+      ]
+    },
+    {
+      "ok": true,
+      "name": "overview 9.8s: ribbon and core share one advancing front"
+    },
+    {
+      "ok": true,
+      "name": "overview 9.8s: the 30-degree horizontal segment stays hidden before arrival"
+    },
+    {
+      "ok": true,
+      "name": "overview 10.2s: no low-latitude segment appears before airflow reaches it",
+      "data": [
+        [
+          {
+            "h": 1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1755250477502042
+          },
+          {
+            "h": 1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 77,
+            "core": 77,
+            "particleMax": 3.8965215648268927
+          },
+          {
+            "h": 1,
+            "kind": "parallel",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.1568206135316998e-7
+          },
+          {
+            "h": 1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2959076717184042e-7
+          },
+          {
+            "h": 1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.6109042897391794e-7
+          }
+        ],
+        [
+          {
+            "h": -1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.175613257489859
+          },
+          {
+            "h": -1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 77,
+            "core": 77,
+            "particleMax": 4.712794535955656
+          },
+          {
+            "h": -1,
+            "kind": "parallel",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.3892406142012322e-7
+          },
+          {
+            "h": -1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.4100160253322632e-7
+          },
+          {
+            "h": -1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2327310867238826e-7
+          }
+        ]
+      ]
+    },
+    {
+      "ok": true,
+      "name": "overview 10.2s: ribbon and core share one advancing front"
+    },
+    {
+      "ok": true,
+      "name": "overview 10.2s: the 30-degree horizontal segment stays hidden before arrival"
+    },
+    {
+      "ok": true,
+      "name": "overview 11s: no low-latitude segment appears before airflow reaches it",
+      "data": [
+        [
+          {
+            "h": 1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.187295338559282
+          },
+          {
+            "h": 1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 87,
+            "core": 87,
+            "particleMax": 4.638641956118478
+          },
+          {
+            "h": 1,
+            "kind": "parallel",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.1568206135316998e-7
+          },
+          {
+            "h": 1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2959076717184042e-7
+          },
+          {
+            "h": 1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.6109042897391794e-7
+          }
+        ],
+        [
+          {
+            "h": -1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1873996052460527
+          },
+          {
+            "h": -1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 87,
+            "core": 87,
+            "particleMax": 5.581968193179461
+          },
+          {
+            "h": -1,
+            "kind": "parallel",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.3892406142012322e-7
+          },
+          {
+            "h": -1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.4100160253322632e-7
+          },
+          {
+            "h": -1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2327310867238826e-7
+          }
+        ]
+      ]
+    },
+    {
+      "ok": true,
+      "name": "overview 11s: ribbon and core share one advancing front"
+    },
+    {
+      "ok": true,
+      "name": "overview 11s: the 30-degree horizontal segment stays hidden before arrival"
+    },
+    {
+      "ok": true,
+      "name": "overview 11.9s: no low-latitude segment appears before airflow reaches it",
+      "data": [
+        [
+          {
+            "h": 1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1849910736698024
+          },
+          {
+            "h": 1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 98,
+            "core": 98,
+            "particleMax": 5.4469934116745025
+          },
+          {
+            "h": 1,
+            "kind": "parallel",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.1568206135316998e-7
+          },
+          {
+            "h": 1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2959076717184042e-7
+          },
+          {
+            "h": 1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.6109042897391794e-7
+          }
+        ],
+        [
+          {
+            "h": -1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1850921693424559
+          },
+          {
+            "h": -1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 98,
+            "core": 98,
+            "particleMax": 6.443499297968238
+          },
+          {
+            "h": -1,
+            "kind": "parallel",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.3892406142012322e-7
+          },
+          {
+            "h": -1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.4100160253322632e-7
+          },
+          {
+            "h": -1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2327310867238826e-7
+          }
+        ]
+      ]
+    },
+    {
+      "ok": true,
+      "name": "overview 11.9s: ribbon and core share one advancing front"
+    },
+    {
+      "ok": true,
+      "name": "overview 11.9s: the 30-degree horizontal segment stays hidden before arrival"
+    },
+    {
+      "ok": true,
+      "name": "overview 12s: no low-latitude segment appears before airflow reaches it",
+      "data": [
+        [
+          {
+            "h": 1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1706992582598634
+          },
+          {
+            "h": 1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 5.400921138112768
+          },
+          {
+            "h": 1,
+            "kind": "parallel",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.1568206135316998e-7
+          },
+          {
+            "h": 1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2959076717184042e-7
+          },
+          {
+            "h": 1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.6109042897391794e-7
+          }
+        ],
+        [
+          {
+            "h": -1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1707810036762432
+          },
+          {
+            "h": -1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 6.396680813413128
+          },
+          {
+            "h": -1,
+            "kind": "parallel",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.3892406142012322e-7
+          },
+          {
+            "h": -1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.4100160253322632e-7
+          },
+          {
+            "h": -1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2327310867238826e-7
+          }
+        ]
+      ]
+    },
+    {
+      "ok": true,
+      "name": "overview 12s: ribbon and core share one advancing front"
+    },
+    {
+      "ok": true,
+      "name": "overview 12.1s: no low-latitude segment appears before airflow reaches it",
+      "data": [
+        [
+          {
+            "h": 1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1817219349559125
+          },
+          {
+            "h": 1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 5.510627913330011
+          },
+          {
+            "h": 1,
+            "kind": "parallel",
+            "visible": true,
+            "ribbon": 3,
+            "core": 3,
+            "particleMax": 0.05870277956003222
+          },
+          {
+            "h": 1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2959076717184042e-7
+          },
+          {
+            "h": 1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.6109042897391794e-7
+          }
+        ],
+        [
+          {
+            "h": -1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1818180771594273
+          },
+          {
+            "h": -1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 6.5077285140635475
+          },
+          {
+            "h": -1,
+            "kind": "parallel",
+            "visible": true,
+            "ribbon": 3,
+            "core": 3,
+            "particleMax": 0.0587026583765476
+          },
+          {
+            "h": -1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.4100160253322632e-7
+          },
+          {
+            "h": -1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2327310867238826e-7
+          }
+        ]
+      ]
+    },
+    {
+      "ok": true,
+      "name": "overview 12.1s: ribbon and core share one advancing front"
+    },
+    {
+      "ok": true,
+      "name": "overview 13.5s: no low-latitude segment appears before airflow reaches it",
+      "data": [
+        [
+          {
+            "h": 1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1836089935593235
+          },
+          {
+            "h": 1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 5.529980662215804
+          },
+          {
+            "h": 1,
+            "kind": "parallel",
+            "visible": true,
+            "ribbon": 50,
+            "core": 50,
+            "particleMax": 0.8818555716942248
+          },
+          {
+            "h": 1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2959076717184042e-7
+          },
+          {
+            "h": 1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.6109042897391794e-7
+          }
+        ],
+        [
+          {
+            "h": -1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1837081940904608
+          },
+          {
+            "h": -1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 6.527162435565126
+          },
+          {
+            "h": -1,
+            "kind": "parallel",
+            "visible": true,
+            "ribbon": 50,
+            "core": 50,
+            "particleMax": 0.88185545194743
+          },
+          {
+            "h": -1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.4100160253322632e-7
+          },
+          {
+            "h": -1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2327310867238826e-7
+          }
+        ]
+      ]
+    },
+    {
+      "ok": true,
+      "name": "overview 13.5s: ribbon and core share one advancing front"
+    },
+    {
+      "ok": true,
+      "name": "overview 14.9s: no low-latitude segment appears before airflow reaches it",
+      "data": [
+        [
+          {
+            "h": 1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1854829001357274
+          },
+          {
+            "h": 1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 5.549374960292879
+          },
+          {
+            "h": 1,
+            "kind": "parallel",
+            "visible": true,
+            "ribbon": 96,
+            "core": 96,
+            "particleMax": 1.641528565038175
+          },
+          {
+            "h": 1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2959076717184042e-7
+          },
+          {
+            "h": 1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.6109042897391794e-7
+          }
+        ],
+        [
+          {
+            "h": -1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.185584672791617
+          },
+          {
+            "h": -1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 6.546592054793964
+          },
+          {
+            "h": -1,
+            "kind": "parallel",
+            "visible": true,
+            "ribbon": 96,
+            "core": 96,
+            "particleMax": 1.6415286215875287
+          },
+          {
+            "h": -1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.4100160253322632e-7
+          },
+          {
+            "h": -1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2327310867238826e-7
+          }
+        ]
+      ]
+    },
+    {
+      "ok": true,
+      "name": "overview 14.9s: ribbon and core share one advancing front"
+    },
+    {
+      "ok": true,
+      "name": "overview 15s: no low-latitude segment appears before airflow reaches it",
+      "data": [
+        [
+          {
+            "h": 1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1712163871074024
+          },
+          {
+            "h": 1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 5.405946464071734
+          },
+          {
+            "h": 1,
+            "kind": "parallel",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.6565634374735243
+          },
+          {
+            "h": 1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2959076717184042e-7
+          },
+          {
+            "h": 1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.6109042897391794e-7
+          }
+        ],
+        [
+          {
+            "h": -1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1712988216933853
+          },
+          {
+            "h": -1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 6.401800523472894
+          },
+          {
+            "h": -1,
+            "kind": "parallel",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.6565634597964316
+          },
+          {
+            "h": -1,
+            "kind": "sink",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.4100160253322632e-7
+          },
+          {
+            "h": -1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2327310867238826e-7
+          }
+        ]
+      ]
+    },
+    {
+      "ok": true,
+      "name": "overview 15s: ribbon and core share one advancing front"
+    },
+    {
+      "ok": true,
+      "name": "overview 15.1s: no low-latitude segment appears before airflow reaches it",
+      "data": [
+        [
+          {
+            "h": 1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.182219515716045
+          },
+          {
+            "h": 1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 5.515716760815428
+          },
+          {
+            "h": 1,
+            "kind": "parallel",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.67008279446299
+          },
+          {
+            "h": 1,
+            "kind": "sink",
+            "visible": true,
+            "ribbon": 2,
+            "core": 2,
+            "particleMax": 0.025777741567012128
+          },
+          {
+            "h": 1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.6109042897391794e-7
+          }
+        ],
+        [
+          {
+            "h": -1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1823168144356546
+          },
+          {
+            "h": -1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 6.512843156184647
+          },
+          {
+            "h": -1,
+            "kind": "parallel",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.6700826796314023
+          },
+          {
+            "h": -1,
+            "kind": "sink",
+            "visible": true,
+            "ribbon": 2,
+            "core": 2,
+            "particleMax": 0.025777742082190313
+          },
+          {
+            "h": -1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2327310867238826e-7
+          }
+        ]
+      ]
+    },
+    {
+      "ok": true,
+      "name": "overview 15.1s: ribbon and core share one advancing front"
+    },
+    {
+      "ok": true,
+      "name": "overview 18.9s: no low-latitude segment appears before airflow reaches it",
+      "data": [
+        [
+          {
+            "h": 1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1692985977348929
+          },
+          {
+            "h": 1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 5.38736706909964
+          },
+          {
+            "h": 1,
+            "kind": "parallel",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.6541814457962685
+          },
+          {
+            "h": 1,
+            "kind": "sink",
+            "visible": true,
+            "ribbon": 97,
+            "core": 97,
+            "particleMax": 1.1507216044018223
+          },
+          {
+            "h": 1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 1.6109042897391794e-7
+          }
+        ],
+        [
+          {
+            "h": -1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1693789599740871
+          },
+          {
+            "h": -1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 6.382856414735111
+          },
+          {
+            "h": -1,
+            "kind": "parallel",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.6541815022388142
+          },
+          {
+            "h": -1,
+            "kind": "sink",
+            "visible": true,
+            "ribbon": 97,
+            "core": 97,
+            "particleMax": 1.1504995599762207
+          },
+          {
+            "h": -1,
+            "kind": "trade",
+            "visible": false,
+            "ribbon": 0,
+            "core": 0,
+            "particleMax": 2.2327310867238826e-7
+          }
+        ]
+      ]
+    },
+    {
+      "ok": true,
+      "name": "overview 18.9s: ribbon and core share one advancing front"
+    },
+    {
+      "ok": true,
+      "name": "overview 19.1s: no low-latitude segment appears before airflow reaches it",
+      "data": [
+        [
+          {
+            "h": 1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1910267171912505
+          },
+          {
+            "h": 1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 5.607809583426979
+          },
+          {
+            "h": 1,
+            "kind": "parallel",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.680701806468372
+          },
+          {
+            "h": 1,
+            "kind": "sink",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1946600440535284
+          },
+          {
+            "h": 1,
+            "kind": "trade",
+            "visible": true,
+            "ribbon": 2,
+            "core": 2,
+            "particleMax": 0.05464276399081517
+          }
+        ],
+        [
+          {
+            "h": -1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1911361401589187
+          },
+          {
+            "h": -1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 6.604853697706126
+          },
+          {
+            "h": -1,
+            "kind": "parallel",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.6807016031000197
+          },
+          {
+            "h": -1,
+            "kind": "sink",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1942940984120471
+          },
+          {
+            "h": -1,
+            "kind": "trade",
+            "visible": true,
+            "ribbon": 2,
+            "core": 2,
+            "particleMax": 0.05701406382948536
+          }
+        ]
+      ]
+    },
+    {
+      "ok": true,
+      "name": "overview 19.1s: ribbon and core share one advancing front"
+    },
+    {
+      "ok": true,
+      "name": "overview 23s: no low-latitude segment appears before airflow reaches it",
+      "data": [
+        [
+          {
+            "h": 1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.189240402295419
+          },
+          {
+            "h": 1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 5.588802681323537
+          },
+          {
+            "h": 1,
+            "kind": "parallel",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.678563679883253
+          },
+          {
+            "h": 1,
+            "kind": "sink",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1927647688539147
+          },
+          {
+            "h": 1,
+            "kind": "trade",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 5.66995151973296
+          }
+        ],
+        [
+          {
+            "h": -1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.189347353394713
+          },
+          {
+            "h": -1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 6.585949058115477
+          },
+          {
+            "h": -1,
+            "kind": "parallel",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.6785636058656028
+          },
+          {
+            "h": -1,
+            "kind": "sink",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1924059991164384
+          },
+          {
+            "h": -1,
+            "kind": "trade",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 6.438116064528397
+          }
+        ]
+      ]
+    },
+    {
+      "ok": true,
+      "name": "overview 23s: ribbon and core share one advancing front"
+    },
+    {
+      "ok": true,
+      "name": "overview 40s: no low-latitude segment appears before airflow reaches it",
+      "data": [
+        [
+          {
+            "h": 1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1695180157918448
+          },
+          {
+            "h": 1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 5.38948285173412
+          },
+          {
+            "h": 1,
+            "kind": "parallel",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.6544541504049868
+          },
+          {
+            "h": 1,
+            "kind": "sink",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1719627869235112
+          },
+          {
+            "h": 1,
+            "kind": "trade",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 5.6179787543819275
+          }
+        ],
+        [
+          {
+            "h": -1,
+            "kind": "equator-rise",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.1695981922324914
+          },
+          {
+            "h": -1,
+            "kind": "upper",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 6.385015767890625
+          },
+          {
+            "h": -1,
+            "kind": "parallel",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.6544541657523892
+          },
+          {
+            "h": -1,
+            "kind": "sink",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 1.171677381197343
+          },
+          {
+            "h": -1,
+            "kind": "trade",
+            "visible": true,
+            "ribbon": 100,
+            "core": 100,
+            "particleMax": 6.38247052307086
+          }
+        ]
+      ]
+    },
+    {
+      "ok": true,
+      "name": "overview 40s: ribbon and core share one advancing front"
+    },
+    {
+      "ok": true,
+      "name": "Pausing freezes the revised continuous drawing"
+    },
+    {
+      "ok": true,
+      "name": "Continuing advances the horizontal flow from its paused front"
+    },
+    {
+      "ok": true,
+      "name": "All three completed cells remain present and closed after the timing change"
+    },
+    {
+      "ok": true,
+      "name": "No browser errors",
+      "data": []
+    }
+  ],
+  "errors": []
+}

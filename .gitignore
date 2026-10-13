@@ -21,6 +21,10 @@ output/**/working/
 
 # 本地临时脚本
 _label_test_server.js
+tools/_tmp-*.mjs
+artifacts/sequence-runtime/node_modules/
+artifacts/tmp-profile/
+output/.git-objects/
 
 # 打包产物
 *.zip

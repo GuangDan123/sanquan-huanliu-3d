@@ -39,7 +39,7 @@ const LESSON_PRESSURE_STEPS = [
 ];
 const LESSON_STATE = {open:false,tab:'pressure',pressureStep:0,elapsed:0,running:false,complete:false,wind:'tradeN',season:'equinox',seasonMode:'target',seasonFrom:0,seasonValue:0,surface:'ideal',monsoonSeason:'winter',region:'east',sectionH:'both',sectionLat:30,climate:'equator',climateSeason:'summer',answers:{},graded:false,essay:'',explanation:false};
 let lessonReturnFocus=null, lessonPreviousPlaying=false;
-const lessonBackgroundIds=['scene-container','step-panel','legend','control-panel','mode-toggle','teacher-bar','teacher-toggle','diagram-toggle','diagram-panel','lesson-entry','fullscreen-btn','perf-toggle'];
+const lessonBackgroundIds=['scene-container','step-panel','legend','control-panel','mode-toggle','teacher-bar','teacher-toggle','diagram-toggle','diagram-panel','lesson-entry','fullscreen-btn','perf-toggle','monsoon-climate-stage','landsea-formation'];
 const lessonInertBefore=new Map();
 function lessonDuration(){return LESSON_STATE.tab==='season'?(LESSON_STATE.seasonMode==='cycle'?16:4):8;}
 function lessonProgress(){return clamp(LESSON_STATE.elapsed/lessonDuration(),0,1);}
@@ -52,6 +52,7 @@ function openLesson(tab=LESSON_STATE.tab){
     lessonBackgroundIds.forEach(id=>{const el=document.getElementById(id);if(el){lessonInertBefore.set(id,el.inert);el.inert=true;}});
   }
   LESSON_STATE.open=true;document.body.classList.add('lesson-open');document.getElementById('lesson-panel').hidden=false;setLessonTab(tab);document.getElementById('lesson-close').focus();updateMechanismDemoUI();
+  updateClassroomRoute();
 }
 function closeLesson(){
   LESSON_STATE.open=false;LESSON_STATE.running=false;document.body.classList.remove('lesson-open');document.getElementById('lesson-panel').hidden=true;
@@ -107,6 +108,7 @@ function initLesson(){
   window.__lessonDebug={state:LESSON_STATE,diagnostics:getLessonDiagnostics,topics:LESSON_TOPICS,winds:LESSON_WINDS};
   initTeachingRoutes();
   window.__teachingDebug={state:TEACHING,force:pressureForceData,site:teachingSiteInfo,nodes:demoNodeStages,section:sectionAssessment,download:teachingEvidence};
+  initPedagogy();
 }
 function renderLesson(){
   const t=LESSON_TOPICS.find(t=>t.id===LESSON_STATE.tab),index=LESSON_TOPICS.indexOf(t);
@@ -190,7 +192,7 @@ function renderLesson(){
   });
   document.querySelectorAll('[data-section-lat]').forEach(b=>b.onclick=()=>{LESSON_STATE.sectionLat=Number(b.dataset.sectionLat);document.querySelectorAll('[data-section-lat]').forEach(x=>x.classList.toggle('active',x===b));updateLessonView();});
   document.querySelectorAll('[data-climate-season]').forEach(b=>b.onclick=()=>{LESSON_STATE.climateSeason=b.dataset.climateSeason;resetLessonAnimation();document.querySelectorAll('[data-climate-season]').forEach(x=>x.classList.toggle('active',x===b));updateLessonView();});
-  const toThree=document.getElementById('lesson-to-three');if(toThree)toThree.onclick=()=>{closeLesson();transitionToStep(2);setView('side');};
+  const toThree=document.getElementById('lesson-to-three');if(toThree)toThree.onclick=()=>{PEDAGOGY.focusLat=LESSON_STATE.sectionLat;closeLesson();transitionToStep(2);setView('side');};
   updateLessonView();
 }
 function updateLessonAnimation(dt){

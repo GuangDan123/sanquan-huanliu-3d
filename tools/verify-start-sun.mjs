@@ -26,9 +26,9 @@ try{
  await click('#btn-start-free');await sleep(500);const free=await panel();check(free.step===0&&free.buttonVisible&&free.body.length>100,'欢迎页自由探索保留展开的第一步提示');await ev('window.__threeCellDebug.STATE.playing=false');await shot('initial-free.png');
  // 用实际渲染像素确认虚线有空隙、且亮段朝地球移动。
  await sleep(180);
- check(await ev(`(()=>{const d=window.__threeCellDebug,g=d.earthGroup.parent.children.find(g=>g.children?.some(o=>o.geometry?.type==='CircleGeometry'));return !g.children.some(o=>o.userData.sunTraveler)&&g.children.filter(o=>o.isMesh&&o.geometry.attributes.position.count===3).length===6})()`),'太阳射线仅保留六个固定三角尖端，无移动三角箭头');
+ check(await ev(`(()=>{const d=window.__threeCellDebug,g=d.earthGroup.parent.children.find(g=>g.children?.some(o=>o.geometry?.type==='CircleGeometry')),heads=g.children.filter(o=>o.userData.sunEndpoint);return !g.children.some(o=>o.userData.sunTraveler)&&heads.length===2&&heads.every(o=>o.material.color.getHex()===0xFF4B3E)&&g.children.filter(o=>o.isMesh&&o.userData.radiation).every(o=>o.material.color.getHex()===0xFF4B3E)})()`),'太阳射线仅保留两个红色固定三角尖端及红色箭杆');
  const radiationBefore=await ev('window.__threeCellDebug.getSunDiagnostics().arrowTargets');
- check(radiationBefore.length===6&&radiationBefore.every(a=>a.radiation.enabled&&!a.radiation.solidLineVisible),'红黄蓝六条太阳辐射均显示流动虚线');
+ check(radiationBefore.length===2&&radiationBefore.every(a=>a.radiation.enabled&&!a.radiation.solidLineVisible),'两条红色太阳辐射均显示流动虚线');
  const flowA=await shot('radiation-paused-a.png');
  const normalStarted=Date.now();await ev('window.__threeCellDebug.STATE.playing=true');await sleep(600);await ev('window.__threeCellDebug.STATE.playing=false');const normalDuration=(Date.now()-normalStarted)/1000;await sleep(150);
  const radiationAfter=await ev('window.__threeCellDebug.getSunDiagnostics().arrowTargets');const flowB=await shot('radiation-paused-b.png');
@@ -48,8 +48,8 @@ try{
      return {lat:a.lat,lit:masks[0].reduce((sum,x)=>sum+x,0)/masks[0].length,shift,agreement:matched/compared,changed:masks[0].filter((x,i)=>x!==masks[1][i]).length};
    });
  })()`);
- check(movement.length===6&&movement.every(x=>x.lit>.3&&x.lit<.8),'实际六条箭杆交替显示亮段与空隙',movement);
- check(movement.every(x=>x.shift>1&&x.shift<20&&x.agreement>.85&&x.changed>20),'六条虚线像素沿太阳到地球方向流动',movement);
+ check(movement.length===2&&movement.every(x=>x.lit>.3&&x.lit<.8),'实际两条箭杆交替显示亮段与空隙',movement);
+ check(movement.every(x=>x.shift>1&&x.shift<20&&x.agreement>.85&&x.changed>20),'两条虚线像素沿太阳到地球方向流动',movement);
  const normalRate=(redAfter[0].radiation.phase-redBefore[0].radiation.phase+1)%1/normalDuration;
  check(normalRate>.35&&normalRate<.65,'默认流动速度降至每秒约半个周期，约12像素',normalRate);
  const widths=await ev(`(async()=>{
@@ -62,7 +62,7 @@ try{
      return {lat:a.lat,sun:sample(.25,.4),earth:sample(.7,.85)};
    });
  })()`);
- check(widths.length===6&&widths.every(w=>w.sun>0&&w.earth>w.sun*1.25),'六条箭杆实际像素宽度均由太阳端向地球端增大',widths);
+ check(widths.length===2&&widths.every(w=>w.sun>0&&w.earth>w.sun*1.25),'两条箭杆实际像素宽度均由太阳端向地球端增大',widths);
  const phasePaused=redAfter.map(a=>a.radiation.phase);await sleep(250);
  check(JSON.stringify(phasePaused)===JSON.stringify((await ev('window.__threeCellDebug.getSunDiagnostics().arrowTargets')).filter(a=>a.radiation).map(a=>a.radiation.phase)),'教师暂停冻结太阳辐射流动');
  const fastStarted=Date.now();await ev("document.getElementById('speed-slider').value=20;document.getElementById('speed-slider').dispatchEvent(new Event('input',{bubbles:true}));window.__threeCellDebug.STATE.playing=true");await sleep(300);await ev('window.__threeCellDebug.STATE.playing=false');const fastDuration=(Date.now()-fastStarted)/1000;
@@ -84,15 +84,16 @@ try{
   await viewport(width,height);
   for(const view of ['side','front','reset','top']){
    await ev(`window.__threeCellDebug.setView(${JSON.stringify(view)})`);await sleep(950);
-   const d=await ev(`(()=>{const debug=window.__threeCellDebug,d=debug.getSunDiagnostics();d.arrowTargets.forEach(a=>{const p=debug.makeVector3(...a.target).project(debug.camera);const shortenedLength=Math.hypot(((p.x+1)/2-d.screen.x)*innerWidth,((1-p.y)/2-d.screen.y)*innerHeight);a.expectedClearance=Math.min(28,(shortenedLength+a.clearancePixels)*.15)});return d})()`);
+   const d=await ev(`(()=>{const debug=window.__threeCellDebug,d=debug.getSunDiagnostics();d.arrowTargets.forEach(a=>{const p=debug.makeVector3(...a.target).project(debug.camera);const shortenedLength=Math.abs(((p.x+1)/2-d.screen.x)*innerWidth);a.expectedClearance=Math.min(28,(shortenedLength+a.clearancePixels)*.15)});return d})()`);
+   check(d.arrowTargets.length===2&&d.arrowTargets.every(a=>Math.abs(a.radiation.screenStart[1]-a.radiation.screenEnd[1])<.01&&a.radiation.screenEnd[0]>a.radiation.screenStart[0])&&Math.abs(d.arrowTargets[0].radiation.screenStart[1]-d.arrowTargets[1].radiation.screenStart[1])>4,`${width}×${height} ${view}两条红色箭头平行分开并指向地球`,d.arrowTargets.map(a=>a.radiation));
    check(d.arrowTargets.every(a=>a.screenGap<.01&&a.clearancePixels>0&&Math.abs(a.clearancePixels-a.expectedClearance)<.01),`${width}×${height} ${view}箭头留出适应窗口的间距`,d.arrowTargets.map(a=>({lat:a.lat,gap:a.clearancePixels,expected:a.expectedClearance,tipError:a.screenGap})));
    const triangles=await ev(`(()=>{const d=window.__threeCellDebug,group=d.earthGroup.parent.children.find(g=>g.children?.some(o=>o.geometry?.type==='CircleGeometry'));return group.children.filter(o=>o.userData.sunEndpoint||o.userData.sunTraveler).map(o=>{const p=o.geometry.attributes.position,points=[0,1,2].map(i=>{const v=d.makeVector3(p.getX(i),p.getY(i),p.getZ(i));o.localToWorld(v);v.project(d.camera);return [(v.x+1)*innerWidth/2,(1-v.y)*innerHeight/2]});const dist=(a,b)=>Math.hypot(a[0]-b[0],a[1]-b[1]);return {endpoint:!!o.userData.sunEndpoint,base:dist(points[0],points[1]),left:dist(points[0],points[2]),right:dist(points[1],points[2])}})})()`);
-   check(triangles.length===6&&triangles.every(t=>t.endpoint&&Math.abs(t.left-t.right)<.01&&Math.abs(t.base-18)<.01),`${width}×${height} ${view}仅六个固定等腰三角尖端，地球端加粗保留`,triangles);
+   check(triangles.length===2&&triangles.every(t=>t.endpoint&&Math.abs(t.left-t.right)<.01&&Math.abs(t.base-18)<.01),`${width}×${height} ${view}仅两个固定等腰三角尖端，地球端加粗保留`,triangles);
    if(view==='side')await shot(`${width}-side.png`);
   }
  }
  await viewport(1366,768);await send('Network.enable');await send('Network.emulateNetworkConditions',{offline:true,latency:0,downloadThroughput:0,uploadThroughput:0});await nav(pathToFileURL(resolve('三圈环流3D交互式教学平台.html')).href);check((await panel()).buttonVisible,'断网双击入口第一步提示完整');await click('#btn-start-free');await shot('offline-initial.png');
- check((await ev('window.__threeCellDebug.getSunDiagnostics().arrowTargets')).every(a=>a.radiation.enabled),'断网单文件入口六条虚线可用');
+ check((await ev('window.__threeCellDebug.getSunDiagnostics().arrowTargets')).every(a=>a.radiation.enabled),'断网单文件入口两条虚线可用');
  check(report.errors.length===0,'首次打开及视角调整无未捕获异常',report.errors);
 }catch(e){report.errors.push(String(e));check(false,'检查执行',String(e));}finally{report.passed=report.errors.length===0&&report.checks.every(x=>x.ok);await writeFile(join(out,'check.json'),JSON.stringify(report,null,2));ws?.close();chrome.kill();}
 console.log(`首次打开与太阳复核：${report.passed?'通过':'未通过'}；${report.checks.filter(x=>x.ok).length}/${report.checks.length}`);process.exitCode=report.passed?0:1;

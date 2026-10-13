@@ -1,0 +1,59 @@
+// 第五步：真实浏览器检查地图、月份、气候图、暂停、开关、步骤回退及离线布局。
+import {spawn} from 'node:child_process';
+import {mkdir,writeFile} from 'node:fs/promises';
+import {resolve,join} from 'node:path';
+import {pathToFileURL} from 'node:url';
+import {setTimeout as sleep} from 'node:timers/promises';
+const out=resolve(process.argv[2]||'artifacts/monsoon-climate-step5-20261009');await mkdir(out,{recursive:true});
+const report={checks:[],errors:[]},port=16000+process.pid%1000;
+const chrome=spawn('C:/Program Files/Google/Chrome/Application/chrome.exe',['--headless=new','--no-first-run','--no-default-browser-check',`--remote-debugging-port=${port}`,`--user-data-dir=${join(out,'profile')}`,'about:blank'],{stdio:'ignore',windowsHide:true});let ws;
+const check=(ok,name,evidence)=>{report.checks.push({ok,name,evidence});console.log(`${ok?'PASS':'FAIL'} ${name}`);};
+try{
+ let tab;for(let i=0;i<60;i++){try{const r=await fetch(`http://127.0.0.1:${port}/json/new?about:blank`,{method:'PUT'});if(r.ok){tab=await r.json();break;}}catch{}await sleep(200);}if(!tab)throw Error('浏览器未启动');
+ ws=new WebSocket(tab.webSocketDebuggerUrl);let id=0;const pending=new Map();
+ ws.addEventListener('message',e=>{const m=JSON.parse(e.data);if(m.id){const p=pending.get(m.id);if(p){pending.delete(m.id);m.error?p.reject(m.error):p.resolve(m.result);}}if(m.method==='Runtime.exceptionThrown')report.errors.push(m.params.exceptionDetails);if(m.method==='Log.entryAdded'&&m.params.entry.level==='error')report.errors.push(m.params.entry);});await new Promise(r=>ws.addEventListener('open',r));
+ const send=(method,params={})=>new Promise((resolve,reject)=>{const k=++id;pending.set(k,{resolve,reject});ws.send(JSON.stringify({id:k,method,params}));});
+ const ev=async expression=>{const r=await send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});if(r.exceptionDetails)throw Error(JSON.stringify(r.exceptionDetails));return r.result.value;};
+ const shot=async name=>{const r=await send('Page.captureScreenshot',{format:'png'});await writeFile(join(out,name),Buffer.from(r.data,'base64'));};
+ const click=async selector=>{await ev(`(()=>{let p=document.querySelector(${JSON.stringify(selector)})?.parentElement;while(p){if(p.tagName==='DETAILS')p.open=true;p=p.parentElement;}})()`);
+  await ev(`document.querySelector(${JSON.stringify(selector)}).scrollIntoView({block:'nearest',inline:'nearest'})`);await sleep(80);
+  const point=await ev(`(()=>{const e=document.querySelector(${JSON.stringify(selector)}),r=e.getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2,hit:e.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2))}})()`);
+  check(point.hit,'控件可见且可点击 '+selector);await send('Input.dispatchMouseEvent',{type:'mousePressed',button:'left',clickCount:1,x:point.x,y:point.y});await send('Input.dispatchMouseEvent',{type:'mouseReleased',button:'left',clickCount:1,x:point.x,y:point.y});await sleep(180);
+ };
+ await send('Runtime.enable');await send('Log.enable');await send('Page.enable');await send('Emulation.setDeviceMetricsOverride',{width:1600,height:1000,deviceScaleFactor:1,mobile:false});
+ await send('Network.enable');await send('Network.emulateNetworkConditions',{offline:true,latency:0,downloadThroughput:0,uploadThroughput:0});
+ await send('Page.navigate',{url:pathToFileURL(resolve('三圈环流3D交互式教学平台.html')).href+'?state=monsoon'});
+ for(let i=0;i<80;i++){if(await ev('window.__threeCellDebug?.STATE.step===4&&window.__monsoonClimateDebug?.ready'))break;await sleep(200);}await sleep(500);
+ check(await ev("window.__threeCellDebug.STATE.step===4&&document.querySelectorAll('.step-dot').length===5&&document.getElementById('sp-tag').textContent==='STEP 5 / 5'"),'第五步离线入口、五个步骤和面板同步');
+ await ev("document.getElementById('climate-formation-view').value='result';document.getElementById('climate-formation-view').dispatchEvent(new Event('change'));document.getElementById('mc-play').click()");
+ check(await ev("window.__monsoonClimateDebug.ready&&!document.getElementById('monsoon-climate-stage').hidden&&document.getElementById('scene-container').style.visibility==='hidden'&&window.__threeCellDebug.getDiagnostics().visibleGroups.length===0"),'内嵌地图加载、第五步独立显示');
+ check(await ev('window.__monsoonClimateDebug.centers().some(c=>c.name==="亚洲高压")&&window.__monsoonClimateDebug.centers().some(c=>c.name==="阿留申低压")'),'1月全球气压中心');
+ await click('#mc-play');await shot('january-shanghai.png');
+ const paused=await ev('({phase:window.__monsoonClimateDebug.state.phase,pixels:document.getElementById("monsoon-world-map").toDataURL()})');await sleep(220);
+ check(await ev(`window.__monsoonClimateDebug.state.phase===${paused.phase}&&document.getElementById('monsoon-world-map').toDataURL()===${JSON.stringify(paused.pixels)}`),'暂停冻结流动箭头和地图画面');
+ await click('[data-mc-month="7"]');check(await ev('window.__monsoonClimateDebug.state.month===7&&window.__monsoonClimateDebug.centers().some(c=>c.name.includes("印度低压"))&&document.getElementById("mc-season-summary").textContent.includes("海洋水汽")'),'7月气压图与上海夏季气候联动');await shot('july-shanghai.png');
+ const chartBefore=await ev('document.getElementById("monsoon-climate-chart").toDataURL()');await click('[data-mc-site="mumbai"]');
+ check(await ev('window.__monsoonClimateDebug.state.site==="mumbai"&&document.getElementById("mc-climate-type").textContent==="热带季风气候"&&document.getElementById("mc-season-summary").textContent.includes("跨赤道")'),'地图地点真实点击切换孟买，解释跨赤道夏季风');
+ check(chartBefore!==await ev('document.getElementById("monsoon-climate-chart").toDataURL()'),'切换地点同步更新气温降水图');await shot('july-mumbai.png');
+ const data=await ev('window.__monsoonClimateDebug.sites');check(data.length===4&&data.every(s=>s.temperature.length===12&&s.rain.length===12)&&data.find(s=>s.id==="mumbai").rain[6]>data.find(s=>s.id==="mumbai").rain[0],'四个典型地区资料完整，孟买夏季雨量高于冬季');
+ await click('[data-mc-month="1"]');check(await ev('document.getElementById("mc-season-summary").textContent.includes("旱季")'),'孟买冬季东北季风对应旱季');
+ await click('[data-mc-site="darwin"]');check(await ev('document.getElementById("mc-season-summary").textContent.includes("当地夏季")&&document.getElementById("mc-season-summary").textContent.includes("湿季")'),'1月达尔文属于南半球夏季湿季');await shot('january-darwin.png');
+ await click('[data-mc-month="7"]');check(await ev('document.getElementById("mc-season-summary").textContent.includes("当地冬季")&&document.getElementById("mc-season-summary").textContent.includes("干季")'),'7月达尔文属于南半球冬季干季');
+ await click('#mc-play');const flowing=await ev('window.__monsoonClimateDebug.state.phase');await sleep(220);check(flowing!==await ev('window.__monsoonClimateDebug.state.phase'),'播放恢复全球流动箭头');await click('#mc-play');
+ await click('#tog-paths');const noPaths=await ev('document.getElementById("monsoon-world-map").toDataURL()');await click('#tog-paths');check(noPaths!==await ev('document.getElementById("monsoon-world-map").toDataURL()'),'轨迹开关控制全球风线');
+ await click('#tog-pressure');const noPressure=await ev('document.getElementById("monsoon-world-map").toDataURL()');await click('#tog-pressure');check(noPressure!==await ev('document.getElementById("monsoon-world-map").toDataURL()'),'气压开关控制色块、等压线和H/L');
+ await click('#tog-labels');check(await ev('document.querySelector(".mc-sites").hidden'),'标注开关隐藏地点标记');await click('#tog-labels');
+ await click('#climate-formation-reveal');check(await ev('!document.getElementById("climate-formation-answer").hidden'),'解释按钮可展开气候解释');
+ await click('#mc-lesson');check(await ev('window.__lessonDebug.state.open&&window.__lessonDebug.state.tab==="climate"&&document.getElementById("monsoon-climate-stage").inert'),'连接气候练习并禁用背景交互');await ev('document.getElementById("lesson-close").click()');
+ await click('#mc-prev');await ev("document.getElementById('landsea-formation-view').value='result';document.getElementById('landsea-formation-view').dispatchEvent(new Event('change'))");check(await ev('window.__threeCellDebug.STATE.step===3&&window.__landSeaDebug.state.month===1&&window.__landSeaDebug.group.children[0].material.opacity===.38&&document.getElementById("monsoon-climate-stage").hidden&&document.getElementById("scene-container").style.visibility===""'),'返回第四步恢复地球与原有月份，结果对照保持清晰');
+ await click('#landsea-next');check(await ev('window.__threeCellDebug.STATE.step===4&&!document.getElementById("monsoon-climate-stage").hidden'),'第四步下一步进入季风与气候');
+ await click('[data-step="0"]');check(await ev('window.__threeCellDebug.STATE.step===0&&!window.__threeCellDebug.getDiagnostics().visibleGroups.includes("singleNH")&&!window.__pedagogyDebug.singleRevealed()&&document.getElementById("monsoon-climate-stage").hidden'),'第五步返回单圈预测状态，运动结论等待揭示');
+ await click('[data-step="4"]');
+ for(const[width,height]of[[1366,768],[760,800],[390,844]]){
+  await send('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:false});await sleep(400);
+  check(await ev('(()=>{const s=document.getElementById("monsoon-climate-stage").getBoundingClientRect(),b=document.querySelector(".step-dot:last-child").getBoundingClientRect();return s.width>100&&s.height>90&&s.left>=0&&s.right<=innerWidth&&s.bottom<=innerHeight&&b.right<=innerWidth&&b.bottom<=innerHeight})()'),`${width}×${height} 第五步地图与导航在窗口内`);
+  await shot(`${width}-step5.png`);
+ }
+ check(report.errors.length===0,'无脚本或WebGL错误',report.errors);
+}catch(e){report.errors.push(String(e));check(false,'验收执行',String(e));}finally{report.passed=report.errors.length===0&&report.checks.every(x=>x.ok);await writeFile(join(out,'check.json'),JSON.stringify(report,null,2));ws?.close();chrome.kill();}
+console.log(`季风环流与气候验收：${report.passed?'通过':'未通过'}；${report.checks.filter(x=>x.ok).length}/${report.checks.length}`);process.exitCode=report.passed?0:1;

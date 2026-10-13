@@ -1,0 +1,29 @@
+.formation-controls{display:grid;gap:9px;margin:10px 0;padding:10px;border:1px solid #405766;border-radius:8px;background:#122531;}
+.formation-controls label{display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:12px;}
+.formation-controls select{min-width:0;max-width:158px;padding:6px;border:1px solid #48616a;border-radius:5px;background:#182b34;color:#e7edf0;}
+.formation-controls progress{width:100%;height:7px;accent-color:#81d8d9;margin:8px 0;}
+.formation-status{font-size:12px;color:#dfe8b9;line-height:1.7;margin-top:8px;}
+.formation-buttons{display:grid;grid-template-columns:1fr 1fr;gap:6px;}.formation-buttons .btn{font-size:11px;padding:6px 3px;}
+.formation-answer{font-size:12px;line-height:1.8;color:#d8e9d0;margin:0;}
+.formation-controls [hidden],.mc-explanation [hidden],.mc-chart-pane[hidden],.mc-climate-card[hidden],#landsea-season-compare[hidden]{display:none!important;}
+#landsea-formation{position:fixed;right:24px;top:106px;bottom:calc(var(--controls-height,90px) + 16px);width:390px;max-height:max-content;overflow:auto;border:1px solid #425965;border-radius:12px;background:#101e2df5;z-index:35;color:#d9e7ed;}
+#landsea-formation[hidden],body.ui-hidden #landsea-formation{display:none;}
+#landsea-formation summary{cursor:pointer;padding:12px 14px;font-size:15px;color:#dfe8b9;}
+#landsea-formation canvas{display:block;width:100%;height:auto;}
+.formation-footnote,#landsea-season-compare{font-size:11px;line-height:1.7;padding:10px 14px;border-top:1px solid #304655;}
+#landsea-season-compare{color:#e7d4ac;}
+body.landsea-active #landsea-legend{top:auto;bottom:calc(var(--controls-height,90px) + 22px);right:24px;width:135px;padding:10px;z-index:36;}body.landsea-active .landsea-scale{height:90px;}
+.mc-mechanism-card{border:1px solid #425965;border-radius:12px;background:#101e2d;flex-shrink:0;overflow:hidden;}
+.mc-mechanism-card header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px;flex-wrap:wrap;}.mc-mechanism-card h3{font-size:16px;margin:0;color:#dfe8b9;}.mc-mechanism-card header span,.mc-mechanism-card p{font-size:11px;color:#afcbd8;}.mc-mechanism-card p{padding:8px 16px;margin:0;border-top:1px solid #304655;}
+#climate-formation-canvas{display:block;width:100%;max-height:260px;object-fit:contain;height:auto;}
+#mc-result-prompt{font-size:13px;line-height:1.8;color:#bacfdb;}
+.formation-diagnosis{margin:10px 0;color:#b9cfda;font-size:12px;line-height:1.8;}.formation-diagnosis summary{cursor:pointer;color:#dde6b5;}.formation-diagnosis ol{padding-left:20px;}
+body.landsea-active #diagram-toggle{display:none!important;}
+@media(min-width:1101px){#monsoon-climate-stage{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);align-content:start;align-items:start;}.mc-heading,.mc-climate-card{grid-column:1 / -1;}.mc-map-card,.mc-mechanism-card{min-width:0;}.mc-map-wrap{min-width:900px;max-width:none;margin:0;}.mc-mechanism-card header{gap:8px;}.mc-mechanism-card header span{line-height:1.6;}#climate-formation-canvas{max-height:none;}.mc-mechanism-card p{line-height:1.7;}.mc-chart-pane{min-width:0;}}
+body.projection #landsea-formation{width:420px;}body.projection .formation-status,body.projection .formation-answer{font-size:14px;}
+body.projection .mc-mechanism-card header span{font-size:14px;}
+@media(max-width:1100px){#landsea-formation{left:310px;right:16px;width:auto;top:auto;bottom:calc(var(--controls-height,90px) + 16px);max-height:280px;}#landsea-formation canvas{max-height:195px;object-fit:contain;}body.landsea-active #landsea-legend{display:none;}body.projection #landsea-formation{width:auto;}}
+@media(max-width:768px){#landsea-formation{left:260px;right:12px;max-height:240px;}#landsea-formation canvas{max-height:150px;}.mc-mechanism-card header{padding:9px;}.mc-mechanism-card h3{font-size:14px;}#climate-formation-canvas{min-width:640px;}.mc-mechanism-card{overflow-x:auto;}}
+@media(max-width:600px){#landsea-formation{left:8px;right:8px;bottom:calc(var(--controls-height,120px) + 43vh + 16px);max-height:23vh;}#landsea-formation summary{padding:7px 10px;font-size:12px;}#landsea-formation canvas{max-height:135px;}#landsea-formation .formation-footnote{font-size:9px;padding:5px 8px;}body.landsea-active #step-panel{max-height:43vh;}body.landsea-active #step-demo-controls,body.monsoon-climate-active #step-demo-controls{max-height:20vh;overflow:auto;}.formation-controls label{flex-wrap:wrap;}.formation-controls select{max-width:100%;}.mc-mechanism-card header span{font-size:10px;}#climate-formation-canvas{min-width:640px;}}
+@media(max-width:768px){#landsea-formation details{overflow:auto;}#landsea-formation canvas{width:640px;max-height:none;}#landsea-formation summary{position:sticky;top:0;left:0;background:#101e2d;z-index:1;}.formation-footnote{position:sticky;left:0;}#landsea-formation details:not([open]){overflow:visible;}}
+@media(max-width:1100px){#landsea-formation .formation-footnote:after{content:' · 小屏可滚动剖面，折叠后观察地球';color:#b7d5de;}}

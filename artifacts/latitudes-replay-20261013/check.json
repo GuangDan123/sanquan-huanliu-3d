@@ -1,0 +1,129 @@
+{
+  "checks": [
+    {
+      "ok": true,
+      "name": "1366 12s: both 30-degree latitude lines remain above the pressure belts"
+    },
+    {
+      "ok": true,
+      "name": "1366 18.5s: both 30-degree latitude lines remain above the pressure belts"
+    },
+    {
+      "ok": true,
+      "name": "1366 40s: both 30-degree latitude lines remain above the pressure belts"
+    },
+    {
+      "ok": true,
+      "name": "1366: grid switch hides the latitude lines while paused"
+    },
+    {
+      "ok": true,
+      "name": "1366: grid switch restores both latitude lines while paused"
+    },
+    {
+      "ok": true,
+      "name": "1366 reset: replay restarts at the equator and restores camera follow"
+    },
+    {
+      "ok": true,
+      "name": "1366 reset: camera advances along the airflow after replay"
+    },
+    {
+      "ok": true,
+      "name": "1366 reset: pause still freezes the resumed follow camera"
+    },
+    {
+      "ok": true,
+      "name": "1366: drag reproduces free observation with explanation open"
+    },
+    {
+      "ok": true,
+      "name": "1366 drag: replay restarts at the equator and restores camera follow"
+    },
+    {
+      "ok": true,
+      "name": "1366 drag: camera advances along the airflow after replay"
+    },
+    {
+      "ok": true,
+      "name": "1366 drag: pause still freezes the resumed follow camera"
+    },
+    {
+      "ok": true,
+      "name": "1366 finished-overview: replay restarts at the equator and restores camera follow"
+    },
+    {
+      "ok": true,
+      "name": "1366 finished-overview: camera advances along the airflow after replay"
+    },
+    {
+      "ok": true,
+      "name": "1366 finished-overview: pause still freezes the resumed follow camera"
+    },
+    {
+      "ok": true,
+      "name": "390 12s: both 30-degree latitude lines remain above the pressure belts"
+    },
+    {
+      "ok": true,
+      "name": "390 18.5s: both 30-degree latitude lines remain above the pressure belts"
+    },
+    {
+      "ok": true,
+      "name": "390 40s: both 30-degree latitude lines remain above the pressure belts"
+    },
+    {
+      "ok": true,
+      "name": "390: grid switch hides the latitude lines while paused"
+    },
+    {
+      "ok": true,
+      "name": "390: grid switch restores both latitude lines while paused"
+    },
+    {
+      "ok": true,
+      "name": "390 reset: replay restarts at the equator and restores camera follow"
+    },
+    {
+      "ok": true,
+      "name": "390 reset: camera advances along the airflow after replay"
+    },
+    {
+      "ok": true,
+      "name": "390 reset: pause still freezes the resumed follow camera"
+    },
+    {
+      "ok": true,
+      "name": "390: drag reproduces free observation with explanation open"
+    },
+    {
+      "ok": true,
+      "name": "390 drag: replay restarts at the equator and restores camera follow"
+    },
+    {
+      "ok": true,
+      "name": "390 drag: camera advances along the airflow after replay"
+    },
+    {
+      "ok": true,
+      "name": "390 drag: pause still freezes the resumed follow camera"
+    },
+    {
+      "ok": true,
+      "name": "390 finished-overview: replay restarts at the equator and restores camera follow"
+    },
+    {
+      "ok": true,
+      "name": "390 finished-overview: camera advances along the airflow after replay"
+    },
+    {
+      "ok": true,
+      "name": "390 finished-overview: pause still freezes the resumed follow camera"
+    },
+    {
+      "ok": true,
+      "name": "No browser errors"
+    }
+  ],
+  "errors": []
+}

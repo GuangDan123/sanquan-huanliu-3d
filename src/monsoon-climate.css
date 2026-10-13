@@ -1,0 +1,51 @@
+#monsoon-climate-stage{position:fixed;left:310px;right:24px;top:104px;bottom:calc(var(--controls-height,90px) + 18px);z-index:30;overflow:auto;display:flex;flex-direction:column;gap:16px;padding:0 0 8px;color:#e7eff4;}
+#monsoon-climate-stage[hidden]{display:none;}
+.mc-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-shrink:0;}
+.mc-heading span{font-size:12px;letter-spacing:2px;color:#b8d989;}
+.mc-heading h2{font-size:23px;margin:5px 0 0;}
+#mc-month-badge{font-size:12px;padding:9px 12px;border:1px solid #3e5a51;border-radius:8px;color:#d7ead1;background:#15262b;}
+.mc-map-card,.mc-climate-card{border:1px solid #3c5260;border-radius:12px;background:rgba(12,23,34,.96);overflow:hidden;flex-shrink:0;}
+.mc-map-scroll{overflow-x:auto;}
+.mc-map-wrap{position:relative;width:100%;}
+@media(min-width:1101px){.mc-map-wrap{max-width:calc((100vh - var(--controls-height,90px) - 500px) * 2.3226);min-width:620px;margin:auto;}}
+#monsoon-world-map{display:block;width:100%;height:auto;}
+.mc-sites{position:absolute;inset:0;pointer-events:none;}
+.mc-sites[hidden]{display:none;}
+.mc-site{position:absolute;transform:translate(-50%,-50%);display:flex;align-items:center;gap:5px;pointer-events:auto;cursor:pointer;border:0;background:transparent;padding:7px;font:600 11px "Microsoft YaHei",sans-serif;color:#dff3cf;}
+.mc-site i{width:8px;height:8px;border:2px solid #def7b9;border-radius:50%;background:#293d2e;box-shadow:0 0 0 3px rgba(14,32,21,.55);}
+.mc-site span{background:rgba(8,21,28,.85);padding:2px 4px;border-radius:3px;white-space:nowrap;}
+.mc-site.active i{background:#d4ffa1;box-shadow:0 0 9px #d4ffa1;}.mc-site.active span{color:#ecffd3;}
+.mc-site:hover,.mc-site:focus-visible{outline:2px solid #b8d989;border-radius:7px;}
+.mc-map-footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:7px;font-size:11px;color:#afc3cb;padding:10px 14px;background:#12202e;}
+.mc-map-footer[hidden]{display:none;}
+.mc-arrow-key{color:#ffbd75;font-weight:bold;}
+.mc-climate-card{display:grid;grid-template-columns:1.25fr 1fr;}
+.mc-chart-pane{padding:14px 16px;border-right:1px solid #304451;}
+.mc-chart-heading{display:flex;justify-content:space-between;align-items:center;gap:8px;}
+.mc-chart-heading h3{font-size:14px;margin:0;}.mc-chart-heading>span{font-size:10px;color:#9db4c1;}
+#monsoon-climate-chart{display:block;width:100%;height:auto;margin-top:10px;}
+@media(min-width:1101px){#monsoon-climate-chart{height:190px;object-fit:contain;}}
+.mc-explanation{padding:16px 20px;}
+.mc-section-label{font-size:11px;color:#b8d989;letter-spacing:1px;}
+.mc-explanation h3{font-size:18px;margin:8px 0 10px;color:#e5eed4;}
+.mc-explanation p{font-size:13px;line-height:1.8;color:#b9d0dc;margin:8px 0;}
+#mc-cause-chain{display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-size:12px;margin:12px 0;}
+#mc-cause-chain span{padding:6px 8px;background:#21362f;border:1px solid #48624a;border-radius:6px;color:#dce9c7;}
+#mc-annual-summary{color:#f1dba5;font-weight:600;}
+.mc-controls{padding:12px;border-bottom:1px solid #314253;background:#12252b;display:grid;gap:10px;}
+.mc-month-buttons{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.mc-month-buttons .btn{font-size:12px;padding:7px 5px;}
+.mc-controls>label{display:grid;gap:6px;color:#bcd4d5;font-size:12px;}
+.mc-controls select{max-width:100%;min-width:0;padding:7px 6px;border:1px solid #48616a;border-radius:6px;background:#182b34;color:#ecf3ed;}
+.mc-panel-answer{font-size:12px;line-height:1.8;color:#d0e0c0;padding:9px;background:#182e29;margin:8px 0;}
+.mc-panel-answer[hidden]{display:none;}
+body.monsoon-climate-active #step-demo-controls{padding:0;}
+body.monsoon-climate-active #legend,body.monsoon-climate-active #diagram-toggle{display:none!important;}
+body.monsoon-climate-active #tog-pressure{font-size:0;}
+body.monsoon-climate-active #tog-pressure:after{content:'气压场';font-size:12px;}
+body.monsoon-climate-active #control-panel [data-view],body.monsoon-climate-active #rotation-slider{opacity:.45;}
+body.ui-hidden #monsoon-climate-stage{left:24px;top:24px;right:24px;bottom:24px;}
+body.projection .mc-heading h2{font-size:28px;}body.projection .mc-explanation p{font-size:16px;}
+@media(max-width:1100px){.mc-climate-card{grid-template-columns:1fr;}.mc-chart-pane{border-right:0;border-bottom:1px solid #304451;}.mc-explanation{padding:14px 16px;}.mc-map-wrap{min-width:900px;}#monsoon-climate-stage{gap:12px;}}
+@media(max-width:768px){#monsoon-climate-stage{left:260px;right:12px;top:105px;}.mc-heading{align-items:flex-start;flex-direction:column;gap:8px;}.mc-heading h2{font-size:18px;}#mc-month-badge{font-size:10px;padding:7px;}.mc-map-wrap{min-width:960px;}.mc-chart-pane{padding:10px;}.mc-chart-heading{flex-wrap:wrap;}}
+@media(max-width:600px){#monsoon-climate-stage{left:8px;right:8px;top:108px;bottom:calc(var(--controls-height,120px) + 43vh + 16px);gap:10px;}.mc-heading{flex-direction:row;align-items:center;}.mc-heading h2{font-size:16px;}.mc-heading span{font-size:10px;letter-spacing:1px;}#mc-month-badge{max-width:136px;line-height:1.4;}.mc-map-wrap{min-width:880px;}.mc-map-footer{font-size:10px;}.mc-climate-card{grid-template-columns:1fr;}.mc-explanation h3{font-size:16px;}body.monsoon-climate-active #step-panel{max-height:43vh;}.mc-controls{padding:7px 10px;grid-template-columns:1fr 1fr;gap:7px;}.mc-month-buttons,.mc-controls>label{grid-column:1 / -1;}.mc-controls>label{grid-template-columns:70px 1fr;align-items:center;gap:5px;}.mc-controls>#mc-play{grid-column:1 / -1;min-height:33px;}.mc-month-buttons .btn{min-height:33px;padding:4px;}.mc-explanation p{font-size:12px;}}

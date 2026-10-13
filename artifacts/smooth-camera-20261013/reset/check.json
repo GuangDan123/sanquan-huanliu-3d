@@ -1,0 +1,216 @@
+{
+  "checks": [
+    {
+      "ok": true,
+      "name": "1366 3.5s: visible subtropical names sit directly on their belts without leaders",
+      "data": []
+    },
+    {
+      "ok": true,
+      "name": "1366 3.5s: high and low pressure pills differ from each other and belt labels"
+    },
+    {
+      "ok": true,
+      "name": "1366 18.5s: visible subtropical names sit directly on their belts without leaders",
+      "data": [
+        {
+          "text": "副热带高气压带 ↓",
+          "lat": 30,
+          "actualLatitude": 29.999999999999993,
+          "centerError": 0.08596079629331409,
+          "leader": false
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "name": "The subtropical belt name is visible in the descent close-up"
+    },
+    {
+      "ok": true,
+      "name": "1366 18.5s: high and low pressure pills differ from each other and belt labels"
+    },
+    {
+      "ok": true,
+      "name": "1366 40s: visible subtropical names sit directly on their belts without leaders",
+      "data": [
+        {
+          "text": "副热带高气压带 ↓",
+          "lat": 30,
+          "actualLatitude": 29.999999999999993,
+          "centerError": 0.0859202511097935,
+          "leader": false
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "name": "1366 40s: high and low pressure pills differ from each other and belt labels"
+    },
+    {
+      "ok": true,
+      "name": "1366: reset button is fully visible and unobstructed"
+    },
+    {
+      "ok": true,
+      "name": "1366: reset with explanation open preserves the exact pause and airflow"
+    },
+    {
+      "ok": true,
+      "name": "1366: actual dragging changes the globe view"
+    },
+    {
+      "ok": true,
+      "name": "1366: reset restores initial orientation, lens and zoom after dragging",
+      "data": {
+        "baseline": {
+          "p": [
+            21.093765086452365,
+            7.945323814839274,
+            15.890647629678545
+          ],
+          "q": [
+            -0.1874446206506754,
+            0.2841722618244724,
+            0.056753664556940066,
+            0.938557223273065
+          ],
+          "fov": 50,
+          "near": 0.1,
+          "root": -2.3790571248427925
+        },
+        "restored": {
+          "p": [
+            21.093765086452365,
+            7.945323814839274,
+            15.890647629678545
+          ],
+          "q": [
+            -0.1874446206506754,
+            0.2841722618244724,
+            0.056753664556940066,
+            0.938557223273065
+          ],
+          "fov": 50,
+          "near": 0.1,
+          "root": -2.3790571248427925
+        }
+      }
+    },
+    {
+      "ok": true,
+      "name": "1366: dragging, zooming and reset keep the paused process unchanged"
+    },
+    {
+      "ok": true,
+      "name": "1366: restored camera stays stable without orbit drift"
+    },
+    {
+      "ok": true,
+      "name": "1366: resetting during playback preserves progress and keeps the overview"
+    },
+    {
+      "ok": true,
+      "name": "1366: reset after completion retains all three circulation cells"
+    },
+    {
+      "ok": true,
+      "name": "390 3.5s: visible subtropical names sit directly on their belts without leaders",
+      "data": []
+    },
+    {
+      "ok": true,
+      "name": "390 3.5s: high and low pressure pills differ from each other and belt labels"
+    },
+    {
+      "ok": true,
+      "name": "390 18.5s: visible subtropical names sit directly on their belts without leaders",
+      "data": []
+    },
+    {
+      "ok": true,
+      "name": "390 18.5s: high and low pressure pills differ from each other and belt labels"
+    },
+    {
+      "ok": true,
+      "name": "390 40s: visible subtropical names sit directly on their belts without leaders",
+      "data": []
+    },
+    {
+      "ok": true,
+      "name": "390 40s: high and low pressure pills differ from each other and belt labels"
+    },
+    {
+      "ok": true,
+      "name": "390: reset button is fully visible and unobstructed"
+    },
+    {
+      "ok": true,
+      "name": "390: reset with explanation open preserves the exact pause and airflow"
+    },
+    {
+      "ok": true,
+      "name": "390: actual dragging changes the globe view"
+    },
+    {
+      "ok": true,
+      "name": "390: reset restores initial orientation, lens and zoom after dragging",
+      "data": {
+        "baseline": {
+          "p": [
+            42.27553598590054,
+            23.83165198942541,
+            47.663303978850806
+          ],
+          "q": [
+            -0.1874446206506754,
+            0.2841722618244724,
+            0.056753664556940066,
+            0.938557223273065
+          ],
+          "fov": 50,
+          "near": 0.1,
+          "root": -2.3790571248427925
+        },
+        "restored": {
+          "p": [
+            42.27553598590054,
+            23.83165198942541,
+            47.663303978850806
+          ],
+          "q": [
+            -0.1874446206506754,
+            0.2841722618244724,
+            0.056753664556940066,
+            0.938557223273065
+          ],
+          "fov": 50,
+          "near": 0.1,
+          "root": -2.3790571248427925
+        }
+      }
+    },
+    {
+      "ok": true,
+      "name": "390: dragging, zooming and reset keep the paused process unchanged"
+    },
+    {
+      "ok": true,
+      "name": "390: restored camera stays stable without orbit drift"
+    },
+    {
+      "ok": true,
+      "name": "390: resetting during playback preserves progress and keeps the overview"
+    },
+    {
+      "ok": true,
+      "name": "390: reset after completion retains all three circulation cells"
+    },
+    {
+      "ok": true,
+      "name": "No browser errors",
+      "data": []
+    }
+  ],
+  "errors": []
+}

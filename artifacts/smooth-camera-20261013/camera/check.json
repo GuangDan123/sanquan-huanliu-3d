@@ -1,0 +1,256 @@
+{
+  "checks": [
+    {
+      "ok": true,
+      "name": "1366: camera path is prepared before playback begins"
+    },
+    {
+      "ok": true,
+      "name": "1366: close-up camera travel is slower than the previous abrupt zoom",
+      "data": {
+        "maxMove": 0.34929113010696705,
+        "maxRelativeMove": 0.025663258506117694,
+        "maxTurn": 0.03276818939704189
+      }
+    },
+    {
+      "ok": true,
+      "name": "1366: the entire 40-second path turns smoothly at stage boundaries",
+      "data": {
+        "maxMove": 0.34929113010696705,
+        "maxRelativeMove": 0.025663258506117694,
+        "maxTurn": 0.03276818939704189
+      }
+    },
+    {
+      "ok": true,
+      "name": "1366: the opening lens eases gradually instead of jumping from 50 to 65 degrees",
+      "data": [
+        {
+          "t": 0,
+          "fov": 50
+        },
+        {
+          "t": 0.01,
+          "fov": 50.00199111111111
+        },
+        {
+          "t": 0.025,
+          "fov": 50.01236111111111
+        },
+        {
+          "t": 0.05,
+          "fov": 50.04888888888889
+        },
+        {
+          "t": 0.25,
+          "fov": 51.111111111111114
+        },
+        {
+          "t": 0.5,
+          "fov": 53.888888888888886
+        },
+        {
+          "t": 1,
+          "fov": 61.111111111111114
+        },
+        {
+          "t": 1.5,
+          "fov": 65
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "name": "1366 4s: the camera crosses the route boundary without a position jump"
+    },
+    {
+      "ok": true,
+      "name": "1366 12s: the camera crosses the route boundary without a position jump"
+    },
+    {
+      "ok": true,
+      "name": "1366 15s: the camera crosses the route boundary without a position jump"
+    },
+    {
+      "ok": true,
+      "name": "1366 19s: the camera crosses the route boundary without a position jump"
+    },
+    {
+      "ok": true,
+      "name": "1366 23s: the camera crosses the route boundary without a position jump"
+    },
+    {
+      "ok": true,
+      "name": "1366 27s: the camera crosses the route boundary without a position jump"
+    },
+    {
+      "ok": true,
+      "name": "1366 30s: the camera crosses the route boundary without a position jump"
+    },
+    {
+      "ok": true,
+      "name": "1366 31s: the camera crosses the route boundary without a position jump"
+    },
+    {
+      "ok": true,
+      "name": "1366 33s: the camera crosses the route boundary without a position jump"
+    },
+    {
+      "ok": true,
+      "name": "1366 35s: the camera crosses the route boundary without a position jump"
+    },
+    {
+      "ok": true,
+      "name": "1366 38s: the camera crosses the route boundary without a position jump"
+    },
+    {
+      "ok": true,
+      "name": "1366: scrubbing reproduces the same smoothed camera pose"
+    },
+    {
+      "ok": true,
+      "name": "1366: pause freezes position, rotation and zoom exactly"
+    },
+    {
+      "ok": true,
+      "name": "1366: continuing advances the same smoothed camera path"
+    },
+    {
+      "ok": true,
+      "name": "390: camera path is prepared before playback begins"
+    },
+    {
+      "ok": true,
+      "name": "390: close-up camera travel is slower than the previous abrupt zoom",
+      "data": {
+        "maxMove": 0.8459401577949637,
+        "maxRelativeMove": 0.042103606017635055,
+        "maxTurn": 0.03480222876331481
+      }
+    },
+    {
+      "ok": true,
+      "name": "390: the entire 40-second path turns smoothly at stage boundaries",
+      "data": {
+        "maxMove": 0.8459401577949637,
+        "maxRelativeMove": 0.042103606017635055,
+        "maxTurn": 0.03480222876331481
+      }
+    },
+    {
+      "ok": true,
+      "name": "390: the opening lens eases gradually instead of jumping from 50 to 65 degrees",
+      "data": [
+        {
+          "t": 0,
+          "fov": 50
+        },
+        {
+          "t": 0.01,
+          "fov": 50.00199111111111
+        },
+        {
+          "t": 0.025,
+          "fov": 50.01236111111111
+        },
+        {
+          "t": 0.05,
+          "fov": 50.04888888888889
+        },
+        {
+          "t": 0.25,
+          "fov": 51.111111111111114
+        },
+        {
+          "t": 0.5,
+          "fov": 53.888888888888886
+        },
+        {
+          "t": 1,
+          "fov": 61.111111111111114
+        },
+        {
+          "t": 1.5,
+          "fov": 65
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "name": "390 4s: the camera crosses the route boundary without a position jump"
+    },
+    {
+      "ok": true,
+      "name": "390 12s: the camera crosses the route boundary without a position jump"
+    },
+    {
+      "ok": true,
+      "name": "390 15s: the camera crosses the route boundary without a position jump"
+    },
+    {
+      "ok": true,
+      "name": "390 19s: the camera crosses the route boundary without a position jump"
+    },
+    {
+      "ok": true,
+      "name": "390 23s: the camera crosses the route boundary without a position jump"
+    },
+    {
+      "ok": true,
+      "name": "390 27s: the camera crosses the route boundary without a position jump"
+    },
+    {
+      "ok": true,
+      "name": "390 30s: the camera crosses the route boundary without a position jump"
+    },
+    {
+      "ok": true,
+      "name": "390 31s: the camera crosses the route boundary without a position jump"
+    },
+    {
+      "ok": true,
+      "name": "390 33s: the camera crosses the route boundary without a position jump"
+    },
+    {
+      "ok": true,
+      "name": "390 35s: the camera crosses the route boundary without a position jump"
+    },
+    {
+      "ok": true,
+      "name": "390 38s: the camera crosses the route boundary without a position jump"
+    },
+    {
+      "ok": true,
+      "name": "390: scrubbing reproduces the same smoothed camera pose"
+    },
+    {
+      "ok": true,
+      "name": "390: pause freezes position, rotation and zoom exactly"
+    },
+    {
+      "ok": true,
+      "name": "390: continuing advances the same smoothed camera path"
+    },
+    {
+      "ok": true,
+      "name": "No browser errors",
+      "data": []
+    }
+  ],
+  "errors": [],
+  "metrics": [
+    {
+      "width": 1366,
+      "maxMove": 0.34929113010696705,
+      "maxRelativeMove": 0.025663258506117694,
+      "maxTurn": 0.03276818939704189
+    },
+    {
+      "width": 390,
+      "maxMove": 0.8459401577949637,
+      "maxRelativeMove": 0.042103606017635055,
+      "maxTurn": 0.03480222876331481
+    }
+  ]
+}

@@ -295,6 +295,7 @@ body.ui-hidden #step-notification{display:none !important;}
 /* ========== 滚动条 ========== */
 ::-webkit-scrollbar{width:4px;}
 ::-webkit-scrollbar-thumb{background:rgba(93,173,226,0.3);border-radius:2px;}
+{{CLASSROOM_CSS}}
 </style>
 </head>
 <body>
@@ -339,6 +340,8 @@ body.ui-hidden #step-notification{display:none !important;}
       <option value="0">理想单圈环流</option>
       <option value="1">地转偏向力介入</option>
       <option value="2">三圈环流与气压带风带</option>
+      <option value="3">海陆分布与季风</option>
+      <option value="4">季风环流与气候</option>
     </select>
     <button class="btn btn-sm" id="tc-jump">跳转</button>
   </div>
@@ -370,11 +373,11 @@ body.ui-hidden #step-notification{display:none !important;}
   </div>
 </div>
 
-<!-- 左侧常驻知识点面板（三步切换时内容同步更新） -->
+<!-- 左侧常驻知识点面板（五步切换时内容同步更新） -->
 <div id="step-panel">
   <div class="sp-progress"><div class="sp-progress-fill" id="sp-progress"></div></div>
   <div class="sp-head">
-    <span class="sp-tag" id="sp-tag">STEP 1 / 3</span>
+    <span class="sp-tag" id="sp-tag">STEP 1 / 5</span>
     <h3 id="sp-title">理想单圈环流</h3>
   </div>
   <div id="step-demo-controls"></div>
@@ -476,7 +479,7 @@ body.ui-hidden #step-notification{display:none !important;}
     <button class="btn btn-sm" data-view="top">俯视</button>
     <button class="btn btn-sm" data-view="side">侧视</button>
     <button class="btn btn-sm" data-view="front">平视</button>
-    <button class="btn btn-sm" data-view="reset">重置</button>
+    <button class="btn btn-sm" id="reset-globe-view" data-view="reset" title="恢复地球初始视角与缩放">复位地球</button>
   </div>
   <div class="ctrl-group">
     <label>步骤：</label>
@@ -484,6 +487,8 @@ body.ui-hidden #step-notification{display:none !important;}
       <div class="step-dot active" data-step="0" title="理想单圈环流">1</div>
       <div class="step-dot" data-step="1" title="地转偏向力介入">2</div>
       <div class="step-dot" data-step="2" title="三圈环流与气压带风带">3</div>
+      <div class="step-dot" data-step="3" title="海陆分布与季风">4</div>
+      <div class="step-dot" data-step="4" title="季风环流与气候">5</div>
     </div>
   </div>
   <div class="ctrl-group">
@@ -550,13 +555,13 @@ const CONFIG = {
   singleCellLongitudes: [0],
   threeCellLongitudes: [0],
   starCount: 3000,
-  sun: { centerX: 1.25, radius: 0.78, arrowStartX: 2.25, arrowEndX: 8.15, arrowCount: 6, screenX: 0.2, screenY: 0.5, screenDepth: 15, arrowStartOffset: 0.62 }
+  sun: { centerX: 1.25, radius: 0.78, arrowStartX: 2.25, arrowEndX: 8.15, arrowCount: 2, screenX: 0.2, screenY: 0.5, screenDepth: 15, arrowStartOffset: 0.62 }
 };
 
 /* ========== 全局状态 ========== */
 const STATE = {
   mode: 'guided',        // 'guided' | 'custom'
-  step: 0,               // 0=理想单圈 1=地转偏向力介入 2=三圈环流+气压带
+  step: 0,               // 0=理想单圈 1=偏向力 2=三圈成型 3=海陆分布 4=季风环流与气候
   playing: true,
   speed: 1.0,
   coriolisDeflection: 12,
@@ -613,22 +618,24 @@ const KNOWLEDGE = {
 <p><b>近地面风：</b>极地高压流向副极地低压，受地转偏向力偏转形成极地东风带。</p>
 <p><b>特点：</b>教材平均环流模型中的热力直接环流，实际范围和强度随季节、地区变化。</p>`
   },
-  'pressure-0':   { title: '赤道低气压带', color: '#FF4444', content: '<p>位于赤道附近（0°±5°）。空气受热强烈上升，形成低压区，多对流雨，气候湿热。</p>' },
-  'pressure-30':  { title: '副热带高气压带', color: '#FF9900', content: '<p>位于南北纬30°附近。教材理想模型中，赤道上升后的高空气流向极地运动并偏转，在30°附近积聚、下沉，形成动力性高压；下沉空气绝热增温，通常干燥少雨。不能简单解释为当地冷却形成高压。</p>' },
-  'pressure-60':  { title: '副极地低气压带', color: '#44AAFF', content: '<p>位于南北纬60°附近。来自副热带的盛行西风与来自极地的极地东风交汇，较暖空气被迫上升，形成动力性低压，常伴锋面降水；不是当地受热形成的热力低压。</p>' },
-  'pressure-90':  { title: '极地高气压带', color: '#6688DD', content: '<p>位于南北极点附近。空气强烈冷却下沉形成高压区，气候严寒干燥。</p>' }
+  'pressure-0':   { title: '赤道低气压带', color: '#ffd447', content: '<p>位于赤道附近（0°±5°）。空气受热强烈上升，形成低压区，多对流雨，气候湿热。</p>' },
+  'pressure-30':  { title: '副热带高气压带', color: '#72d44a', content: '<p>位于南北纬30°附近。教材理想模型中，赤道上升后的高空气流向极地运动并偏转，在30°附近积聚、下沉，形成动力性高压；下沉空气绝热增温，通常干燥少雨。不能简单解释为当地冷却形成高压。</p>' },
+  'pressure-60':  { title: '副极地低气压带', color: '#329bff', content: '<p>位于南北纬60°附近。来自副热带的盛行西风与来自极地的极地东风交汇，较暖空气被迫上升，形成动力性低压，常伴锋面降水；不是当地受热形成的热力低压。</p>' },
+  'pressure-90':  { title: '极地高气压带', color: '#b986ff', content: '<p>位于南北极点附近。空气强烈冷却下沉形成高压区，气候严寒干燥。</p>' }
 };
 
 const STEP_INFO = [
   { title: '第一步：理想单圈环流（无偏转）', body: '假设地球不自转：赤道空气受热上升，高空流向极地；极地空气冷却下沉，近地面流回赤道——形成单一闭合的热力环流圈。这是理想化模型，真实地球因自转产生了地转偏向力。' },
   { title: '第二步：地转偏向力介入', body: '地球自转产生地转偏向力：北半球右偏、南半球左偏；相同水平风速下，其大小随纬度增大而增强。高空气流在30°附近偏转积聚下沉，在60°附近冷暖交汇抬升——请逐环节预测、显示解释并观察对应箭头，最后归纳三圈。这是教材理想模型，不是动力数值模拟。' },
-  { title: '第三步：三圈环流成型', body: '在教材理想模型中，归纳每个半球的三个相互联系的环流圈：哈德莱环流（0°~30°）、费雷尔环流（30°~60°）、极地环流（60°~90°），配合地面七个气压带与六个风带，构成完整的三圈环流体系。' }
+  { title: '第三步：三圈环流成型', body: '在教材理想模型中，归纳每个半球的三个相互联系的环流圈：哈德莱环流（0°~30°）、费雷尔环流（30°~60°）、极地环流（60°~90°），配合地面七个气压带与六个风带，构成完整的三圈环流体系。' },
+  { title: '第四步：海陆分布与季风', body: '加入真实海陆分布与冬夏热力差异，观察连续气压带怎样被气压中心改变。在三维地球上对照1月与7月的大陆、海洋气压中心和季风方向。' },
+  { title: '第五步：季风环流与气候', body: '在全球展开地图上对照冬夏气压中心与季风方向，结合典型地区的气温降水图，解释海陆差异、季风、水汽输送与气候季节变化。' }
 ];
 
-/* 左侧常驻知识点面板内容（三步详细原理说明，随步骤切换同步更新） */
+/* 左侧常驻知识点面板内容（五步详细原理说明，随步骤切换同步更新） */
 const STEP_PANEL = [
   {
-    tag: 'STEP 1 / 3', title: '理想单圈环流', color: '#88CCFF',
+    tag: 'STEP 1 / 5', title: '理想单圈环流', color: '#88CCFF',
     points: [
       ['假设前提', '不考虑地球自转，地表性质均匀；以<b>太阳直射赤道</b>为基准'],
       ['热力驱动', '赤道受热多→空气膨胀<b>上升</b>；极地受热少→空气冷却<b>下沉</b>'],
@@ -638,7 +645,7 @@ const STEP_PANEL = [
     ]
   },
   {
-    tag: 'STEP 2 / 3', title: '地转偏向力介入', color: '#FDB813',
+    tag: 'STEP 2 / 5', title: '地转偏向力介入', color: '#FDB813',
     points: [
       ['真实地球自转', '产生<b>地转偏向力</b>（科里奥利力）：北半球右偏、南半球左偏'],
       ['随纬度增强', '在<b>相同水平风速</b>下，偏向力在赤道为零、随纬度增大而增强；青色箭头表示偏向方向，长度为示意'],
@@ -648,7 +655,7 @@ const STEP_PANEL = [
     ]
   },
   {
-    tag: 'STEP 3 / 3', title: '三圈环流成型', color: '#FF6B35',
+    tag: 'STEP 3 / 5', title: '三圈环流成型', color: '#FF6B35',
     points: [
       ['低纬环流 0°~30°', '赤道上升→30°下沉，热力<b>直接环流</b>（哈德莱）'],
       ['中纬环流 30°~60°', '30°下沉→60°抬升，<b>间接环流</b>（费雷尔，方向与两侧相反）'],
@@ -656,6 +663,12 @@ const STEP_PANEL = [
       ['七个气压带', '赤道低压 · 副热带高压 · 副极地低压 · 极地高压（南北对称分布）'],
       ['六个风带', '信风带 · 盛行西风带 · 极地东风带（近地面风向偏转的结果）']
     ]
+  },
+  {
+    tag: 'STEP 4 / 5', title: '海陆分布与季风', color: '#7EE0D1', points: []
+  },
+  {
+    tag: 'STEP 5 / 5', title: '季风环流与气候', color: '#B8D989', points: []
   }
 ];
 
@@ -767,6 +780,9 @@ function initScene() {
   controls.maxDistance = 100;
   controls.target.set(SCENE_OFFSET_X, 0, 0);
   frameScene(true);
+  controls.addEventListener('start',()=>{CLASSROOM.focusAnimation++;viewAnimation++;});
+  renderer.domElement.addEventListener('pointerdown',beginSequenceFreeView,{capture:true});
+  renderer.domElement.addEventListener('wheel',beginSequenceFreeView,{capture:true,passive:true});
 
   // 灯光
   const ambientLight = new THREE.AmbientLight(0x404060, 1.2);
@@ -800,9 +816,7 @@ function createSun() {
   sunGroup.add(sunLabel);
 
   const arrowDefs = [
-    { lat: 10, color: 0xFF4B3E }, { lat: -10, color: 0xFF4B3E },
-    { lat: 30.5, color: 0xFFD23F }, { lat: -30.5, color: 0xFFD23F },
-    { lat: 75, color: 0x4A90E2 }, { lat: -75, color: 0x4A90E2 }
+    { lat: 10, color: 0xFF4B3E }, { lat: -10, color: 0xFF4B3E }
   ];
   arrowDefs.slice(0, CONFIG.sun.arrowCount).forEach(({ lat, color }) => {
     const line = new THREE.Line(
@@ -815,19 +829,19 @@ function createSun() {
     );
     {
       // 在面向屏幕的渐宽箭杆上裁出虚线，保持太阳端细、地球端粗。
-      // 路径参数从太阳端递增至地球端；减去相位使亮段向地球流动。
+      // 用裁剪空间 w 抵消透视插值，使路径参数按屏幕距离均匀递增；减去相位使亮段向地球流动。
       const radiation = {enabled:{value:1},phase:{value:0},count:{value:12}};
       shaft.userData.radiation = radiation;
       shaft.material.onBeforeCompile = shader => {
         shader.uniforms.solarDashEnabled = radiation.enabled;
         shader.uniforms.solarDashPhase = radiation.phase;
         shader.uniforms.solarDashCount = radiation.count;
-        shader.vertexShader = 'attribute float solarRayT;\nvarying float solarRayPosition;\n' + shader.vertexShader;
-        shader.vertexShader = shader.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\nsolarRayPosition = solarRayT;');
-        shader.fragmentShader = 'varying float solarRayPosition;\nuniform float solarDashEnabled;\nuniform float solarDashPhase;\nuniform float solarDashCount;\n' + shader.fragmentShader;
-        shader.fragmentShader = shader.fragmentShader.replace('#include <clipping_planes_fragment>', '#include <clipping_planes_fragment>\nif (solarDashEnabled > 0.5 && fract(solarRayPosition * solarDashCount - solarDashPhase) > 0.58) discard;');
+        shader.vertexShader = 'attribute float solarRayT;\nvarying vec2 solarRayPosition;\n' + shader.vertexShader;
+        shader.vertexShader = shader.vertexShader.replace('#include <project_vertex>', '#include <project_vertex>\nsolarRayPosition = vec2(solarRayT, 1.0) * gl_Position.w;');
+        shader.fragmentShader = 'varying vec2 solarRayPosition;\nuniform float solarDashEnabled;\nuniform float solarDashPhase;\nuniform float solarDashCount;\n' + shader.fragmentShader;
+        shader.fragmentShader = shader.fragmentShader.replace('#include <clipping_planes_fragment>', '#include <clipping_planes_fragment>\nif (solarDashEnabled > 0.5 && fract((solarRayPosition.x / solarRayPosition.y) * solarDashCount - solarDashPhase) > 0.58) discard;');
       };
-      shaft.material.customProgramCacheKey = () => 'solar-radiation-dashes-v1';
+      shaft.material.customProgramCacheKey = () => 'solar-radiation-dashes-v2';
     }
     const head = new THREE.Mesh(
       new THREE.BufferGeometry().setAttribute('position',new THREE.Float32BufferAttribute([-9,0,0,9,0,0,0,0,24],3)),
@@ -858,31 +872,30 @@ function updateSunArrowTargets() {
   const rimRadius = radius * Math.sqrt(1 - radius * radius / (cameraDistance * cameraDistance));
   const screenRight = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion);
   const screenUp = new THREE.Vector3(0, 1, 0).applyQuaternion(camera.quaternion);
+  const projectedSun = sunOrigin.clone().project(camera);
+  // 射线平面略置于太阳圆盘后方，确保圆盘能稳定遮住根部。
+  const rayDepth = sunOrigin.clone().add(new THREE.Vector3(0, 0, -.1).applyQuaternion(camera.quaternion)).project(camera).z;
   sunArrows.forEach(({ line, shaft, head, lat }) => {
-    const isRedArrow = Math.abs(lat) === 10;
-    // 取轮廓左侧的六个示意位置，而非球面内部的投影点。
-    const latitude = isRedArrow ? Math.sign(lat) * degToRad(8) : degToRad(lat);
+    // 两条红色射线分别指向轮廓左侧的上下位置。
+    const latitude = Math.sign(lat) * degToRad(8);
     const rimTarget = rimCenter.clone()
       .addScaledVector(screenRight, -rimRadius * Math.cos(latitude))
       .addScaledVector(screenUp, rimRadius * Math.sin(latitude));
-    // 向太阳收短箭头，按屏幕像素保留空隙，避免缩放或更换视角后贴近大气层。
+    // 起终点位于同一相机深度，且各自保持相同的屏幕高度；两条射线始终平行。
+    // 按屏幕像素保留地球端空隙，避免缩放或更换视角后贴近大气层。
     const projectedRim = rimTarget.clone().project(camera);
-    const projectedSun = sunOrigin.clone().project(camera);
-    const screenLength = Math.hypot((projectedRim.x-projectedSun.x)*innerWidth/2,
-      (projectedRim.y-projectedSun.y)*innerHeight/2);
-    const screenFraction = 1 - Math.min(SUN_ARROW_CLEARANCE_PX, screenLength * .15) / Math.max(screenLength,1);
-    const sunDepth = -sunOrigin.clone().applyMatrix4(camera.matrixWorldInverse).z;
-    const targetDepth = -rimTarget.clone().applyMatrix4(camera.matrixWorldInverse).z;
-    const fraction = screenFraction * sunDepth / ((1-screenFraction)*targetDepth + screenFraction*sunDepth);
-    const target = sunOrigin.clone().lerp(rimTarget, fraction);
-    const direction = target.clone().sub(sunOrigin);
+    const screenDx=(projectedRim.x-projectedSun.x)*innerWidth/2;
+    const clearance = Math.min(SUN_ARROW_CLEARANCE_PX, Math.abs(screenDx) * .15);
+    const rayOrigin = new THREE.Vector3(projectedSun.x, projectedRim.y, rayDepth).unproject(camera);
+    const target = new THREE.Vector3(projectedRim.x-Math.sign(screenDx)*clearance*2/innerWidth,
+      projectedRim.y, rayDepth).unproject(camera);
+    const direction = target.clone().sub(rayOrigin);
     const distance = direction.length();
     direction.normalize();
     // 加粗后的地球端采用18×24像素等腰三角形，切换视角保持对称。
-    start.copy(direction).multiplyScalar(0.55);
+    start.copy(rayOrigin).sub(sunOrigin);
     if (!head.geometry.boundingBox) head.geometry.computeBoundingBox();
-    const screenDx=(projectedRim.x-projectedSun.x)*innerWidth/2;
-    const screenDy=(projectedRim.y-projectedSun.y)*innerHeight/2;
+    const screenDy=0;
     const screenDirection=screenRight.clone().multiplyScalar(screenDx).addScaledVector(screenUp,screenDy).normalize();
     const sideDirection=screenRight.clone().multiplyScalar(-screenDy).addScaledVector(screenUp,screenDx).normalize();
     const headDepth=-target.clone().applyMatrix4(camera.matrixWorldInverse).z;
@@ -936,14 +949,18 @@ function updateSunScreenPosition() {
 
 const SUN_STEP_STYLE = [
   { core: 1.0, glow: 0.2, arrows: 0.92 },
-  { core: 0.58, glow: 0.08, arrows: 0.38 },
-  { core: 0.42, glow: 0.04, arrows: 0.16 }
+  { core: 0, glow: 0, arrows: 0 },
+  { core: 0, glow: 0, arrows: 0 }
 ];
 
 function updateSunStyle() {
   if (!sunGroup) return;
-  const style = STATE.step === 1 && STATE.mechanismStage <= 1
-    ? {core:.3,glow:.04,arrows:.08} : SUN_STEP_STYLE[STATE.step] || SUN_STEP_STYLE[2];
+  const visible = STATE.step === 0;
+  sunGroup.visible = visible;
+  sunLabel.visible = visible;
+  // CSS2D 标签不会继承父组的 visible，显式同步对象与 DOM。
+  sunLabel.element.style.display = visible ? '' : 'none';
+  const style = SUN_STEP_STYLE[STATE.step] || {core:.42,glow:.04,arrows:.16};
   sunCore.material.opacity = style.core;
   sunCore.material.transparent = style.core < 1;
   sunGlow.material.opacity = style.glow;
@@ -952,7 +969,7 @@ function updateSunStyle() {
     line.material.opacity = arrows;
     shaft.material.opacity = arrows;
     head.material.opacity = Math.min(0.95, arrows + 0.04);
-    // 隐藏实线辅助层，透出六条辐射虚线的空隙。
+    // 隐藏实线辅助层，透出两条辐射虚线的空隙。
     line.visible = style.arrows > 0.01 && !(shaft.userData.radiation && STATE.step === 0);
     if (shaft.userData.radiation) shaft.userData.radiation.enabled.value = STATE.step === 0 ? 1 : 0;
     shaft.visible = style.arrows > 0.01;
@@ -1121,6 +1138,7 @@ function createEarth() {
   const glowMesh = new THREE.Mesh(glowGeo, glowMat);
   glowMesh.scale.set(1.05, 1.0, 1.05);
   earthGroup.add(glowMesh);
+  earthGroup.userData.sequenceAtmosphere = [atmosMesh, glowMesh];
 
   // 边缘光晕（模拟大气散射）
   const rimGeo = new THREE.SphereGeometry(CONFIG.earth.radius * 1.02, 64, 48);
@@ -2272,6 +2290,8 @@ function updateCrossSectionFacing() {
   if (!crossSectionRoot || !camera) return;
   const az = Math.atan2(camera.position.z, camera.position.x - SCENE_OFFSET_X);
   crossSectionRoot.rotation.y = -(az + CELLS_SCREEN_OFFSET);
+  // 偏转演示单独以球心定位，置于可见球面；不继承剖面的左移与大气层高度。
+  if (mechanismGroups[0]) mechanismGroups[0].rotation.y = -(az + degToRad(12));
 }
 
 function createDeflectionIndicators(parent) {
@@ -2395,6 +2415,7 @@ const pressureData = [
     const el = document.createElement('div');
     el.className = d.cls;
     el.textContent = d.text;
+    el.style.color=KNOWLEDGE[d.key]?.color||'#dce5ed';
     el.addEventListener('click', () => showKnowledge(d.key));
     const obj = new CSS2DObject(el);
     obj.position.copy(beltAnchorPos(d.anchorLat ?? d.lat, (d.dLon || 0) + PRESSURE_LABEL_DLON));
@@ -2589,20 +2610,20 @@ function createPressureBelts() {
   pressureBeltGroup.position.x = SCENE_OFFSET_X;
   scene.add(pressureBeltGroup);
   // 气压带定义：lat=中心纬度, latHalfWidth=半宽(度), color=色带颜色
-  // 赤道低压浅红、副热带高压浅黄、副极地低压浅蓝、极地高压浅紫
+  // Latitude colors match the formation demonstration: yellow, green, blue, purple.
   // 半宽收窄到贴合标准纬度带范围
   // 赤道低压: 南北纬5°之间(半宽5°)
   // 副热带高压: 对齐南北纬30°，宽度5°内(半宽2.5°)
   // 副极地低压: 对齐南北纬60°，宽度5°内(半宽2.5°)
   // 极地高压: 对齐极地85°
   const beltData = [
-    { lat: 0,   latHalfWidth: 2.5, color: 0xFF6B6B, name: '赤道低气压带' },
-    { lat: 30,  latHalfWidth: 2.5, color: 0xFFD93D, name: '副热带高气压带' },
-    { lat: -30, latHalfWidth: 2.5, color: 0xFFD93D, name: '副热带高气压带' },
-    { lat: 60,  latHalfWidth: 2.5, color: 0x6BC5E8, name: '副极地低气压带' },
-    { lat: -60, latHalfWidth: 2.5, color: 0x6BC5E8, name: '副极地低气压带' },
-    { lat: 85,  latHalfWidth: 4,   color: 0xA8A0D8, name: '极地高气压带' },
-    { lat: -85, latHalfWidth: 4,   color: 0xA8A0D8, name: '极地高气压带' }
+    { lat: 0,   latHalfWidth: 2.5, color: 0xffd447, name: '赤道低气压带' },
+    { lat: 30,  latHalfWidth: 2.5, color: 0x72d44a, name: '副热带高气压带' },
+    { lat: -30, latHalfWidth: 2.5, color: 0x72d44a, name: '副热带高气压带' },
+    { lat: 60,  latHalfWidth: 2.5, color: 0x329bff, name: '副极地低气压带' },
+    { lat: -60, latHalfWidth: 2.5, color: 0x329bff, name: '副极地低气压带' },
+    { lat: 85,  latHalfWidth: 4,   color: 0xb986ff, name: '极地高气压带' },
+    { lat: -85, latHalfWidth: 4,   color: 0xb986ff, name: '极地高气压带' }
   ];
 
   const R = PRESSURE_BELT_R; // 略大于地球半径，保证前后部分深度关系正确（气压带标签锚点同用该半径）
@@ -2689,39 +2710,21 @@ function updateStepPanel(step) {
   const demoControls = document.getElementById('step-demo-controls');demoControls.replaceChildren();
   const navigation=document.getElementById('mechanism-navigation');navigation.replaceChildren();
   if (step === 1) {
-    const index = STATE.mechanismStage;
-    const stage = MECHANISM_STAGES[index];
-    document.getElementById('sp-title').textContent = stage.title;
-    tag.textContent = `STEP 2 / 3 · 环节 ${index + 1} / 4`;
-    body.innerHTML = `<div class="mechanism-question">${stage.question}</div>
-      <div class="sp-item"><span class="sp-item-k">观察画面</span><span class="sp-item-v">${stage.observation}</span></div>
-      ${index <= 2 ? `<div class="mechanism-demo"><div id="mechanism-demo-phase" class="mechanism-demo-status" aria-live="polite"></div><progress id="mechanism-demo-progress" max="${getMechanismDemoDuration()}" value="0" aria-label="机制演示进度"></progress><div class="mechanism-actions"><button class="btn" id="mechanism-demo-play">播放过程</button><button class="btn" id="mechanism-demo-replay">从头重播</button></div></div>` : ''}
-      <div class="mechanism-actions"><button class="btn" id="mechanism-reveal">${STATE.mechanismRevealed[index] ? '收起解释' : '显示解释'}</button></div>
-      <div id="mechanism-explanation" class="sp-item" ${STATE.mechanismRevealed[index] ? '' : 'hidden'}><span class="sp-item-v">${stage.explanation}</span></div>
-      <p class="model-note">本图为均匀地表的参考模型，位置、高度和时间为示意。季节、海陆影响请进入课堂探究。</p><button class="btn btn-sm" id="mechanism-related">${index===0?'先看水平风成因':index===1?'推导六个近地面风带':'对应教材标准剖面'}</button>`;
-    navigation.innerHTML=`<button class="btn" id="mechanism-prev">上一环节</button><button class="btn" id="mechanism-next">${index===3?'第三步':'下一环节'}</button>`;
-    document.getElementById('mechanism-related').onclick=()=>openLesson(index===0?'pressure':index===1?'wind':'section');
-    document.getElementById('mechanism-reveal').onclick = () => { STATE.mechanismRevealed[index] = !STATE.mechanismRevealed[index]; updateStepPanel(1); };
-    document.getElementById('mechanism-prev').onclick = () => index === 0 ? transitionToStep(0) : setMechanismStage(index - 1);
-    document.getElementById('mechanism-next').onclick = () => index === 3 ? transitionToStep(2) : setMechanismStage(index + 1);
-    if (index <= 2) {
-      document.getElementById('mechanism-demo-play').onclick = () => {
-        if (STATE.mechanismDemo.running && STATE.playing) { STATE.mechanismDemo.running = false; STATE.playing = false; }
-        else playMechanismDemo();
-        updateMechanismDemoUI();
-      };
-      document.getElementById('mechanism-demo-replay').onclick = () => { resetMechanismDemo(); playMechanismDemo(); };
-      updateMechanismDemoUI();
-    }
+    renderSequencePanel(body,demoControls,navigation);
+  } else if (step === 3) {
+    renderLandSeaPanel(body, demoControls, navigation);
+  } else if (step === 4) {
+    renderMonsoonClimatePanel(body, demoControls, navigation);
   } else {
     if (step === 0) {
-      body.insertAdjacentHTML('afterbegin', `<div class="mechanism-question">预测：为什么赤道空气会上升，而两极空气会下沉？</div>
+      body.insertAdjacentHTML('afterbegin', `<div class="mechanism-question">预测：赤道与两极受热不同，空气分别怎样运动？</div>
         <div class="sp-item"><span class="sp-item-k">观察过程</span><span class="sp-item-v">先看赤道受热，再看高空输送、极地冷却下沉和近地面回流如何闭合。</span></div>
         <div class="mechanism-demo"><div id="single-demo-phase" class="mechanism-demo-status" aria-live="polite"></div><progress id="single-demo-progress" max="10" value="0" aria-label="单圈成因演示进度"></progress><div class="mechanism-actions"><button class="btn" id="single-demo-play">播放过程</button><button class="btn" id="single-demo-replay">从头重播</button></div></div>`);
     }
     body.insertAdjacentHTML('beforeend', '<p class="model-note">教材理想模型 / 机制示意，非动力数值模拟；30°和60°为近似位置。</p>');
-    body.insertAdjacentHTML('beforeend',`<button class="btn btn-sm" id="step-related">${step===0?'先看气压差与水平风':'继续：季节移动与海陆影响'}</button>`);
-    document.getElementById('step-related').onclick=()=>openLesson(step===0?'pressure':'season');
+    body.insertAdjacentHTML('beforeend',`<button class="btn btn-sm" id="step-related">${step===0?'先看气压差与水平风':'第四步：加入海陆分布'}</button>`);
+    document.getElementById('step-related').onclick=()=>step===0?openLesson('pressure'):transitionToStep(3);
+    if(step===2){body.insertAdjacentHTML('beforeend','<button class="btn btn-sm" id="step-season">探究气压带的季节移动</button>');document.getElementById('step-season').onclick=()=>openLesson('season');}
     if (step === 0) {
       document.getElementById('single-demo-play').onclick = () => {
         if (STATE.singleDemo.running && STATE.playing) { STATE.singleDemo.running = false; STATE.playing = false; }
@@ -2734,8 +2737,11 @@ function updateStepPanel(step) {
   }
   const demoPanel = body.querySelector('.mechanism-demo');
   if (demoPanel) demoControls.appendChild(demoPanel);
-  body.insertAdjacentHTML('afterbegin',modelAssumptionsHTML(step===0?'single':'three'));
-  if (demoPanel) mountDemoNodes(step===0?'single':'mechanism',demoPanel);
+  if(step<3)body.insertAdjacentHTML('afterbegin',modelAssumptionsHTML(step===0?'single':step===1&&STATE.mechanismStage===0?'coriolis':'three'));
+  if (demoPanel && step === 0) mountDemoNodes('single',demoPanel);
+  mountClassroomControls(step,body,demoControls);
+  if(step===1){const reveal=document.getElementById('mechanism-reveal'),wrapper=reveal.parentElement;document.getElementById('step-node-dock').append(reveal);wrapper.remove();}
+  mountPedagogyStep(step,body);
   document.getElementById('sp-progress').style.width = ((step + 1) / STEP_PANEL.length * 100) + '%';
   // 内容切换闪烁提示（强制重排以重新触发动画）
   const panel = document.getElementById('step-panel');
@@ -2789,6 +2795,7 @@ function setStepVisual(step) {
   // 第一步无自转/无偏转；第二步手动机制环节；第三步三圈稳定态
   const coriolis = step >= 1 ? STATE.coriolisDeflection : 0;
   STATE.step = step;
+  if(step!==0)restoreSingleGeometry();
   updateSunStyle();
 
   if (step === 0) {
@@ -2837,7 +2844,7 @@ function setStepVisual(step) {
   verticalLabels.forEach(vl => { vl.obj.userData.baseVisible = showVertical; });
 
   // 气压带标签与环带
-  const showP = STATE.showPressure && step >= 2;
+  const showP = STATE.showPressure && step === 2;
   pressureLabels.forEach(pl => {
     pl.obj.userData.baseVisible = showP && STATE.showLabels;
     if (!showP) pl.obj.visible = false;
@@ -2851,6 +2858,8 @@ function setStepVisual(step) {
 
   if (step === 1) updateMechanismCurves();
   applyMechanismVisual();
+  syncLandSeaVisual();
+  syncMonsoonClimateVisual();
 
   // 更新步骤指示器
   document.querySelectorAll('.step-dot').forEach(d => {
@@ -2861,29 +2870,54 @@ function setStepVisual(step) {
 }
 
 function transitionToStep(newStep) {
-  if (![0, 1, 2].includes(newStep)) return;
+  if (![0, 1, 2, 3, 4].includes(newStep)) return;
+  const stepChanged = newStep !== STATE.step;
+  if (stepChanged) { CLASSROOM.focusAnimation++; viewAnimation++; }
+  document.getElementById('demo-overlay').classList.remove('show');
+  if(newStep===4&&STATE.step===3&&MONSOON_CLIMATE.month!==LANDSEA.month){MONSOON_CLIMATE.month=LANDSEA.month;resetFormation('climate');MONSOON_CLIMATE.phase=0;}
+  if(newStep>=3||STATE.step>=3)STATE.playing=false;
+  const enteringLandSea = newStep === 3 && STATE.step !== 3;
+  const leavingLandSea = newStep !== 3 && STATE.step === 3;
+  prepareLandSeaStep(newStep);
   hideStepNotification();
   hideKnowledge();
   if (newStep === 1 && STATE.step !== 1) {
     STATE.mechanismStage = 0;
+    STATE.demoMode = 'continuous';
     STATE.mechanismRevealed = [false, false, false, false];
     resetMechanismDemo();
   }
   STATE.stepTransitioning = false;
   STATE.transitionCoriolis = null;
   STATE.pendingStep = null;
-  STATE.showPressure = newStep === 2;
+  STATE.showPressure = newStep >= 2;
   document.getElementById('tog-pressure').classList.toggle('active', STATE.showPressure);
   updateAtmosphereColor(newStep);
   setStepVisual(newStep);
   updateStepPanel(newStep);
+  document.getElementById('tc-step-select').value = newStep;
+  if (leavingLandSea || (stepChanged && newStep < 3)) {
+    controls.target.set(SCENE_OFFSET_X, 0, 0);
+    frameScene(true);
+  }
+  if(newStep>=3&&STATE.showDiagram)toggleDiagramPanel(false);
+  if(enteringLandSea)focusLandSeaRegion(LANDSEA.region);
+  updateClassroomRoute();
+  if(newStep<3)focusTeachingNode();
 }
 
-// 分阶段机制对象挂在现有环流剖面根组，保持原来的相机锚定视觉。
+// 偏转环节贴近球面，其余形成机制仍使用环流剖面。
 let mechanismGroups = [], mechanismLabels = [];
 const MECHANISM_FLOW_COLORS = { upper: 0xFFAA55, sink: 0xFFD93D, trade: 0x55DDCC, westerly: 0x70B7FF };
 const subtropicalAccumulations = [];
 const coriolisParcels = [];
+const CORIOLIS_SURFACE_ALT = .12;
+class CoriolisSurfaceCurve extends THREE.CatmullRomCurve3 {
+  getPoint(t, target = new THREE.Vector3()) {
+    // 将插值轨迹投影回球面，避免弯曲幅度较大时轨迹穿入地球。
+    return super.getPoint(t, target).setLength(CONFIG.earth.radius + CORIOLIS_SURFACE_ALT);
+  }
+}
 function createMechanismVisuals() {
   document.querySelectorAll('[data-flow]').forEach(row => {
     row.querySelector('.legend-dot').style.backgroundColor = '#' + MECHANISM_FLOW_COLORS[row.dataset.flow].toString(16).padStart(6,'0');
@@ -2894,7 +2928,7 @@ function createMechanismVisuals() {
     return new THREE.Vector3(r * Math.cos(phi) * Math.cos(theta), r * Math.sin(phi), r * Math.cos(phi) * Math.sin(theta));
   };
   const path = (group, points, color, kind, hemisphere) => {
-    const curve = new THREE.CatmullRomCurve3(points);
+    const curve = group.userData.stage === 0 ? new CoriolisSurfaceCurve(points) : new THREE.CatmullRomCurve3(points);
     const mesh = new THREE.Mesh(new THREE.TubeGeometry(curve, 40, .045, 6, false), new THREE.MeshBasicMaterial({color, transparent:true, opacity:.9}));
     mesh.userData = { kind, hemisphere, basePoints: points.map(p => p.clone()), arrows: [] };
     if (group.userData.stage <= 2) {
@@ -2913,9 +2947,9 @@ function createMechanismVisuals() {
     });
     return mesh;
   };
-  const label = (group, lat, alt, text) => {
+  const label = (group, lat, alt, text, lon = 0) => {
     const el = document.createElement('div'); el.className = 'mechanism-label'; el.textContent = text;
-    const obj = new CSS2DObject(el); obj.position.copy(point(lat, alt)); group.add(obj);
+    const obj = new CSS2DObject(el); obj.position.copy(point(lat, alt, lon)); group.add(obj);
     obj.userData.demoKind = lat === 18 ? 'trade' : lat === 46 ? 'westerly' : 'status';
     if (['trade','westerly'].includes(obj.userData.demoKind)) {
       const color = '#' + MECHANISM_FLOW_COLORS[obj.userData.demoKind].toString(16).padStart(6,'0');
@@ -2924,23 +2958,26 @@ function createMechanismVisuals() {
     mechanismLabels.push({obj, group});
   };
   for (let stage=0; stage<4; stage++) {
-    const group = new THREE.Group(); group.userData.stage = stage; group.visible = false; crossSectionRoot.add(group); mechanismGroups.push(group);
+    const group = new THREE.Group(); group.userData.stage = stage; group.visible = false;
+    if (stage === 0) { group.position.x = SCENE_OFFSET_X; scene.add(group); }
+    else crossSectionRoot.add(group);
+    mechanismGroups.push(group);
     if (stage === 0) {
       [1,-1].forEach(h => {
-        // 已在高空的气团，保持示意高度；与同纬度的沿经线参考比较。
-        const mesh = path(group,[point(5*h,1.8),point(12*h,1.8,1.5),point(21*h,1.8,9),point(30*h,1.8,24)],0xFFAA55,'upper',h);
+        // 高空气流的水平方向投影至球面，与同纬度的经线参考比较。
+        const mesh = path(group,[point(5*h,CORIOLIS_SURFACE_ALT),point(12*h,CORIOLIS_SURFACE_ALT,1.5),point(21*h,CORIOLIS_SURFACE_ALT,9),point(30*h,CORIOLIS_SURFACE_ALT,24)],0xFFAA55,'upper',h);
         const referencePoints = [];
-        for (let i=0;i<=60;i++) referencePoints.push(point((5+25*i/60)*h,1.8));
+        for (let i=0;i<=60;i++) referencePoints.push(point((5+25*i/60)*h,CORIOLIS_SURFACE_ALT));
         const reference = new THREE.Line(new THREE.BufferGeometry().setFromPoints(referencePoints),new THREE.LineDashedMaterial({color:0xBCC9DB,dashSize:.2,gapSize:.13,transparent:true,opacity:.75}));
         reference.computeLineDistances(); group.add(reference);
         const parcel = new THREE.Mesh(new THREE.SphereGeometry(.14,12,8),new THREE.MeshBasicMaterial({color:0xFFAA55}));
-        const force = new THREE.ArrowHelper(new THREE.Vector3(0,0,-1),point(5*h,1.8),.6,0x66EEFF,.24,.15);
-        const velocity = new THREE.ArrowHelper(new THREE.Vector3(0,h,0),point(5*h,1.8),.7,0xFFAA55,.24,.15);
+        const force = new THREE.ArrowHelper(new THREE.Vector3(0,0,-1),point(5*h,CORIOLIS_SURFACE_ALT),.6,0x66EEFF,.24,.15);
+        const velocity = new THREE.ArrowHelper(new THREE.Vector3(0,h,0),point(5*h,CORIOLIS_SURFACE_ALT),.7,0xFFAA55,.24,.15);
         group.add(parcel,force,velocity);
         coriolisParcels.push({mesh,reference,parcel,force,velocity,hemisphere:h});
       });
-      label(group,18,3.1,'北半球：向前进方向右偏');
-      label(group,-18,3.1,'南半球：向前进方向左偏');
+      label(group,18,.3,'北半球：向前进方向右偏',-28);
+      label(group,-18,.3,'南半球：向前进方向左偏',-28);
     } else if (stage === 1 || stage === 2) {
       [1,-1].forEach(h => {
         if (stage === 1) {
@@ -2983,7 +3020,7 @@ function updateMechanismCurves() {
       const radius = Math.hypot(p.x, p.z), angle = Math.atan2(p.z, p.x) * factor;
       return new THREE.Vector3(radius * Math.cos(angle), p.y, radius * Math.sin(angle));
     });
-    const curve = new THREE.CatmullRomCurve3(points);
+    const curve = group.userData.stage === 0 ? new CoriolisSurfaceCurve(points) : new THREE.CatmullRomCurve3(points);
     mesh.geometry.dispose();
     mesh.geometry = new THREE.TubeGeometry(curve, 40, .045, 6, false);
     mesh.userData.arrows.forEach(({arrow,t}) => {
@@ -2993,33 +3030,11 @@ function updateMechanismCurves() {
   }));
 }
 function setMechanismStage(index) {
-  STATE.mechanismStage = clamp(index,0,3);
-  resetMechanismDemo();
-  setStepVisual(1); updateStepPanel(1);
+  seekCirculationSequence(CIRCULATION_SEQUENCE.starts[clamp(index,0,3)]);
+  updateStepPanel(1);
 }
 function applyMechanismVisual() {
-  const stage = STATE.mechanismStage, active = STATE.step === 1;
-  document.getElementById('flow-legend').hidden = !active || stage !== 1;
-  document.getElementById('coriolis-comparison').hidden = !active || stage !== 0 || !STATE.showPaths;
-  document.getElementById('polar-front').hidden = !active || stage !== 2 || !STATE.showPaths;
-  mechanismGroups.forEach((g,i) => { g.visible = active && i === stage && STATE.showPaths; });
-  mechanismLabels.forEach(({obj,group}) => { obj.visible = active && group.visible && group === mechanismGroups[stage] && STATE.showLabels; });
-  if (!active) return;
-  singleCellGroup.visible = false;
-  ['hadley','polar','ferrel'].forEach(key => {
-    const visible = key === 'hadley' ? stage >= 1 : key === 'polar' ? stage >= 2 : stage === 3;
-    threeCellGroups[key].visible = visible;
-    ['NH','SH'].forEach(h => cellObjects[key+h].setOpacity(visible ? 1 : 0));
-  });
-  STATE.morph = stage === 3 ? 1 : 0;
-  // 旧偏转节点错误地把极点标为“堆积下沉”，禁用，只保留自转方向指示。
-  coriolisNodes.forEach(n => { n.group.visible = false; });
-  coriolisLabels.forEach(l => { l.obj.userData.baseVisible = false; l.obj.visible = false; });
-  pressureBeltMeshes.forEach((m,i) => { m.visible = stage >= 1 && (i === 1 || i === 2 || (stage >= 2 && (i === 3 || i === 4))); });
-  toggleParticles(STATE.showParticles); togglePaths(STATE.showPaths);
-  if (stage === 0) updateCoriolisDemo();
-  else if (stage === 1) updateSubtropicalDemo();
-  else if (stage === 2) updatePolarDemo();
+  syncCirculationSequence();
 }
 
 // 环节内部的教学动画时间仅表示观察顺序，不表示真实大气时间。
@@ -3050,10 +3065,11 @@ function updateSingleDemoUI() {
   const status = document.getElementById('single-demo-phase');
   const progress = document.getElementById('single-demo-progress');
   const button = document.getElementById('single-demo-play');
-  if (status) status.textContent = STATE.singleDemo.complete ? '完成：受热上升 → 高空输送 → 冷却下沉 → 近地面回流' : phase.text;
+  if (status) status.textContent = singleNodeRevealed() ? (STATE.singleDemo.complete ? '完成：受热上升 → 高空输送 → 冷却下沉 → 近地面回流' : phase.text) : '先记录你的判断，再播放观察；本节点结论尚未显示。';
   if (progress) progress.value = STATE.singleDemo.elapsed;
   if (button) button.textContent = STATE.singleDemo.running && STATE.playing ? '暂停' : STATE.singleDemo.complete ? '再次播放' : STATE.singleDemo.elapsed > 0 ? '继续过程' : '播放过程';
   updateDemoNodeControls('single');
+  syncSinglePredictionControls();
   verticalLabels.forEach(({obj, data}) => {
     if (!obj.element) return;
     if (data.lat === 0) obj.element.textContent = phase.index === 0 ? '赤道受热上升 ↑' : '赤道上升 ↑';
@@ -3089,50 +3105,23 @@ function updateSingleDemo(dt) {
   }
   updateSingleDemoUI();
 }
-function getMechanismDemoDuration() { return STATE.mechanismStage === 1 ? SUBTROPICAL_DEMO_DURATION : 10; }
+function getMechanismDemoDuration() { return sequenceDuration(); }
 function resetMechanismDemo() {
   STATE.mechanismDemo = { elapsed: 0, running: false, complete: false, node:0 };
+  CIRCULATION_SEQUENCE.ambientElapsed=0;CIRCULATION_SEQUENCE.ambientPaused=false;
 }
 function playMechanismDemo() {
-  if (STATE.mechanismDemo.complete) resetMechanismDemo();
+  document.getElementById('sequence-explanation')?.close();
+  CIRCULATION_SEQUENCE.ambientPaused=false;CIRCULATION_SEQUENCE.inspectedNote=null;
+  if (STATE.mechanismDemo.complete) { updateMechanismDemoUI();return; }
   STATE.mechanismDemo.running = true; STATE.playing = true;
   updateMechanismDemoUI();
 }
 function getMechanismDemoPhase() {
-  const {complete} = STATE.mechanismDemo;
-  const elapsed=demoPhaseElapsed('mechanism');
-  if (STATE.mechanismStage === 0) {
-    if (complete) return {index:3,text:'完成：两半球均获得东向分量 → 偏西风；可重播对照'};
-    if (elapsed === 0) return {index:0,text:'等待预测：灰色虚线为沿经线的无偏转参考'};
-    if (elapsed < 3) return {index:1,text:'① 高空气流向极地运动：观察橙色前进箭头'};
-    return {index:2,text:STATE.coriolisDeflection === 0 ? '② 弯曲设为0：沿参考经线运动，青色偏向箭头关闭' : '② 轨迹逐渐偏离经线：北半球右偏、南半球左偏'};
-  }
-  if (STATE.mechanismStage === 2) {
-    if (complete) return {index:3,text:'完成：副极地低压与高纬环流归纳；停留当前环节'};
-    if (elapsed === 0) return {index:0,text:'等待预测：暖、冷气流相遇，哪股空气抬升？'};
-    if (elapsed < 3) return {index:1,text:'① 较暖西风与较冷极地东风向60°附近辐合'};
-    if (elapsed < 7) return {index:2,text:'② 较暖空气沿较冷空气上方被迫抬升'};
-    return {index:3,text:'③ 归纳动力性低压与高纬环流'};
-  }
-  if (complete) return {index:4,text:'完成：哈德莱环流归纳；教学环节停留在此处'};
-  if (elapsed === 0) return {index:0,text:'等待演示：请先预测，再播放过程'};
-  if (elapsed < 2.5) return {index:0,text:'① 高空气流向30°附近汇入'};
-  if (elapsed < 4.5) return {index:1,text:'② 高空气流在30°附近逐渐积聚'};
-  if (elapsed < 7.2) return {index:2,text:'③ 积聚空气下沉，形成近地面高压'};
-  if (elapsed < 10.2) return {index:3,text:'④ 近地面分流：向赤道、向较高纬度'};
-  return {index:4,text:'⑤ 连接上下气流，归纳哈德莱环流'};
+  return sequencePhase();
 }
 function updateMechanismDemoUI() {
-  const button = document.getElementById('mechanism-demo-play');
-  if (!button) return;
-  const demo = STATE.mechanismDemo;
-  button.textContent = demo.complete ? '再次播放' : demo.running && STATE.playing ? '暂停过程' : demo.elapsed > 0 ? '继续过程' : '播放过程';
-  const phase = getMechanismDemoPhase();
-  const status = document.getElementById('mechanism-demo-phase');
-  const text = phase.text + (demo.elapsed > 0 && !demo.complete && (!demo.running || !STATE.playing) ? '（已暂停）' : '');
-  if (status.textContent !== text) status.textContent = text;
-  document.getElementById('mechanism-demo-progress').value = demo.elapsed;
-  updateDemoNodeControls('mechanism');
+  updateSequenceUI();
 }
 function updateCoriolisDemo() {
   const elapsed = STATE.mechanismDemo.elapsed;
@@ -3166,6 +3155,15 @@ function updateCoriolisDemo() {
   });
   drawCoriolisComparison(progress);
   updateMechanismDemoUI();
+}
+function isSurfaceMarkerVisible(obj) {
+  const point = isSurfaceMarkerVisible._point || (isSurfaceMarkerVisible._point = new THREE.Vector3());
+  const ray = isSurfaceMarkerVisible._ray || (isSurfaceMarkerVisible._ray = new THREE.Vector3());
+  obj.getWorldPosition(point);
+  ray.copy(camera.position).sub(point);
+  point.sub(earthGroup.position);
+  const t = clamp(-point.dot(ray) / ray.lengthSq(), 0, 1);
+  return point.addScaledVector(ray,t).lengthSq() >= CONFIG.earth.radius * CONFIG.earth.radius;
 }
 function drawCoriolisComparison(progress) {
   const canvas = document.getElementById('coriolis-comparison');
@@ -3256,6 +3254,9 @@ function getSunDiagnostics() {
   if (!sunGroup) return null;
   const projected = sunGroup.position.clone().project(camera);
   return {
+    visible: sunGroup.visible,
+    labelVisible: sunLabel.visible,
+    arrowsVisible: sunArrows.some(({line,shaft,head}) => line.visible || shaft.visible || head.visible),
     center: { x: sunGroup.position.x, y: sunGroup.position.y, z: sunGroup.position.z },
     screen: {
       x: (projected.x + 1) / 2,
@@ -3281,7 +3282,7 @@ function getSunDiagnostics() {
         clearancePixels: Math.hypot((projectedTip.x-projectedRim.x)*innerWidth/2,(projectedTip.y-projectedRim.y)*innerHeight/2),
         screenGap: Math.hypot((projectedTip.x-projectedTarget.x)*innerWidth/2,(projectedTip.y-projectedTarget.y)*innerHeight/2) };
     }),
-    style: SUN_STEP_STYLE[STATE.step] || SUN_STEP_STYLE[2]
+    style: SUN_STEP_STYLE[STATE.step] || {core:.42,glow:.04,arrows:.16}
   };
 }
 
@@ -3330,7 +3331,8 @@ function getDiagnostics() {
 // 暴露给控制台/自动化脚本使用（模块作用域下的对象默认无法从外部访问）
 try {
   window.__threeCellDebug = {
-    STATE, cellObjects, getDiagnostics, getSunDiagnostics, setMechanismStage, transitionToStep,
+    STATE, cellObjects, getDiagnostics, getSunDiagnostics, getSceneFraming, setMechanismStage, transitionToStep,
+    get cameraTarget(){return controls.target.clone();},
     get mechanismGroups() { return mechanismGroups; },
     get mechanismLabels() { return mechanismLabels; },
     getSingleDropPosition, getThreeCellDropPosition,
@@ -3341,6 +3343,7 @@ try {
     // 各类标签（供自动化脚本量测位置）
     get latLabels() { return latLabels; },
     get pressureLabels() { return pressureLabels; },
+    get pressureBeltMeshes() { return pressureBeltMeshes; },
     get windLabels() { return windLabels; },
     get verticalLabels() { return verticalLabels; },
     // 纬度标签当前的 z 分量（用于校验标签分置两侧、不互相遮挡）
@@ -3510,17 +3513,21 @@ function getSceneFraming() {
   const control = document.getElementById('control-panel').getBoundingClientRect();
   const diagram = document.getElementById('diagram-panel').getBoundingClientRect();
   const left = uiHidden ? 16 : Math.min(panel.right + 20, w * .36);
-  const right = !uiHidden && STATE.showDiagram && w > 768 ? diagram.width + 20 : 24;
-  const top = uiHidden ? 20 : 58;
+  let right = !uiHidden && STATE.showDiagram && w > 768 ? diagram.width + 20 : 24;
+  const top = uiHidden ? 20 : w <= 600 && (STATE.step === 1 || STATE.step === 2) ? 100 : 58;
   let bottom = uiHidden ? h - 20 : control.top - 16;
   const compactPanel = !uiHidden && w <= 600;
   if (compactPanel) bottom = Math.min(bottom, panel.top - 12);
   if (!uiHidden && STATE.showDiagram && w <= 768) bottom = Math.min(bottom, diagram.top - 12);
+  const formationPanel=document.getElementById('landsea-formation');
+  if(!uiHidden&&STATE.step===3&&formationPanel&&!formationPanel.hidden){const r=formationPanel.getBoundingClientRect();if(w>1100){if(formationPanel.querySelector('details').open)right=Math.max(right,r.width+44);}else bottom=Math.min(bottom,r.top-12);}
   const sceneLeft = compactPanel ? 16 : left;
   const availableW = Math.max(160, w - sceneLeft - right), availableH = Math.max(140, bottom - top);
-  const tangent = Math.tan(degToRad(camera.fov / 2)) * Math.min(availableW, availableH) / h * .78;
-  const distance = (CONFIG.earth.atmosphereRadius + 1.1) / Math.sin(Math.atan(tangent));
-  return { w, h, left:sceneLeft, availableW, centerX: sceneLeft + availableW * (0.5 + EARTH_SCREEN_BIAS), centerY: top + availableH / 2, distance };
+  const earthCentered = STATE.step === 1 || STATE.step === 2;
+  // 隐去太阳后，地球使用整个可用区；保留大气层外的环流与标签边距。
+  const tangent = Math.tan(degToRad(camera.fov / 2)) * Math.min(availableW, availableH) / h * (earthCentered ? .96 : .78);
+  const distance = (STATE.step===1?7.2:STATE.step===3?5.7:CONFIG.earth.atmosphereRadius + 1.1) / Math.sin(Math.atan(tangent));
+  return { w, h, left:sceneLeft, availableW, availableH, top, centerX: sceneLeft + availableW * (0.5 + (earthCentered || STATE.step===3 ? 0 : EARTH_SCREEN_BIAS)), centerY: top + availableH / 2, distance };
 }
 function frameScene(fitDistance = false) {
   if (!camera || !controls) return;
@@ -3538,6 +3545,17 @@ function frameScene(fitDistance = false) {
 let viewAnimation = 0;
 function setView(view) {
   if (STATE.viewLocked) return;
+  if(STATE.step===1&&view==='reset'){
+    const seq=CIRCULATION_SEQUENCE;
+    releaseSequenceCamera(true);seq.cameraMode='overview';seq.freeView=false;
+    if(seq.freeLens){camera.near=seq.freeLens.near;camera.fov=seq.freeLens.fov;camera.updateProjectionMatrix();seq.freeLens=null;}
+    const position=camera.position.clone(),rotation=camera.quaternion.clone(),damping=controls.enableDamping;
+    controls.enableDamping=false;controls.update();controls.enableDamping=damping;
+    camera.position.copy(position);camera.quaternion.copy(rotation);camera.up.set(0,1,0);
+    seq.lastSignature=null;updateSequenceUI();
+  }
+  if(STATE.step===1&&CIRCULATION_SEQUENCE.cameraActive)setSequenceCameraMode('overview');
+  CLASSROOM.focusAnimation++;
   const dur = 800;
   const start = camera.position.clone();
   let direction;
@@ -3952,11 +3970,10 @@ function presetExplore() {
   document.getElementById('coriolis-val').textContent = STATE.coriolisDeflection + '°';
   transitionToStep(1);
   setView('front'); // 平视/斜视
-  STATE.showGrid = true; STATE.showParticles = true; STATE.showPaths = true; STATE.showPressure = false;
+  STATE.showGrid = true; STATE.showParticles = true; STATE.showPaths = true; STATE.showPressure = true;
   applyToggleStates();
   if (STATE.showDiagram) toggleDiagramPanel(false);
   hideKnowledge();
-  showDemoOverlay('自定义探索', '第二步：高空偏转机制。使用左侧环节按钮手动推进，偏转滑块仅为视觉示意参数。', 3500);
 }
 
 // 预设状态3：图示回归（步骤2，侧视，气压带+风带开启，面板打开）
@@ -3983,15 +4000,17 @@ function applyToggleStates() {
   document.getElementById('tog-paths').classList.toggle('active', STATE.showPaths);
   togglePaths(STATE.showPaths);
   document.getElementById('tog-pressure').classList.toggle('active', STATE.showPressure);
-  const showP = STATE.showPressure && STATE.step >= 2;
+  const showP = STATE.showPressure && STATE.step === 2;
   pressureLabels.forEach(pl => { pl.obj.userData.baseVisible = showP && STATE.showLabels; });
   windLabels.forEach(wl => { wl.obj.userData.baseVisible = showP && STATE.showLabels; });
   pressureBeltMeshes.forEach(m => { m.visible = showP; });
   windArrowMeshes.forEach(a => { a.visible = showP; });
   document.getElementById('tog-labels').classList.toggle('active', STATE.showLabels);
-  latLabels.forEach(l => { l.obj.userData.baseVisible = STATE.showLabels; });
+  latLabels.forEach(l => { l.obj.userData.baseVisible = STATE.showLabels && STATE.step !== 3; });
   verticalLabels.forEach(l => { l.obj.userData.baseVisible = STATE.step === 0 && STATE.showLabels; });
   if (STATE.step === 1) applyMechanismVisual();
+  syncLandSeaVisual();
+  syncMonsoonClimateVisual();
 }
 
 // 教师手动演示：不安排定时跳转
@@ -4001,7 +4020,7 @@ function runDemoSequence() {
   setView('side');
   STATE.mechanismStage = 0; STATE.mechanismRevealed = [false,false,false,false];
   transitionToStep(1);
-  showDemoOverlay('教师控制机制演示', '请先预测，再显示解释；使用上一环节 / 下一环节推进。不会自动跳过30°与60°成因。', 3500);
+  showDemoOverlay('连续形成过程', '点击播放连续观察四个形成环节；可随时暂停并查看当前解释，也可拖动进度或从头重播。', 2500);
 }
 
 // 课堂实录视频弹窗
@@ -4053,6 +4072,10 @@ function resetToInitial() {
   STATE.density = 'medium';STATE.lowPerf = false;STATE.earthRotationSpeed = .0004;
   STATE.mechanismStage = 0;STATE.mechanismRevealed = [false,false,false,false];
   STATE.demoMode='step';
+  resetClassroomRoute();
+  Object.assign(LANDSEA,{month:1,surface:'real',reference:false,region:'asia',phase:0,formation:newFormationState()});
+  Object.assign(MONSOON_CLIMATE,{month:1,site:'shanghai',phase:0,reveal:false,formation:newFormationState()});
+  rebuildLandSea();
   resetMechanismDemo();STATE.playing = true;
   document.getElementById('speed-slider').value = 10;
   document.getElementById('speed-val').textContent = '1.0x';
@@ -4065,6 +4088,8 @@ function resetToInitial() {
   document.getElementById('perf-toggle').classList.remove('active');
   renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
   CONFIG.particles.baseSize = .1;applyParticleSettings();
+  landSeaReturnRotation = null;
+  landSeaReturnView = null;
   earthGroup.rotation.y = 0;
   document.body.classList.remove('projection','ui-hidden');
   document.getElementById('projection-toggle').setAttribute('aria-pressed','false');
@@ -4097,6 +4122,8 @@ function handleKeyboard(e) {
     case '1': presetGuided(); break;
     case '2': presetExplore(); break;
     case '3': presetDiagram(); break;
+    case '4': transitionToStep(3); break;
+    case '5': transitionToStep(4); break;
     case 'h': case 'H': toggleUIHidden(); break;
     case 'r': case 'R': resetToInitial(); break;
   }
@@ -4114,6 +4141,8 @@ function applyUrlState() {
       case 'guided':  presetGuided(); break;
       case 'explore': presetExplore(); break;
       case 'diagram': presetDiagram(); break;
+      case 'landsea': transitionToStep(3); break;
+      case 'monsoon': transitionToStep(4); break;
     }
   }, 800);
 }
@@ -4147,7 +4176,7 @@ function bindControls() {
     'tog-paths':     () => { STATE.showPaths = !STATE.showPaths; togglePaths(STATE.showPaths); },
     'tog-pressure':  () => {
       STATE.showPressure = !STATE.showPressure;
-      const showP = STATE.showPressure && STATE.step >= 2;
+      const showP = STATE.showPressure && STATE.step === 2;
       pressureLabels.forEach(pl => { pl.obj.userData.baseVisible = showP && STATE.showLabels; });
       windLabels.forEach(wl => { wl.obj.userData.baseVisible = showP && STATE.showLabels; });
       pressureBeltMeshes.forEach(m => { m.visible = showP; });
@@ -4157,7 +4186,7 @@ function bindControls() {
       STATE.showLabels = !STATE.showLabels;
       latLabels.forEach(l => { l.obj.userData.baseVisible = STATE.showLabels; });
       verticalLabels.forEach(vl => { vl.obj.userData.baseVisible = STATE.step === 0 && STATE.showLabels; });
-      const showP = STATE.showPressure && STATE.step >= 2 && STATE.showLabels;
+      const showP = STATE.showPressure && STATE.step === 2 && STATE.showLabels;
       pressureLabels.forEach(pl => { pl.obj.userData.baseVisible = showP; });
       windLabels.forEach(wl => { wl.obj.userData.baseVisible = showP; });
     },
@@ -4168,6 +4197,8 @@ function bindControls() {
       fn();
       document.getElementById(id).classList.toggle('active');
       if (STATE.step === 1) applyMechanismVisual();
+      syncLandSeaVisual();
+      syncMonsoonClimateVisual();
     });
   });
 
@@ -4252,9 +4283,10 @@ function bindControls() {
   document.getElementById('tc-play').addEventListener('click', () => {
     STATE.playing = true;
     if (STATE.step === 0) playSingleDemo();
-    else if (STATE.step === 1 && STATE.mechanismStage <= 2) playMechanismDemo();
+    else if (STATE.step === 1) {document.getElementById('sequence-explanation')?.close();playMechanismDemo();}
+    else if(STATE.step>=3){const kind=STATE.step===3?'landsea':'climate',f=formationState(kind);if(f.view==='mechanism'&&f.progress===1)formationAction(kind,'next');}
   });
-  document.getElementById('tc-pause').addEventListener('click', () => { STATE.playing = false; updateSingleDemoUI();updateMechanismDemoUI(); });
+  document.getElementById('tc-pause').addEventListener('click', () => { STATE.playing = false; if(STATE.step===1)pauseSequenceExplanation();updateSingleDemoUI();updateMechanismDemoUI(); });
   document.getElementById('tc-jump').addEventListener('click', () => {
     const s = parseInt(document.getElementById('tc-step-select').value);
     transitionToStep(s);
@@ -4319,6 +4351,7 @@ function applyParticleSettings() {
     positions.needsUpdate = true;cell._setParticleColors();
     cell.tubes.forEach(t => { t.mesh.material.uniforms.uLowPerf.value = STATE.lowPerf ? 0 : 1; });
   });
+  applyLandSeaParticleSettings();
 }
 function toggleParticles(visible) {
   Object.values(cellObjects).forEach(c => {
@@ -4368,9 +4401,14 @@ function animate() {
   requestAnimationFrame(animate);
   const dt = clock.getDelta();
   updateLessonAnimation(dt);
+  if (document.hidden) return;
+  if (STATE.step === 4) {
+    updateMonsoonClimateAnimation(dt);
+    return;
+  }
 
   // 第一步假设地球不自转：不转纹理；拖动相机仅改变观察角度。
-  if (earthGroup && STATE.playing && STATE.step !== 0) {
+  if (earthGroup && (STATE.playing || sequenceAmbientRunning()) && STATE.step > 0 && STATE.step < 3) {
     earthGroup.rotation.y += STATE.earthRotationSpeed;
   }
 
@@ -4381,6 +4419,8 @@ function animate() {
   updateSunArrowTargets();
 
   updateSunRadiation(dt);
+  updateLandSeaAnimation(dt);
+  updateMonsoonClimateAnimation(dt);
 
   // 标签背面剔除：标签与相机的连线被地球球体挡住时隐藏
   if (latLabels.length > 0 || pressureLabels.length > 0 || windLabels.length > 0 || verticalLabels.length > 0 || coriolisLabels.length > 0) {
@@ -4438,17 +4478,12 @@ function animate() {
   }
 
   // 不按播放时间推进教学环节；CSS2D 显隐显式同步（不依赖父级 visible）。
-  mechanismLabels.forEach(({obj,group}) => { obj.visible = STATE.step === 1 && group.visible && group === mechanismGroups[STATE.mechanismStage] && STATE.showLabels; });
+  mechanismLabels.forEach(({obj,group}) => {
+    obj.visible = STATE.step === 1 && group.visible && group === mechanismGroups[STATE.mechanismStage] && STATE.showLabels;
+    if (obj.visible && group.userData.stage === 0) obj.visible = isSurfaceMarkerVisible(obj);
+  });
   if (STATE.step === 0) updateSingleDemo(dt);
-  if (STATE.step === 1 && STATE.mechanismStage <= 2) {
-    const demo = STATE.mechanismDemo;
-    if (demo.running && STATE.playing) {
-      advanceDemoNodeTime('mechanism',dt);
-    }
-    if (STATE.mechanismStage === 0) updateCoriolisDemo();
-    else if (STATE.mechanismStage === 1) updateSubtropicalDemo();
-    else updatePolarDemo();
-  }
+  if (STATE.step === 1) updateCirculationSequence(dt);
 
   // 更新环流圈粒子（按组可见性驱动：过渡期间两组同屏时都保持流动）
   if (STATE.playing) {
@@ -4469,9 +4504,13 @@ function animate() {
     }
   }
 
-  controls.update();
+  if(!CIRCULATION_SEQUENCE.cameraActive)controls.update();
+  updateSequenceCamera();
+  if(STATE.step===0)applySinglePredictionVisual();
+  syncBridgeHighlight();
   renderer.render(scene, camera);
   labelRenderer.render(scene, camera);
+  updateSequenceAnnotations();
 
   // 图示回归面板：高亮闪烁时持续重绘 Canvas
   if (STATE.showDiagram && (diagramHighlightId || diagramHighlightTimer)) {
@@ -4513,6 +4552,8 @@ async function init() {
 
   createLabels();
   createPressureBelts();
+  createLandSeaVisual();
+  createMonsoonClimateVisual();
   // 初次双击打开没有URL预设，也必须填充左侧第一步内容及其播放区。
   setStepVisual(STATE.step);
   updateStepPanel(STATE.step);

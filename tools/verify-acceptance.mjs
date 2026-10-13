@@ -38,7 +38,7 @@ try {
   check(await ready(1),'成品HTTP入口与第二步初始化');await sleep(3800);
   const state=()=>ev('window.__threeCellDebug.getDiagnostics()');
   // 本脚本复核复习模式的连续运动；讲课逐节点停顿另由verify-teaching覆盖。
-  await ev("document.getElementById('mechanism-demo-mode').value='continuous';document.getElementById('mechanism-demo-mode').dispatchEvent(new Event('change',{bubbles:true}))");
+  check(await ev("!document.getElementById('mechanism-demo-mode')&&window.__threeCellDebug.STATE.demoMode==='continuous'"),'地转偏向力环节默认连续演示且不显示逐步停顿设置');
   check((await state()).mechanismStage===0,'第二步从首环节开始');
   check(await ev("getComputedStyle(document.getElementById('mechanism-explanation')).display==='none'"),'解释初始收起');
   await click('#mechanism-reveal');
@@ -83,6 +83,7 @@ try {
     const expected=[[],[],['hadleyNH'],['hadleyNH','ferrelNH','polarNH']][i];
     check(d.mechanismStage===i&&JSON.stringify(d.visibleGroups)===JSON.stringify(expected),`环节${i+1}逐段呈现`,d.visibleGroups);
     if(i===1){
+      await ev("document.getElementById('mechanism-demo-mode').value='continuous';document.getElementById('mechanism-demo-mode').dispatchEvent(new Event('change',{bubbles:true}))");
       await sleep(350);const waiting=await state();
       check(waiting.mechanismDemo.elapsed===0&&!waiting.mechanismDemo.running&&waiting.visibleGroups.length===0,'30°环节等待预测，不提前显示完整圈');
       check(await ev("(()=>{const b=document.getElementById('mechanism-demo-play').getBoundingClientRect(),p=document.getElementById('step-panel').getBoundingClientRect();return b.top>=p.top&&b.bottom<=p.bottom;})()"),'30°播放按钮直接可见');
@@ -112,6 +113,7 @@ try {
       check(reenter.mechanismDemo.elapsed===0&&!reenter.mechanismDemo.running,'回退后重入30°过程重新等待预测');await click('#tc-play');
     }
     if(i===2){
+      await ev("document.getElementById('mechanism-demo-mode').value='continuous';document.getElementById('mechanism-demo-mode').dispatchEvent(new Event('change',{bubbles:true}))");
       check(d.mechanismDemo.elapsed===0&&!d.mechanismDemo.running&&!d.visibleGroups.includes('polarNH'),'60°环节等待预测，不提前显示高纬完整圈');
       await click('#mechanism-demo-play');await sleep(1500);await click('#mechanism-demo-play');const converging=await state();
       check(converging.mechanismDemo.phase===1&&await ev("window.__threeCellDebug.mechanismGroups[2].children.filter(x=>x.userData.kind==='rise').every(x=>!x.visible)"),'60°先辐合，抬升尚未出现');await snap('60-converging.png');

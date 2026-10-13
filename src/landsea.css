@@ -1,0 +1,32 @@
+.landsea-controls{padding:10px 12px;border-bottom:1px solid #314253;display:grid;gap:10px;background:rgba(13,27,34,.65);}
+.landsea-month{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.landsea-month .btn{padding:8px 4px;font-size:12px;white-space:normal;}
+.landsea-controls>label{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;color:#b9d8dc;}
+.landsea-controls select{min-width:0;max-width:175px;padding:6px 4px;border:1px solid #47626a;border-radius:6px;background:#142a34;color:#deedf0;}
+.landsea-controls .landsea-reference{justify-content:flex-start;}
+.landsea-reference input{accent-color:#7ee0d1;width:16px;height:16px;}
+.landsea-season-note{border-left:3px solid #7ee0d1;padding:9px 10px;background:#152d31;margin:10px 0;color:#d7f4e9;font-size:13px;line-height:1.6;}
+body.landsea-active #step-demo-controls{padding:0;}
+#landsea-legend{position:fixed;right:24px;top:100px;width:158px;background:rgba(12,21,31,.9);border:1px solid #405764;border-radius:12px;padding:14px 16px;color:#e1e8dd;pointer-events:none;z-index:15;}
+#landsea-legend[hidden],body.ui-hidden #landsea-legend{display:none;}
+#landsea-legend h3{font-size:13px;margin:0 0 12px;}
+#landsea-legend h3 small{font-weight:normal;color:#a6c2ce;}
+.landsea-scale{display:flex;gap:12px;height:150px;}
+.landsea-scale-bar{width:18px;background:linear-gradient(to bottom,#e34531,#ed8540,#f5cc56,#d3dabb,#58afce,#527fb7,#64519e);border-radius:3px;}
+.landsea-scale>div:last-child{display:flex;flex-direction:column;justify-content:space-between;font-size:11px;}
+#landsea-legend p{font-size:11px;color:#afc2ca;line-height:1.65;margin:12px 0;}
+.landsea-wind-key{font-size:11px;display:flex;gap:8px;align-items:center;}
+.landsea-wind-key i{width:27px;height:2px;background:#ffbd6e;position:relative;}
+.landsea-wind-key i:after{content:'';position:absolute;right:-2px;top:-3px;border-left:7px solid #ff785c;border-top:4px solid transparent;border-bottom:4px solid transparent;}
+.landsea-center{text-align:center;pointer-events:none;color:#fff0af;text-shadow:0 1px 5px #050912,0 0 10px #050912;}
+.landsea-center strong{display:block;font:600 31px Georgia,serif;line-height:1.1;}
+.landsea-center span{display:block;margin-top:4px;font-size:13px;font-weight:600;background:rgba(6,17,28,.55);padding:3px 7px;border-radius:4px;}
+.landsea-center.low{color:#cdeeff;}
+.landsea-isobar{font-size:12px;color:#fff4d2;text-shadow:0 1px 3px #07151f;background:rgba(8,17,28,.28);padding:1px 3px;border-radius:3px;pointer-events:none;}
+.landsea-wind-label{font-size:13px;font-weight:600;color:#ffe1a0;text-shadow:0 1px 4px #07151f;pointer-events:none;}
+body.landsea-active #tog-pressure{font-size:0;}
+body.landsea-active #tog-pressure:after{content:'气压场';font-size:12px;}
+body.projection .landsea-center strong{font-size:38px;}
+body.projection .landsea-center span,body.projection .landsea-wind-label{font-size:17px;}
+@media(max-width:768px){#landsea-legend{right:12px;top:110px;width:126px;padding:10px;}.landsea-scale{height:120px;}.landsea-center span{font-size:11px;}.landsea-center strong{font-size:26px;}}
+@media(max-width:600px){#landsea-legend{top:105px;right:10px;width:103px;padding:8px;}#landsea-legend h3{font-size:11px;margin-bottom:8px;}.landsea-scale{height:80px;}#landsea-legend p{font-size:9px;margin:7px 0;}.landsea-wind-key{font-size:9px;}.landsea-center span{font-size:10px;max-width:110px;}.landsea-center strong{font-size:22px;}.landsea-wind-label{font-size:10px;}.landsea-controls{gap:6px;padding:7px 10px;grid-template-columns:1fr 1fr;}.landsea-month,.landsea-controls>.mechanism-actions,.landsea-controls>.landsea-reference{grid-column:1 / -1;}.landsea-controls>label:not(.landsea-reference){display:grid;gap:3px;font-size:11px;}.landsea-controls select{width:100%;max-width:none;}.landsea-controls .mechanism-actions{margin:0;}.landsea-controls .mechanism-actions .btn{flex:1;}body.landsea-active #step-panel{max-height:46vh;}.landsea-controls .landsea-month .btn{min-height:34px;padding:4px;}}

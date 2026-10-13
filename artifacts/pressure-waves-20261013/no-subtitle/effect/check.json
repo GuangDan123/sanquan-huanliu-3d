@@ -1,0 +1,261 @@
+{
+  "checks": [
+    {
+      "ok": true,
+      "name": "Spherical wave patches sit directly beneath the descent columns and at the equatorial ascent base"
+    },
+    {
+      "ok": true,
+      "name": "Outward high-pressure waves use green and inward low-pressure waves use yellow with clear words"
+    },
+    {
+      "ok": true,
+      "name": "Wave effects appear with their respective vertical motion at 0s"
+    },
+    {
+      "ok": true,
+      "name": "Wave effects appear with their respective vertical motion at 2s"
+    },
+    {
+      "ok": true,
+      "name": "Wave effects appear with their respective vertical motion at 16s"
+    },
+    {
+      "ok": true,
+      "name": "Wave effects appear with their respective vertical motion at 18s"
+    },
+    {
+      "ok": true,
+      "name": "Wave effects appear with their respective vertical motion at 40s"
+    },
+    {
+      "ok": true,
+      "name": "Low-pressure rings contract from outside to inside"
+    },
+    {
+      "ok": true,
+      "name": "High-pressure rings expand from inside to outside"
+    },
+    {
+      "ok": true,
+      "name": "Pausing freezes every wave radius and its formation opacity"
+    },
+    {
+      "ok": true,
+      "name": "Playing advances the ring animation"
+    },
+    {
+      "ok": true,
+      "name": "Pause-and-explain freezes waves together with the arrows"
+    },
+    {
+      "ok": true,
+      "name": "Wave rings keep moving after circulation formation ends"
+    },
+    {
+      "ok": true,
+      "name": "Pause after completion also freezes the rings"
+    },
+    {
+      "ok": true,
+      "name": "The pressure layer switch hides all wave patches and pressure words"
+    },
+    {
+      "ok": true,
+      "name": "1366 ride 3.5s: visible pressure words stay inside the usable scene",
+      "data": [
+        {
+          "text": "低压",
+          "inside": true
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "name": "1366 3.5s: the active pressure word is visible near its wave patch",
+      "data": [
+        {
+          "text": "低压",
+          "inside": true
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "name": "1366 ride 18.5s: visible pressure words stay inside the usable scene",
+      "data": [
+        {
+          "text": "高压",
+          "inside": true
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "name": "1366 18.5s: the active pressure word is visible near its wave patch",
+      "data": [
+        {
+          "text": "高压",
+          "inside": true
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "name": "1366 ride 40s: visible pressure words stay inside the usable scene",
+      "data": [
+        {
+          "text": "高压",
+          "inside": true
+        },
+        {
+          "text": "高压",
+          "inside": true
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "name": "1366 overview 3.5s: visible pressure words stay inside the usable scene",
+      "data": []
+    },
+    {
+      "ok": true,
+      "name": "1366 overview 18.5s: visible pressure words stay inside the usable scene",
+      "data": [
+        {
+          "text": "高压",
+          "inside": true
+        },
+        {
+          "text": "高压",
+          "inside": true
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "name": "1366 overview 40s: visible pressure words stay inside the usable scene",
+      "data": [
+        {
+          "text": "高压",
+          "inside": true
+        },
+        {
+          "text": "高压",
+          "inside": true
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "name": "390 ride 3.5s: visible pressure words stay inside the usable scene",
+      "data": [
+        {
+          "text": "低压",
+          "inside": true
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "name": "390 3.5s: the active pressure word is visible near its wave patch",
+      "data": [
+        {
+          "text": "低压",
+          "inside": true
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "name": "390 ride 18.5s: visible pressure words stay inside the usable scene",
+      "data": [
+        {
+          "text": "高压",
+          "inside": true
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "name": "390 18.5s: the active pressure word is visible near its wave patch",
+      "data": [
+        {
+          "text": "高压",
+          "inside": true
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "name": "390 ride 40s: visible pressure words stay inside the usable scene",
+      "data": [
+        {
+          "text": "高压",
+          "inside": true
+        },
+        {
+          "text": "高压",
+          "inside": true
+        },
+        {
+          "text": "低压",
+          "inside": true
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "name": "390 overview 3.5s: visible pressure words stay inside the usable scene",
+      "data": [
+        {
+          "text": "低压",
+          "inside": true
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "name": "390 overview 18.5s: visible pressure words stay inside the usable scene",
+      "data": [
+        {
+          "text": "高压",
+          "inside": true
+        },
+        {
+          "text": "高压",
+          "inside": true
+        },
+        {
+          "text": "低压",
+          "inside": true
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "name": "390 overview 40s: visible pressure words stay inside the usable scene",
+      "data": [
+        {
+          "text": "高压",
+          "inside": true
+        },
+        {
+          "text": "高压",
+          "inside": true
+        },
+        {
+          "text": "低压",
+          "inside": true
+        }
+      ]
+    },
+    {
+      "ok": true,
+      "name": "No browser or shader errors",
+      "data": []
+    }
+  ],
+  "errors": []
+}
