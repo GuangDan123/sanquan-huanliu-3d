@@ -1,0 +1,56 @@
+import {chromium} from '../artifacts/sequence-runtime/node_modules/playwright/index.mjs';
+import {mkdir,writeFile} from 'node:fs/promises';
+import {resolve,join} from 'node:path';
+import {pathToFileURL} from 'node:url';
+const out=resolve(process.argv[2]||'artifacts/single-pressure-20261013/effects');await mkdir(out,{recursive:true});
+const browser=await chromium.launch({executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe',headless:true});
+const page=await browser.newPage({viewport:{width:1366,height:768}}),checks=[],errors=[];
+page.on('pageerror',e=>errors.push(String(e)));
+const check=(ok,name,evidence)=>{checks.push({ok,name,evidence});console.log(`${ok?'PASS':'FAIL'} ${name}`);};
+const seek=async t=>{await page.evaluate(t=>window.__singleCirculationDebug.seek(t),t);await page.waitForTimeout(100);};
+const snapshot=()=>page.evaluate(()=>{const m=window.__singleCirculationDebug.model,d=window.__threeCellDebug;return{camera:d.camera.position.toArray(),target:d.cameraTarget.toArray(),rotation:d.camera.quaternion.toArray(),cloud:Array.from(m.equatorAir.particles.geometry.attributes.position.array),rings:m.pressureWaves.map(w=>w.mesh.material.uniforms.uRadii.value),arrows:m.columns.flatMap(c=>c.arrows.map(a=>a.helper.position.toArray()))};});
+try{
+  await page.goto(pathToFileURL(resolve('三圈环流3D交互式教学平台.html')).href+'?state=guided');await page.waitForFunction(()=>window.__singleCirculationDebug&&document.getElementById('loading-screen').classList.contains('hidden'));await page.waitForTimeout(900);
+  check(await page.evaluate(()=>window.__singleCirculationDebug.model.pressureWaves.every(w=>!w.mesh.visible)),'Pressure remains hidden before the ascent');
+  await page.locator('#single-demo-play').click();await page.waitForTimeout(450);
+  check(await page.evaluate(()=>!window.__singleCirculationDebug.model.cameraActive&&window.__threeCellDebug.STATE.singleDemo.running),'The normal Play button starts with the solar arrival phase');await seek(1.6);
+  check(await page.evaluate(()=>window.__singleCirculationDebug.model.cameraActive&&!window.__threeCellDebug.STATE.singleDemo.running),'The ascent camera starts only after the heating phase');await seek(0);
+  const overview=await snapshot();await seek(.7);
+  check(await page.evaluate(()=>{const m=window.__singleCirculationDebug.model;return !m.heatZone.band.visible&&!m.equatorAir.group.visible&&!m.pressureWaves.some(w=>w.mesh.visible)&&m.flows[0].progress===0;}), 'Before radiation arrival the equatorial atmosphere and ascent remain inactive');
+  await seek(1.2);
+  check(await page.evaluate(()=>{const m=window.__singleCirculationDebug.model;return m.heatZone.band.visible&&m.heatZone.ring.visible&&m.heatZone.band.material.color.getHex()>0xb06000&&!m.equatorAir.group.visible&&m.flows[0].progress===0;}), 'Solar arrival heats the equatorial atmospheric layer before ascent');
+  await seek(1.7);
+  check(await page.evaluate(()=>{const m=window.__singleCirculationDebug.model;return m.bands[0].mesh.visible&&m.bands.slice(1).every(b=>!b.mesh.visible)&&m.pressureWaves[0].mesh.visible&&m.pressureWaves[0].mesh.material.uniforms.uAlpha.value>0&&m.pressureWaves.slice(1).every(w=>!w.mesh.visible);}), 'Only equatorial low pressure appears once the ascent begins');
+  await seek(3.4);const close=await snapshot();
+  check(await page.evaluate(()=>{const m=window.__singleCirculationDebug.model;return m.equatorAir.group.visible&&m.equatorAir.puffs.length===9&&m.columns.length===2&&m.columns.every(c=>c.group.visible&&c.arrows.some(a=>a.helper.visible))&&m.equatorAir.center.x>6.4;}),'A rising warm air mass reaches the top of two upward light columns');
+  check(close.camera.some((v,i)=>Math.abs(v-overview.camera[i])>.5)&&close.target.some((v,i)=>Math.abs(v-overview.target[i])>1),'Camera pushes toward the equatorial ascent');
+  check(await page.evaluate(()=>!window.__singleCirculationDebug.model.pressureWaves[0].word.hidden),'Equatorial low-pressure label is visible in the close-up');
+  await page.waitForTimeout(350);check(JSON.stringify(close)===JSON.stringify(await snapshot()),'Pause freezes camera, air mass, column arrows and ring waves');
+  await seek(1.6);const fixed=await snapshot();await seek(3.4);await seek(1.6);check(JSON.stringify(fixed)===JSON.stringify(await snapshot()),'Seeking reproduces the same close-up and effects');
+  await seek(5.1);const returned=await snapshot();check(returned.camera.every((v,i)=>Math.abs(v-overview.camera[i])<1e-6),'Camera returns to overview after the ascent',{overview:overview.camera,returned:returned.camera});
+  await seek(5.35);check(await page.evaluate(()=>window.__singleCirculationDebug.model.pressureWaves.slice(1).every(w=>!w.mesh.visible)),'Polar high pressure waits for the descent');
+  await seek(6.2);const waves=await page.evaluate(()=>window.__singleCirculationDebug.model.pressureWaves.map(w=>({visible:w.mesh.visible,radii:w.mesh.material.uniforms.uRadii.value,alpha:w.mesh.material.uniforms.uAlpha.value})));
+  check(await page.evaluate(()=>window.__singleCirculationDebug.model.bands.every(b=>b.mesh.visible)&&window.__singleCirculationDebug.model.bands.slice(1).every(b=>b.mesh.material.opacity>0&&b.mesh.material.opacity<.92)),'Polar pressure bands appear automatically with descent');
+  check(waves.every(w=>w.visible)&&waves.slice(1).every(w=>w.alpha>0&&w.alpha<.85),'Both polar high-pressure cues grow with the sinking air');
+  await seek(6.25);const moved=await page.evaluate(()=>window.__singleCirculationDebug.model.pressureWaves.map(w=>w.mesh.material.uniforms.uRadii.value));
+  check(moved[0][0]<waves[0].radii[0]&&moved[1][0]>waves[1].radii[0]&&moved[2][0]>waves[2].radii[0],'Equatorial waves contract while both polar waves expand');
+  await seek(7.4);check(await page.evaluate(()=>window.__singleCirculationDebug.model.pressureWaves.slice(1).every(w=>Math.abs(w.mesh.material.uniforms.uAlpha.value-.85)<1e-6)),'Polar high pressure reaches full strength at the end of descent');
+  await seek(3.4);const r=await page.evaluate(()=>{const f=window.__threeCellDebug.getSceneFraming();return{x:f.centerX,y:f.centerY};});await page.mouse.move(r.x,r.y);await page.mouse.down();await page.mouse.move(r.x+75,r.y+25,{steps:10});await page.mouse.up();await page.waitForTimeout(300);
+  check(await page.evaluate(()=>{const m=window.__singleCirculationDebug.model;return m.freeView&&!m.cameraActive&&m.cameraSaved===null;}),'Dragging takes over the close-up camera');
+  const free=await snapshot();await page.waitForTimeout(250);check(JSON.stringify(free)===JSON.stringify(await snapshot()),'The paused camera stays where the user leaves it');
+  await page.locator('[data-view="reset"]').click();await page.waitForTimeout(900);
+  check(await page.evaluate(()=>!window.__singleCirculationDebug.model.cameraActive&&window.__threeCellDebug.STATE.singleDemo.elapsed===3.4),'Reset restores overview without changing ascent progress');
+  await page.locator('#single-demo-replay').click();await page.evaluate(()=>{window.__threeCellDebug.STATE.playing=false;window.__threeCellDebug.STATE.singleDemo.running=false;});await seek(0);
+  check(await page.evaluate(()=>!window.__singleCirculationDebug.model.cameraActive&&window.__singleCirculationDebug.model.pressureWaves.every(w=>!w.mesh.visible)),'Replay clears the close-up and pressure formation');
+  await page.locator('[data-view="side"]').click();await page.waitForTimeout(900);
+  for(const [width,height] of [[1366,768],[760,800],[390,844]]){
+    await page.setViewportSize({width,height});await page.waitForTimeout(350);await seek(3.4);await page.screenshot({path:join(out,width+'-ascent.png')});
+    check(await page.evaluate(()=>{const m=window.__singleCirculationDebug.model;return !m.pressureWaves[0].word.hidden&&m.columns.every(c=>c.group.visible);}),width+' close-up shows upward columns and low pressure');
+    await seek(6.4);await page.screenshot({path:join(out,width+'-descent.png')});
+    check(await page.evaluate(()=>window.__singleCirculationDebug.model.pressureWaves.slice(1).every(w=>w.mesh.visible&&!w.word.hidden)),width+' overview shows both polar high-pressure cues');
+  }
+  await seek(1.2);await page.evaluate(()=>window.__threeCellDebug.STATE.viewLocked=true);const locked=await snapshot();await seek(1.9);check(JSON.stringify(locked.camera)===JSON.stringify((await snapshot()).camera),'View lock prevents camera movement');await page.evaluate(()=>window.__threeCellDebug.STATE.viewLocked=false);
+  await page.evaluate(()=>window.__threeCellDebug.transitionToStep(1));await page.waitForTimeout(180);check(await page.evaluate(()=>!window.__singleCirculationDebug.model.cameraActive&&!window.__singleCirculationDebug.model.root.visible),'Changing steps releases the first-step camera and effects');
+  check(errors.length===0,'No browser exceptions',errors);
+}finally{await writeFile(join(out,'check.json'),JSON.stringify({checks,errors},null,2));await browser.close();}
+process.exitCode=checks.some(c=>!c.ok)||errors.length?1:0;

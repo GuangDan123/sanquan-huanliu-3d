@@ -19,23 +19,16 @@ function syncSinglePredictionControls(){
 }
 function mountPedagogyStep(step,body){
  document.body.classList.toggle('single-prediction-stage',step===0);
- if(step===0){
-  const box=document.createElement('div');box.className='prediction-record';
-  box.innerHTML='<label for="single-prediction">先写判断与理由</label><textarea id="single-prediction" rows="2" placeholder="先画或描述方向，再说明依据"></textarea><button class="btn btn-sm" id="single-show-answer">显示本节点结论</button>';
-  body.prepend(box);
-  box.querySelector('textarea').oninput=e=>{PEDAGOGY.predictions[STATE.singleDemo.node||0]=e.target.value;saveLearningEvidence();};
-  box.querySelector('button').onclick=()=>{STATE.singleDemo.answerShown=true;updateSingleDemoUI();};syncSinglePredictionControls();
- }
+ if(step===0)body.querySelector('.prediction-record')?.remove();
  // Keep conditions visible; they are needed to interpret the model, not an optional answer.
  const assumptions=body.querySelector('.model-assumptions');if(assumptions)body.prepend(assumptions);
- if(step===1||step===2){const link=document.createElement('button');link.className='btn btn-sm';link.id='pedagogy-open-section';link.textContent='对照：球面怎样转为剖面';link.onclick=()=>openSectionAt(STATE.step===1?[30,30,60,0][STATE.mechanismStage]:0);body.append(link);}
  for(const prefix of ['classroom','classroom-lesson']){
   const prev=document.getElementById(prefix+'-prev'),next=document.getElementById(prefix+'-next');
   if(prev)prev.textContent='上一课堂环节';if(next)next.textContent='下一课堂环节';
  }
  const previous=document.getElementById('mechanism-prev'),next=document.getElementById('mechanism-next');
- if(previous)previous.textContent='上一形成环节';if(next&&STATE.mechanismStage<3)next.textContent='下一形成环节';
- const tag=document.getElementById('sp-tag');if(step===1)tag.textContent=`STEP 2 / 5 · 形成环节 ${STATE.mechanismStage+1} / 4`;
+ if(previous)previous.textContent='第一步';if(next)next.textContent='第三步';
+ const tag=document.getElementById('sp-tag');if(step===1)tag.textContent='STEP 2 / 5';
 }
 function restoreSingleGeometry(){
  for(const key of ['singleNH','singleSH']){const c=cellObjects[key];if(!c)continue;
@@ -43,22 +36,8 @@ function restoreSingleGeometry(){
   if(c.particles){c.particles.geometry.setIndex(null);c.particles.geometry.setDrawRange(0,c.activeParticleCount);}
  }
 }
-function applySinglePredictionVisual(){
- if(!singleCellGroup)return;
- const d=STATE.singleDemo,index=d.node||0,s=SINGLE_FLOW_STAGES[index];
- let end=singleNodeRevealed()?s.end:s.start;
- if(STATE.demoMode==='continuous')end=d.elapsed===0&&!d.running?0:SINGLE_FLOW_STAGES[getSingleDemoPhase().index].end;
- if(d.complete)end=1;
- singleCellGroup.visible=end>0;
- for(const key of ['singleNH','singleSH']){
-  const c=cellObjects[key];if(!c)continue;
-  for(const a of [...c.tubes,...c.innerGlows]){const geo=a.mesh.geometry;const segments=geo.parameters.tubularSegments,radial=geo.parameters.radialSegments;geo.setDrawRange(0,Math.floor(segments*end)*radial*6);}
-  for(const a of c.arrows)a.mesh.visible=STATE.showPaths&&a.phase<end;
-  if(c.particles){const indices=[];for(let i=0;i<c.activeParticleCount;i++)if(c.phases[i]<end)indices.push(i);c.particles.geometry.setIndex(indices);c.particles.geometry.setDrawRange(0,indices.length);}
- }
- for(const {obj,data} of verticalLabels){const allowed=STATE.showLabels&&(data.lat===0?end>0:end>.5);obj.userData.baseVisible=allowed;obj.visible=obj.visible&&allowed;}
- document.body.classList.toggle('prediction-waiting',end===0);
-}
+function applySinglePredictionVisual(dt=0){renderSingleCirculation(dt);}
+
 function openSectionAt(lat){PEDAGOGY.focusLat=lat;LESSON_STATE.sectionLat=Math.abs(lat);LESSON_STATE.sectionH=lat<0?'south':'north';TEACHING.sectionMode='full';openLesson('section');}
 function syncBridgeHighlight(){
  for(const {obj,data} of latLabels)obj.element?.classList.toggle('bridge-lat',STATE.step===2&&PEDAGOGY.focusLat!==null&&data.lat===PEDAGOGY.focusLat);

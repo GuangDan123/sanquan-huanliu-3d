@@ -64,22 +64,12 @@ function mountClassroomControls(step,body,controlsPanel){
    const actions=controlsPanel.querySelector(selector);if(actions){dock.append(...actions.children);actions.remove();}
   }
  }
- // Keep secondary explanations and shortcuts behind one disclosure.
- const extra=document.createElement('details');extra.className='teaching-extra';extra.innerHTML='<summary>条件说明与更多探究</summary>';
- for(const el of [...body.children])if(el.matches('.model-note,.model-assumptions,.sp-item,.formation-diagnosis,#step-related,#step-season,#mechanism-related,#landsea-season-lesson,#landsea-related,#mc-lesson'))extra.append(el);
- if(extra.children.length>1)body.append(extra);
- if(step<3){
-  const label=document.createElement('label');label.className='teaching-focus-toggle';
-  label.innerHTML='<input type="checkbox" id="teaching-auto-focus"> 随节点聚焦 <button class="btn btn-sm" id="teaching-focus-now" type="button">定位本节点</button>';
-  body.append(label);
-  document.getElementById('teaching-auto-focus').checked=CLASSROOM.autoFocus;
-  document.getElementById('teaching-auto-focus').onchange=e=>{CLASSROOM.autoFocus=e.target.checked;if(CLASSROOM.autoFocus)focusTeachingNode();else{CLASSROOM.focusAnimation++;setView('side');}};
-  document.getElementById('teaching-focus-now').onclick=()=>focusTeachingNode(true);
- }
+ // Keep the teaching panel focused on the core interaction.
  const guide=document.getElementById('landsea-globe-play');if(guide)guide.textContent='连续复习形成过程';
 }
 function focusTeachingNode(force=false){
  if(!camera||!controls||STATE.viewLocked||STATE.step>2||(!CLASSROOM.autoFocus&&!force))return;
+ if(STATE.step===0){if((STATE.singleDemo.node||0)===0)SINGLE_CIRCULATION.cameraSuppressed=false;return;}
  const node=STATE.step===0?(STATE.singleDemo.node||0):STATE.mechanismStage;
  const lat=STATE.step===0?[0,35,90,35][node]:STATE.step===1?[20,30,60,0][node]:0;
  const detail=STATE.step<2&&(STATE.step!==1||node<3),framing=getSceneFraming();
@@ -161,12 +151,12 @@ function demoNodeStages(kind){
   return[{start:0,end:2.5,title:'① 高空气流汇入'},{start:2.5,end:4.5,title:'② 气流逐渐积聚'},{start:4.5,end:7.2,title:'③ 下沉形成近地面高压'},{start:7.2,end:10.2,title:'④ 近地面向两侧分流'},{start:10.2,end:12,title:'⑤ 归纳低纬环流'}];
 }
 function demoNodeState(kind){return kind==='single'?STATE.singleDemo:STATE.mechanismDemo;}
-function demoPhaseElapsed(kind){const d=demoNodeState(kind),s=demoNodeStages(kind)[d.node||0];return STATE.demoMode==='step'&&!d.complete?Math.min(d.elapsed,s.end-1e-6):d.elapsed;}
+function demoPhaseElapsed(kind){const d=demoNodeState(kind),s=demoNodeStages(kind)[d.node||0];return kind!=='single'&&STATE.demoMode==='step'&&!d.complete?Math.min(d.elapsed,s.end-1e-6):d.elapsed;}
 function advanceDemoNodeTime(kind,dt){
   const d=demoNodeState(kind),stages=demoNodeStages(kind),last=stages.at(-1).end;
-  const limit=STATE.demoMode==='step'?stages[d.node||0].end:last;
+  const limit=kind!=='single'&&STATE.demoMode==='step'?stages[d.node||0].end:last;
   d.elapsed=Math.min(limit,d.elapsed+Math.min(dt,.1)*STATE.speed);
-  if(d.elapsed>=limit){d.running=false;d.complete=limit===last;STATE.playing=false;}
+  if(d.elapsed>=limit){d.running=false;d.complete=limit===last;STATE.playing=kind==='single'&&d.complete;}
 }
 function chooseDemoNode(kind,index,play=false,previous=false){
   const d=demoNodeState(kind),stages=demoNodeStages(kind);if(index<0||index>=stages.length)return;
@@ -176,6 +166,10 @@ function chooseDemoNode(kind,index,play=false,previous=false){
   focusTeachingNode();
 }
 function mountDemoNodes(kind,panel,continuousOnly=false){
+  if(kind==='single'&&continuousOnly){
+    panel.insertAdjacentHTML('afterbegin','<div id="single-node-status" class="mechanism-demo-status" aria-live="polite"></div><div id="single-node-question" class="demo-node-question"></div>');
+    updateDemoNodeControls(kind);return;
+  }
   panel.insertAdjacentHTML('afterbegin',`<label class="demo-mode">播放方式 <select id="${kind}-demo-mode"><option value="step">讲课：每步停顿</option><option value="continuous">复习：连续演示</option></select></label><div id="${kind}-node-status" class="mechanism-demo-status" aria-live="polite"></div><div id="${kind}-node-question" class="demo-node-question"></div>`);
   panel.insertAdjacentHTML('beforeend',`<div class="mechanism-actions demo-node-actions"><button class="btn" id="${kind}-node-prev">上一节点</button><button class="btn" id="${kind}-node-replay">重播本节点</button><button class="btn" id="${kind}-node-next">下一节点</button></div>`);
   const select=document.getElementById(kind+'-demo-mode');
@@ -191,10 +185,11 @@ function mountDemoNodes(kind,panel,continuousOnly=false){
 }
 function updateDemoNodeControls(kind){
   const el=document.getElementById(kind+'-node-status');if(!el)return;
-  const d=demoNodeState(kind),stages=demoNodeStages(kind),index=d.node||0,s=stages[index],step=STATE.demoMode==='step';
-  el.textContent=step?`动画节点 ${index+1}/${stages.length} · ${kind==='single'&&!singleNodeRevealed()?['赤道区域','高空水平运动','极地区域','近地面水平运动'][index]:s.title}${!d.running&&d.elapsed>=s.end?' · 本节点完成':''}`:'连续演示：可随时暂停';
+  const d=demoNodeState(kind),stages=demoNodeStages(kind),index=kind==='single'?getSingleDemoPhase().index:d.node||0,s=stages[index],step=kind!=='single'&&STATE.demoMode==='step';
+  el.textContent=kind==='single'?singleNodeRevealed()?`连续演示 · ${s.title}`:'连续演示：点击播放观察完整过程':step?`动画节点 ${index+1}/${stages.length} · ${s.title}${!d.running&&d.elapsed>=s.end?' · 本节点完成':''}`:'连续演示：可随时暂停';
   const questions=kind==='single'?['先预测：受热最多的赤道，空气怎样运动？','追问：同一高度上，气压差怎样推动高空回流？','先预测：极地空气冷却后，垂直运动怎样？','归纳：近地面从哪一端流向哪一端？']:STATE.mechanismStage===0?['先判断：高空气流的初始方向？','对照：两半球左右偏转为何都获得东向分量？']:STATE.mechanismStage===2?['比较：两股气流的冷热与来向？','解释：暖空气为什么被抬升，而不是当地受热上升？','归纳：近地面气压高低与高纬圈方向？']:['观察：高空气流向哪里汇入？','预测：积聚后会怎样运动？','解释：这是热力性还是动力性高压？','推导：近地面向两侧分别形成什么风带？','归纳：上下气流如何连接成低纬圈？'];
   lessonText(kind+'-node-question',step?questions[index]:'复习时请口述形成的因果链。');
+  if(kind==='single'){const play=document.getElementById('single-demo-play');if(play)play.disabled=false;return;}
   document.getElementById(kind+'-node-prev').disabled=!step||index===0;
   document.getElementById(kind+'-node-next').disabled=!step||(d.running&&STATE.playing)||(index===stages.length-1&&d.elapsed>=s.end);
   document.getElementById(kind+'-node-replay').disabled=!step;
@@ -219,7 +214,6 @@ function mountTeachingTopic(topic){
     document.getElementById('teaching-to-single').onclick=()=>{closeLesson();transitionToStep(0);setView('side');};
   }
   if(topic==='section'){
-    mountViewBridge(body);
     controls.insertAdjacentHTML('beforeend','<label>图示 <select id="teaching-section-mode"><option value="full">完整参考图</option><option value="names">隐藏名称</option><option value="arrows">隐藏箭头</option><option value="blank">空白作图</option></select></label>');
     const mode=document.getElementById('teaching-section-mode');mode.value=TEACHING.sectionMode;
     mode.onchange=()=>{TEACHING.sectionMode=mode.value;TEACHING.sectionChecked=false;updateLessonView();};

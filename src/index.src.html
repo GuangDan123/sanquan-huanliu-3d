@@ -61,12 +61,20 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg-dark);font-
 #loading-retry{margin-top:12px;}
 
 /* ========== 欢迎弹窗 ========== */
-#welcome-modal{position:fixed;inset:0;z-index:8000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity 0.4s;}
+#welcome-modal{position:fixed;inset:0;z-index:8000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.68);backdrop-filter:blur(10px);opacity:0;pointer-events:none;transition:opacity .4s;}
 #welcome-modal.show{opacity:1;pointer-events:auto;}
-.welcome-card{background:var(--panel-bg);border:1px solid var(--panel-border);border-radius:16px;padding:36px 40px;max-width:520px;width:90%;box-shadow:var(--shadow);text-align:center;}
-.welcome-card h2{font-size:22px;margin-bottom:12px;}
-.welcome-card p{color:var(--text-dim);line-height:1.8;margin-bottom:20px;font-size:14px;}
-.welcome-card .btn-row{display:flex;gap:12px;justify-content:center;}
+.welcome-card{position:relative;box-sizing:border-box;background:linear-gradient(145deg,rgba(18,28,43,.96),rgba(10,17,29,.94));border:1px solid rgba(126,201,238,.42);border-radius:24px;padding:64px 74px 46px;max-width:900px;width:min(900px,calc(100% - 32px));box-shadow:0 30px 100px rgba(0,0,0,.52),0 0 65px rgba(63,167,220,.14),inset 0 1px 0 rgba(255,255,255,.12);text-align:center;overflow:hidden;}
+.welcome-card::before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(110deg,rgba(109,211,255,.08),transparent 35%,rgba(255,190,101,.05));}
+.welcome-card>*{position:relative;z-index:1;}
+.welcome-card h2{margin:0 0 18px;font-size:34px;line-height:1.35;letter-spacing:1px;color:#f5fbff;text-shadow:0 3px 18px rgba(86,187,236,.2);}
+.welcome-lead{margin:0 auto 38px;color:#b9cbd9;line-height:1.8;font-size:16px;}
+.welcome-modes{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin:0 auto 36px;text-align:left;}
+.welcome-mode{display:flex;flex-direction:column;align-items:stretch;gap:12px;padding:22px;border:1px solid rgba(139,194,223,.25);border-radius:14px;background:rgba(255,255,255,.045);}
+.welcome-mode .btn{width:100%;font-size:16px;font-weight:700;}
+.welcome-mode p{margin:0;color:#aebfcd;line-height:1.65;font-size:14px;text-align:center;}
+.welcome-card .btn-row{display:contents;}
+.welcome-tip{margin:0;padding-top:26px;border-top:1px solid rgba(163,203,223,.2);color:#8ea6b7;font-family:"KaiTi","STKaiti",serif;font-size:14px;line-height:1.7;letter-spacing:.5px;}
+@media(max-width:600px){.welcome-card{padding:34px 20px 26px;border-radius:18px}.welcome-card h2{font-size:22px;letter-spacing:.4px}.welcome-lead{font-size:13px;margin-bottom:22px}.welcome-modes{grid-template-columns:1fr;gap:10px;margin-bottom:22px}.welcome-mode{padding:12px 14px;gap:7px}.welcome-mode p{font-size:12px}.welcome-tip{padding-top:16px;font-size:12px}}
 
 /* ========== 3D场景容器 ========== */
 #scene-container{position:fixed;inset:0;z-index:1;}
@@ -238,6 +246,24 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg-dark);font-
 #demo-overlay h3{font-size:18px;color:var(--accent);margin-bottom:8px;}
 #demo-overlay p{color:var(--text-dim);line-height:1.7;font-size:13px;}
 
+/* ========== 两步教学播放前说明 ========== */
+#teaching-intro{position:fixed;inset:0;z-index:5600;display:flex;align-items:center;justify-content:center;background:rgba(3,8,18,.16);pointer-events:none;opacity:0;transition:opacity .35s ease;}
+#teaching-intro.show{opacity:1;pointer-events:none;}
+.teaching-intro-card{width:min(500px,calc(100vw - 32px));padding:28px 32px 24px;border:1px solid rgba(125,211,252,.55);border-radius:18px;background:linear-gradient(145deg,rgba(12,27,48,.94),rgba(15,22,39,.92));box-shadow:0 18px 60px rgba(0,0,0,.42),0 0 32px rgba(72,180,255,.12);backdrop-filter:blur(8px);text-align:center;pointer-events:auto;transform:translateY(10px) scale(.98);transition:transform .35s ease;}
+#teaching-intro.show .teaching-intro-card{transform:none;}
+#teaching-intro.is-compact .teaching-intro-card{background:rgba(24,32,38,.46);border-color:rgba(207,235,245,.46);box-shadow:0 18px 60px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.14);backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%);}
+#teaching-intro.is-compact .teaching-intro-step,#teaching-intro.is-compact #teaching-intro-copy,#teaching-intro.is-compact .intro-tip{display:none;}
+#teaching-intro.is-compact.is-first-step #teaching-intro-copy{display:block;margin:0 auto 18px;max-width:400px;font-size:14px;line-height:1.7;color:#d3e0e9;}
+#teaching-intro.is-compact.is-prompt-step #teaching-intro-copy{display:block;margin:0 auto 18px;max-width:400px;font-size:14px;line-height:1.7;color:#d3e0e9;}
+#teaching-intro.is-compact h2{margin-bottom:24px;line-height:1.5;letter-spacing:0;text-shadow:0 1px 8px rgba(0,0,0,.35);}
+.teaching-intro-step{display:inline-block;margin-bottom:10px;padding:3px 10px;border:1px solid currentColor;border-radius:999px;font-size:11px;letter-spacing:1px;color:#8bdcff;}
+.teaching-intro-card h2{margin-bottom:12px;font-size:21px;color:#f0f8ff;letter-spacing:.5px;}
+.teaching-intro-card p{margin:0 auto 20px;max-width:400px;color:#c0d3e2;font-size:14px;line-height:1.85;}
+.teaching-intro-card .intro-tip{margin-top:12px;margin-bottom:0;color:#8ca8bc;font-size:12px;line-height:1.6;}
+.teaching-intro-actions{display:flex;justify-content:center;gap:10px;}
+.teaching-intro-actions .btn{min-width:128px;}
+@media(max-width:600px){.teaching-intro-card{padding:22px 20px 18px}.teaching-intro-card h2{font-size:18px}.teaching-intro-card p{font-size:13px}}
+
 /* ========== 课堂实录视频弹窗 ========== */
 #video-modal{position:fixed;inset:0;z-index:8500;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.8);backdrop-filter:blur(6px);opacity:0;pointer-events:none;transition:opacity 0.4s;}
 #video-modal.show{opacity:1;pointer-events:auto;}
@@ -260,7 +286,8 @@ body.ui-hidden #diagram-toggle,
 body.ui-hidden #diagram-panel,
 body.ui-hidden #knowledge-card,
 body.ui-hidden #step-panel,
-body.ui-hidden #step-notification{display:none !important;}
+body.ui-hidden #step-notification,
+body.ui-hidden #teaching-intro{display:none !important;}
 
 
 #diagram-panel{position:fixed;top:60px;bottom:calc(var(--controls-height,80px) + 16px);right:0;z-index:450;background:var(--panel-bg);border:1px solid var(--panel-border);border-right:none;border-radius:12px 0 0 12px;box-shadow:var(--shadow);width:380px;max-width:90vw;display:flex;flex-direction:column;transition:transform 0.3s;backdrop-filter:blur(8px);}
@@ -311,14 +338,21 @@ body.ui-hidden #step-notification{display:none !important;}
 <!-- 欢迎弹窗 -->
 <div id="welcome-modal">
   <div class="welcome-card">
-    <h2>欢迎进入三圈环流学习平台</h2>
-    <p>本平台将帮助你直观理解大气三圈环流的运动规律。<br>点击播放观察过程，按步骤和环节手动推进，也可切换为自定义探索模式。<br><br>提示：拖拽旋转地球，滚轮缩放，点击图例或气压带、风带标签查看知识点。</p>
-    <div class="btn-row">
-      <button class="btn" id="btn-start-guided" style="background:rgba(93,173,226,0.3);border-color:var(--accent);">开始引导学习</button>
-      <button class="btn" id="btn-start-free">自由探索</button>
+    <h2>欢迎进入气压带与风带学习平台</h2>
+    <p class="welcome-lead">通过三维演示观察大气环流的运动规律，逐步建立气压带与风带的空间认识。</p>
+    <div class="welcome-modes">
+      <div class="welcome-mode">
+        <button class="btn" id="btn-start-guided" style="background:rgba(93,173,226,0.3);border-color:var(--accent);">开始引导学习</button>
+        <p>按课堂步骤逐层演示，从理想单圈环流推导三圈环流。</p>
+      </div>
+      <div class="welcome-mode">
+        <button class="btn" id="btn-start-free">自由探索</button>
+        <p>自由切换步骤、视角和显示内容，按自己的节奏观察模型。</p>
+      </div>
       <!-- 课堂实录入口：录制 assets/video/classroom.mp4 后取消下一行注释即可恢复按钮 -->
       <!-- <button class="btn" id="btn-classroom-video" style="font-size:12px;">课堂实录</button> -->
     </div>
+    <p class="welcome-tip">温馨提示：拖拽旋转地球，滚轮缩放；点击图例、气压带或风带标签可查看知识点。</p>
   </div>
 </div>
 
@@ -460,6 +494,17 @@ body.ui-hidden #step-notification{display:none !important;}
   <p id="demo-desc"></p>
 </div>
 
+<!-- 第一、第二步播放前的教学说明；球体仍在后方保持可见 -->
+<div id="teaching-intro" class="is-compact" aria-live="polite" aria-labelledby="teaching-intro-title">
+  <div class="teaching-intro-card">
+    <span class="teaching-intro-step" id="teaching-intro-step">第一步 · 理想模型</span>
+    <h2 id="teaching-intro-title">假设地表均一、地球不自转</h2>
+    <p id="teaching-intro-copy"></p>
+    <div class="teaching-intro-actions"><button class="btn" id="teaching-intro-play" style="background:rgba(93,173,226,.3);border-color:var(--accent);">开始播放</button></div>
+    <p class="intro-tip">播放后可暂停、拖动地球或切换视角。</p>
+  </div>
+</div>
+
 <!-- 课堂实录视频弹窗 -->
 <div id="video-modal">
   <div class="video-card" style="position:relative;">
@@ -557,6 +602,9 @@ const CONFIG = {
   starCount: 3000,
   sun: { centerX: 1.25, radius: 0.78, arrowStartX: 2.25, arrowEndX: 8.15, arrowCount: 2, screenX: 0.2, screenY: 0.5, screenDepth: 15, arrowStartOffset: 0.62 }
 };
+// The second-step globe rotation is intentionally accelerated so the learner
+// can see the meridians move while the single cell is deforming.
+const SECOND_STEP_ROTATION_MULTIPLIER = 4;
 
 /* ========== 全局状态 ========== */
 const STATE = {
@@ -574,7 +622,7 @@ const STATE = {
   showGrid: true,
   showParticles: true,
   showPaths: true,
-  showPressure: false,
+  showPressure: true,
   showLabels: true,
   showLegend: true,
   lowPerf: false,
@@ -590,6 +638,9 @@ const STATE = {
   transitionCoriolis: null, // 过渡中的瞬时偏转量（粒子与管道几何同步），null=非过渡中
   showDiagram: false       // 图示回归面板是否展开
 };
+
+// 播放前的两步教学说明；第二步播放时先静止展示完整单圈，再启动自转。
+const TEACHING_INTRO = { step: null, open: false };
 
 /* ========== 知识库 ========== */
 const KNOWLEDGE = {
@@ -621,7 +672,8 @@ const KNOWLEDGE = {
   'pressure-0':   { title: '赤道低气压带', color: '#ffd447', content: '<p>位于赤道附近（0°±5°）。空气受热强烈上升，形成低压区，多对流雨，气候湿热。</p>' },
   'pressure-30':  { title: '副热带高气压带', color: '#72d44a', content: '<p>位于南北纬30°附近。教材理想模型中，赤道上升后的高空气流向极地运动并偏转，在30°附近积聚、下沉，形成动力性高压；下沉空气绝热增温，通常干燥少雨。不能简单解释为当地冷却形成高压。</p>' },
   'pressure-60':  { title: '副极地低气压带', color: '#329bff', content: '<p>位于南北纬60°附近。来自副热带的盛行西风与来自极地的极地东风交汇，较暖空气被迫上升，形成动力性低压，常伴锋面降水；不是当地受热形成的热力低压。</p>' },
-  'pressure-90':  { title: '极地高气压带', color: '#b986ff', content: '<p>位于南北极点附近。空气强烈冷却下沉形成高压区，气候严寒干燥。</p>' }
+  'pressure-90':  { title: '极地高气压带', color: '#b986ff', content: '<p>位于南北极点附近。空气强烈冷却下沉形成高压区，气候严寒干燥。</p>' },
+  'polar-front': { title: '极锋', color: '#329bff', content: '<p>极锋位于副极地附近，是较暖的盛行西风与较冷的极地东风交汇形成的锋面。冷空气密度较大，暖空气沿冷空气上方抬升，促成副极地低气压带和锋面降水。</p><p>极锋的位置和强度会随季节、海陆和天气系统变化；图中为三圈环流的平均示意。</p>' }
 };
 
 const STEP_INFO = [
@@ -636,13 +688,7 @@ const STEP_INFO = [
 const STEP_PANEL = [
   {
     tag: 'STEP 1 / 5', title: '理想单圈环流', color: '#88CCFF',
-    points: [
-      ['假设前提', '不考虑地球自转，地表性质均匀；以<b>太阳直射赤道</b>为基准'],
-      ['热力驱动', '赤道受热多→空气膨胀<b>上升</b>；极地受热少→空气冷却<b>下沉</b>'],
-      ['高空流动', '赤道高空为高压、极地为低压→气流由赤道<b>流向极地</b>'],
-      ['近地面回流', '极地为高压、赤道为低压→气流由极地<b>流回赤道</b>'],
-      ['结论', '形成单一闭合的<b>热力环流圈</b>（直接环流）——理想化模型']
-    ]
+    points: []
   },
   {
     tag: 'STEP 2 / 5', title: '地转偏向力介入', color: '#FDB813',
@@ -867,7 +913,8 @@ function updateSunArrowTargets() {
   const toCamera = camera.position.clone().sub(earthCenter);
   const cameraDistance = toCamera.length();
   toCamera.normalize();
-  const radius = CONFIG.earth.atmosphereRadius + SUN_ARROW_RIM_MARGIN;
+  const singleAtmosphere=STATE.step===0&&typeof SINGLE_CIRCULATION!=='undefined'&&SINGLE_CIRCULATION.root;
+  const radius = singleAtmosphere?CONFIG.earth.radius+2.05:CONFIG.earth.atmosphereRadius + SUN_ARROW_RIM_MARGIN;
   const rimCenter = earthCenter.clone().addScaledVector(toCamera, radius * radius / cameraDistance);
   const rimRadius = radius * Math.sqrt(1 - radius * radius / (cameraDistance * cameraDistance));
   const screenRight = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion);
@@ -877,15 +924,15 @@ function updateSunArrowTargets() {
   const rayDepth = sunOrigin.clone().add(new THREE.Vector3(0, 0, -.1).applyQuaternion(camera.quaternion)).project(camera).z;
   sunArrows.forEach(({ line, shaft, head, lat }) => {
     // 两条红色射线分别指向轮廓左侧的上下位置。
-    const latitude = Math.sign(lat) * degToRad(8);
-    const rimTarget = rimCenter.clone()
+    const latitude = Math.sign(lat) * degToRad(4);
+    const rimTarget = singleAtmosphere?SINGLE_CIRCULATION.root.localToWorld(sequencePoint(Math.sign(lat)*3,0,2.05)):rimCenter.clone()
       .addScaledVector(screenRight, -rimRadius * Math.cos(latitude))
       .addScaledVector(screenUp, rimRadius * Math.sin(latitude));
     // 起终点位于同一相机深度，且各自保持相同的屏幕高度；两条射线始终平行。
     // 按屏幕像素保留地球端空隙，避免缩放或更换视角后贴近大气层。
     const projectedRim = rimTarget.clone().project(camera);
     const screenDx=(projectedRim.x-projectedSun.x)*innerWidth/2;
-    const clearance = Math.min(SUN_ARROW_CLEARANCE_PX, Math.abs(screenDx) * .15);
+    const clearance = Math.min(singleAtmosphere?12:SUN_ARROW_CLEARANCE_PX, Math.abs(screenDx) * .15);
     const rayOrigin = new THREE.Vector3(projectedSun.x, projectedRim.y, rayDepth).unproject(camera);
     const target = new THREE.Vector3(projectedRim.x-Math.sign(screenDx)*clearance*2/innerWidth,
       projectedRim.y, rayDepth).unproject(camera);
@@ -926,6 +973,7 @@ function updateSunArrowTargets() {
     head.quaternion.setFromRotationMatrix(new THREE.Matrix4().makeBasis(sideDirection,screenDirection.clone().cross(sideDirection),screenDirection));
     line.geometry.computeBoundingSphere();
     head.userData.targetLat = lat;
+    head.userData.targetRadius = radius;
     head.userData.targetDistance = distance;
     head.userData.rimTarget = target.toArray();
     head.userData.atmosphereRimTarget = rimTarget.toArray();
@@ -1089,10 +1137,13 @@ function createEarth() {
   const earthGeo = new THREE.SphereGeometry(CONFIG.earth.radius, 64, 48);
   const earthMat = new THREE.MeshPhongMaterial({
     map: earthTexture,
-    shininess: 15,
-    specular: 0x222244
+    shininess: 0,
+    specular: 0x000000
   });
   const earthMesh = new THREE.Mesh(earthGeo, earthMat);
+  earthGroup.userData.surfaceMesh = earthMesh;
+  earthGroup.userData.originalSurfaceMap = earthTexture;
+  earthGroup.userData.surfaceStyle = 'textured';
   // 轻微椭球化：赤道略鼓、两极略扁，与真实地球一致
   earthMesh.scale.set(1.005, 1.0, 1.005);
   earthGroup.add(earthMesh);
@@ -1182,8 +1233,8 @@ function createEarth() {
       tex.needsUpdate = true;
       tex.colorSpace = THREE.SRGBColorSpace; // 确保颜色空间正确
       tex.anisotropy = renderer.capabilities.getMaxAnisotropy(); // 各向异性过滤，斜视角更清晰
-      earthMat.map = tex;
-      earthMat.needsUpdate = true;
+      earthGroup.userData.originalSurfaceMap = tex;
+      setEarthSurfaceStyle(earthGroup.userData.surfaceStyle || 'textured');
       console.log('[纹理加载] 内嵌真实卫星纹理已应用');
     };
     earthImg.onerror = () => {
@@ -1197,14 +1248,44 @@ function createEarth() {
   }
 }
 
+/* 教学前两步使用无大陆、无纹理的光滑球体，避免学生把地表细节当成环流机制。 */
+function setEarthSurfaceStyle(style = 'textured') {
+  if (!earthGroup?.userData?.surfaceMesh) return;
+  const mesh = earthGroup.userData.surfaceMesh;
+  const material = mesh.material;
+  earthGroup.userData.surfaceStyle = style;
+  if (style === 'smooth') {
+    material.map = null;
+    material.color.set(0x2d668d);
+    // The teaching globe is matte: a specular hotspot competes with the
+    // circulation paths and makes the latitude/longitude grid disappear.
+    material.specular.set(0x000000);
+    material.shininess = 0;
+    if (material.emissive) {
+      material.emissive.set(0x071522);
+      material.emissiveIntensity = .28;
+    }
+  } else {
+    material.map = earthGroup.userData.originalSurfaceMap || material.map;
+    material.color.set(0xffffff);
+    material.specular.set(0x222244);
+    material.shininess = 15;
+    if (material.emissive) {
+      material.emissive.set(0x000000);
+      material.emissiveIntensity = 1;
+    }
+  }
+  material.needsUpdate = true;
+}
+
 /* 回退方案：使用 assets/textures 下的真实卫星贴图（随作品包一同分发，file:// 下可用） */
 function loadExternalEarthTexture(earthMat) {
   const texLoader = new THREE.TextureLoader();
   const applyTex = (tex) => {
     tex.colorSpace = THREE.SRGBColorSpace;
     tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
-    earthMat.map = tex;
-    earthMat.needsUpdate = true;
+    earthGroup.userData.originalSurfaceMap = tex;
+    setEarthSurfaceStyle(earthGroup.userData.surfaceStyle || 'textured');
     console.log('[纹理加载] 已应用 assets/textures/earth_atmos_2048.jpg 卫星贴图');
   };
   texLoader.load(
@@ -1227,7 +1308,7 @@ function createGrid() {
 
   // 纬度圈
   const latitudes = [0, 30, 60, 90, -30, -60, -90];
-  const latColors = [0xffcc00, 0xff8844, 0x66aaff, 0xaaaaaa, 0xff8844, 0x66aaff, 0xaaaaaa];
+  const latColors = [0xf0c45b, 0xa7cce4, 0x8bb3d2, 0xb5c7d8, 0xa7cce4, 0x8bb3d2, 0xb5c7d8];
   const latWidths = [2, 1.5, 1.5, 1, 1.5, 1.5, 1];
 
   latitudes.forEach((lat, idx) => {
@@ -1243,7 +1324,7 @@ function createGrid() {
     const mat = new THREE.LineBasicMaterial({
       color: latColors[idx],
       transparent: true,
-      opacity: lat === 0 ? 0.6 : 0.35,
+      opacity: lat === 0 ? 0.82 : 0.56,
       linewidth: latWidths[idx]
     });
     gridGroup.add(new THREE.Line(geo, mat));
@@ -1262,7 +1343,7 @@ function createGrid() {
       ));
     }
     const geo = new THREE.BufferGeometry().setFromPoints(pts);
-    const mat = new THREE.LineBasicMaterial({ color: 0x334466, transparent: true, opacity: 0.15 });
+    const mat = new THREE.LineBasicMaterial({ color: 0x173d5e, transparent: true, opacity: 0.38 });
     gridGroup.add(new THREE.Line(geo, mat));
   }
 
@@ -1350,12 +1431,19 @@ function getCellPosition(t, riseLat, sinkLat, baseLonDeg, hemisphere, coriolisDe
 */
 // 路径、高亮和文字使用同一组阶段边界，极地下沉单独保留径向路径。
 const SINGLE_FLOW_STAGES = [
-  {start:0,end:.16,until:2.3,text:'① 赤道受热最多 → 空气膨胀上升'},
-  {start:.16,end:.5,until:5.1,text:'② 高空气流由赤道向两极输送'},
-  {start:.5,end:.66,until:7.3,text:'③ 极地空气冷却变重 → 下沉'},
-  {start:.66,end:1,until:10,text:'④ 近地面由两极流回赤道，形成闭合环流'}
+  {start:0,end:.16,until:5.2,text:'① 受热上升：赤道空气膨胀上升'},
+  {start:.16,end:.5,until:8.5,text:'② 高空气流由赤道向两极输送'},
+  {start:.5,end:.66,until:11.8,text:'③ 极地空气冷却变重 → 下沉'},
+  {start:.66,end:1,until:16,text:'④ 近地面由两极流回赤道，形成闭合环流'}
 ];
-function getSingleDropPosition(t, baseLonDeg, hemisphere, coriolisDeg, riseLat = 2.5, sinkLat = 90) {
+// 第一阶段的因果顺序：太阳辐射先抵达，再让赤道大气受热，最后启动地表上升。
+const SINGLE_SOLAR_ARRIVAL = 1.2;
+const SINGLE_EQUATOR_HEAT_END = 2.3;
+const SINGLE_ASCENT_BEGIN = 2.3;
+// Keep the deflected single-cell ascent on the same equatorial origin as the
+// low-latitude sequence branch. The second step is a continuation, not a new
+// ascent drawn from a nearby latitude.
+function getSingleDropPosition(t, baseLonDeg, hemisphere, coriolisDeg, riseLat = 2, sinkLat = 90) {
   const R = CONFIG.earth.radius;
   const surfaceAlt = CONFIG.particles.surfaceAlt;
   const upperAlt = CONFIG.particles.upperAlt;
@@ -1406,6 +1494,36 @@ function getSingleDropPosition(t, baseLonDeg, hemisphere, coriolisDeg, riseLat =
   const theta = degToRad(baseLonDeg + coriolisShift);
   const r = R + alt;
 
+  return new THREE.Vector3(
+    r * Math.sin(phi) * Math.cos(theta),
+    r * Math.cos(phi),
+    r * Math.sin(phi) * Math.sin(theta)
+  );
+}
+
+// Visible baseline for the single-cell loop. The analytical path above keeps
+// exact stage boundaries for teaching checks; this version gives the rendered
+// tube a wider, continuous turn at the equator and poles.
+function getRoundedSingleDropPosition(t, baseLonDeg, hemisphere, coriolisDeg, riseLat = 2, sinkLat = 90) {
+  const R = CONFIG.earth.radius;
+  const u = ((t % 1) + 1) % 1;
+  const up = smoothstep(clamp((u - .06) / (.52 - .06), 0, 1));
+  const down = smoothstep(clamp((u - .58) / (.96 - .58), 0, 1));
+  const lat = riseLat + (sinkLat - riseLat) * (up - down);
+  // Keep the descent over the polar cap while preserving visible height aloft.
+  const polarWeight = smoothstep(clamp((lat - 55) / 30, 0, 1));
+  const surfaceAlt = lerp(CONFIG.particles.surfaceAlt, .12, polarWeight);
+  const upperAlt = lerp(CONFIG.particles.upperAlt, 1.45, polarWeight);
+  const high = smoothstep(clamp(u / .16, 0, 1)) * (1 - smoothstep(clamp((u - .50) / (.66 - .50), 0, 1)));
+  const equatorTurn = u > .88 ? .09 * Math.pow(Math.sin(Math.PI * (u - .88) / .12), 2) : 0;
+  const alt = surfaceAlt + (upperAlt - surfaceAlt) * high - equatorTurn;
+  const upperWeight = smoothstep(clamp((u - .10) / (.22 - .10), 0, 1)) * (1 - smoothstep(clamp((u - .36) / (.50 - .36), 0, 1)));
+  const surfaceWeight = smoothstep(clamp((u - .58) / (.72 - .58), 0, 1)) * (1 - smoothstep(clamp((u - .90) / (.10), 0, 1)));
+  const coriolisShift = coriolisDeg * Math.sin(Math.abs(degToRad(lat))) * (upperWeight - surfaceWeight) * hemisphere;
+  const actualLat = lat * hemisphere;
+  const phi = degToRad(90 - actualLat);
+  const theta = degToRad(baseLonDeg + coriolisShift);
+  const r = R + alt;
   return new THREE.Vector3(
     r * Math.sin(phi) * Math.cos(theta),
     r * Math.cos(phi),
@@ -1473,6 +1591,44 @@ class CirculationPathCurve extends THREE.Curve {
     }
     return getCellPosition(t, this.riseLat, this.sinkLat, this.baseLon, this.hemisphere, this.coriolisDeg);
   }
+}
+
+// The single-cell path is physically piecewise (rise, upper return, descent,
+// surface return), but its visible tube should read as one continuous loop.
+// A sampled closed spline rounds those four junctions while keeping the
+// analytical path available for particles, arrows, and teaching checkpoints.
+class RoundedSingleDropCurve extends THREE.Curve {
+  constructor(riseLat, sinkLat, baseLon, hemisphere, coriolisDeg) {
+    super();
+    this.riseLat = riseLat;
+    this.sinkLat = sinkLat;
+    this.baseLon = baseLon;
+    this.hemisphere = hemisphere;
+    this.coriolisDeg = coriolisDeg;
+    const sampleCount = 128;
+    const points = [];
+    for (let i = 0; i < sampleCount; i++) {
+      points.push(getRoundedSingleDropPosition(i / sampleCount, baseLon, hemisphere, coriolisDeg, riseLat, sinkLat));
+    }
+    this.spline = new THREE.CatmullRomCurve3(points, true, 'centripetal', 0.2);
+  }
+
+  getPoint(t, target = new THREE.Vector3()) {
+    if (t <= 0 || t >= 1) {
+      return target.copy(getRoundedSingleDropPosition(t <= 0 ? 0 : 1, this.baseLon, this.hemisphere, this.coriolisDeg, this.riseLat, this.sinkLat));
+    }
+    this.spline.getPoint(t, target);
+    // Cartesian spline interpolation can drift slightly inside/outside the
+    // shell at a rounded bend. Restore the analytical radius at this time.
+    const radius = getRoundedSingleDropPosition(t, this.baseLon, this.hemisphere, this.coriolisDeg, this.riseLat, this.sinkLat).length();
+    return target.setLength(radius);
+  }
+}
+
+function makeCirculationPathCurve(riseLat, sinkLat, baseLon, hemisphere, coriolisDeg, customPath) {
+  return customPath === 'singleDrop'
+    ? new RoundedSingleDropCurve(riseLat, sinkLat, baseLon, hemisphere, coriolisDeg)
+    : new CirculationPathCurve(riseLat, sinkLat, baseLon, hemisphere, coriolisDeg, customPath);
 }
 
 /* ========== 环流圈类 ========== */
@@ -1582,7 +1738,7 @@ class CirculationCell {
 
   _createTube(baseLon, coriolis = 0) {
     // 必须使用传入的 coriolis：各步骤的弯折形态由调用方决定，读全局 STATE 会导致第一步也被弯折
-    const curve = new CirculationPathCurve(this.riseLat, this.sinkLat, baseLon, this.hemisphere, coriolis, this.customPath);
+    const curve = makeCirculationPathCurve(this.riseLat, this.sinkLat, baseLon, this.hemisphere, coriolis, this.customPath);
     const geo = new THREE.TubeGeometry(curve, 96, this.tubeRadius, 10, true);
     // 流动条纹着色器：沿管周方向(u)产生移动明暗条纹，直观表现气流方向
     // uTime 递增 → 条纹沿 +u 方向移动 → 对应气流 phase 增大方向（下沉→地面→上升→高空→下沉）
@@ -1735,7 +1891,7 @@ class CirculationCell {
   }
 
   _createInnerGlow(baseLon, coriolis = 0) {
-    const curve = new CirculationPathCurve(this.riseLat, this.sinkLat, baseLon, this.hemisphere, coriolis, this.customPath);
+    const curve = makeCirculationPathCurve(this.riseLat, this.sinkLat, baseLon, this.hemisphere, coriolis, this.customPath);
     const geo = new THREE.TubeGeometry(curve, 96, this.tubeRadius * 0.35, 8, true);
     const mat = new THREE.MeshBasicMaterial({
       color: this.colorHex,
@@ -2717,31 +2873,30 @@ function updateStepPanel(step) {
     renderMonsoonClimatePanel(body, demoControls, navigation);
   } else {
     if (step === 0) {
-      body.insertAdjacentHTML('afterbegin', `<div class="mechanism-question">预测：赤道与两极受热不同，空气分别怎样运动？</div>
-        <div class="sp-item"><span class="sp-item-k">观察过程</span><span class="sp-item-v">先看赤道受热，再看高空输送、极地冷却下沉和近地面回流如何闭合。</span></div>
-        <div class="mechanism-demo"><div id="single-demo-phase" class="mechanism-demo-status" aria-live="polite"></div><progress id="single-demo-progress" max="10" value="0" aria-label="单圈成因演示进度"></progress><div class="mechanism-actions"><button class="btn" id="single-demo-play">播放过程</button><button class="btn" id="single-demo-replay">从头重播</button></div></div>`);
+      body.insertAdjacentHTML('afterbegin', `<div class="mechanism-demo"><div id="single-demo-phase" class="mechanism-demo-status" aria-live="polite"></div><progress id="single-demo-progress" max="16" value="0" aria-label="单圈成因演示进度"></progress><div class="mechanism-actions"><button class="btn" id="single-demo-play">播放过程</button><button class="btn" id="single-demo-replay">从头重播</button></div></div>`);
     }
-    body.insertAdjacentHTML('beforeend', '<p class="model-note">教材理想模型 / 机制示意，非动力数值模拟；30°和60°为近似位置。</p>');
+    if (step !== 0) body.insertAdjacentHTML('beforeend', '<p class="model-note">教材理想模型 / 机制示意，非动力数值模拟；30°和60°为近似位置。</p>');
     body.insertAdjacentHTML('beforeend',`<button class="btn btn-sm" id="step-related">${step===0?'先看气压差与水平风':'第四步：加入海陆分布'}</button>`);
     document.getElementById('step-related').onclick=()=>step===0?openLesson('pressure'):transitionToStep(3);
     if(step===2){body.insertAdjacentHTML('beforeend','<button class="btn btn-sm" id="step-season">探究气压带的季节移动</button>');document.getElementById('step-season').onclick=()=>openLesson('season');}
     if (step === 0) {
       document.getElementById('single-demo-play').onclick = () => {
-        if (STATE.singleDemo.running && STATE.playing) { STATE.singleDemo.running = false; STATE.playing = false; }
+        if ((STATE.singleDemo.running && STATE.playing) || singleAmbientRunning()) { STATE.singleDemo.running = false; STATE.playing = false; }
         else playSingleDemo();
         updateSingleDemoUI();
       };
-      document.getElementById('single-demo-replay').onclick = () => { resetSingleDemo(); playSingleDemo(); };
+      document.getElementById('single-demo-replay').onclick = () => { resetSingleDemo(); showTeachingIntro(0); };
       updateSingleDemoUI();
     }
   }
   const demoPanel = body.querySelector('.mechanism-demo');
   if (demoPanel) demoControls.appendChild(demoPanel);
   if(step<3)body.insertAdjacentHTML('afterbegin',modelAssumptionsHTML(step===0?'single':step===1&&STATE.mechanismStage===0?'coriolis':'three'));
-  if (demoPanel && step === 0) mountDemoNodes('single',demoPanel);
+  if (demoPanel && step === 0) {mountDemoNodes('single',demoPanel,true);mountSingleVisualControls(demoPanel);}
   mountClassroomControls(step,body,demoControls);
   if(step===1){const reveal=document.getElementById('mechanism-reveal'),wrapper=reveal.parentElement;document.getElementById('step-node-dock').append(reveal);wrapper.remove();}
   mountPedagogyStep(step,body);
+  if(step===0)finishSingleVisualPanel(body);
   document.getElementById('sp-progress').style.width = ((step + 1) / STEP_PANEL.length * 100) + '%';
   // 内容切换闪烁提示（强制重排以重新触发动画）
   const panel = document.getElementById('step-panel');
@@ -2795,7 +2950,10 @@ function setStepVisual(step) {
   // 第一步无自转/无偏转；第二步手动机制环节；第三步三圈稳定态
   const coriolis = step >= 1 ? STATE.coriolisDeflection : 0;
   STATE.step = step;
-  if(step!==0)restoreSingleGeometry();
+  if (step <= 1) setEarthSurfaceStyle('smooth');
+  else setEarthSurfaceStyle('textured');
+  if (step === 0 && earthGroup) earthGroup.rotation.y = 0;
+  if(step!==0){syncSingleCirculation();restoreSingleGeometry();}
   updateSunStyle();
 
   if (step === 0) {
@@ -2860,6 +3018,7 @@ function setStepVisual(step) {
   applyMechanismVisual();
   syncLandSeaVisual();
   syncMonsoonClimateVisual();
+  if(step===0)syncSingleCirculation();
 
   // 更新步骤指示器
   document.querySelectorAll('.step-dot').forEach(d => {
@@ -2874,6 +3033,7 @@ function transitionToStep(newStep) {
   const stepChanged = newStep !== STATE.step;
   if (stepChanged) { CLASSROOM.focusAnimation++; viewAnimation++; }
   document.getElementById('demo-overlay').classList.remove('show');
+  hideTeachingIntro();
   if(newStep===4&&STATE.step===3&&MONSOON_CLIMATE.month!==LANDSEA.month){MONSOON_CLIMATE.month=LANDSEA.month;resetFormation('climate');MONSOON_CLIMATE.phase=0;}
   if(newStep>=3||STATE.step>=3)STATE.playing=false;
   const enteringLandSea = newStep === 3 && STATE.step !== 3;
@@ -2890,7 +3050,7 @@ function transitionToStep(newStep) {
   STATE.stepTransitioning = false;
   STATE.transitionCoriolis = null;
   STATE.pendingStep = null;
-  STATE.showPressure = newStep >= 2;
+  STATE.showPressure = newStep === 0 || newStep >= 2;
   document.getElementById('tog-pressure').classList.toggle('active', STATE.showPressure);
   updateAtmosphereColor(newStep);
   setStepVisual(newStep);
@@ -2904,6 +3064,8 @@ function transitionToStep(newStep) {
   if(enteringLandSea)focusLandSeaRegion(LANDSEA.region);
   updateClassroomRoute();
   if(newStep<3)focusTeachingNode();
+  if (newStep === 0) showTeachingIntro(0);
+  if (stepChanged && newStep === 1) showTeachingIntro(1);
 }
 
 // 偏转环节贴近球面，其余形成机制仍使用环流剖面。
@@ -3039,23 +3201,23 @@ function applyMechanismVisual() {
 
 // 环节内部的教学动画时间仅表示观察顺序，不表示真实大气时间。
 const SUBTROPICAL_DEMO_DURATION = 12;
-const SINGLE_DEMO_DURATION = 10;
+const SINGLE_DEMO_DURATION = 16;
 function resetSingleDemo() {
+  releaseSingleCamera();SINGLE_CIRCULATION.cameraSuppressed=false;
   STATE.singleDemo = { elapsed: 0, running: false, complete: false, node:0 };
+  SINGLE_CIRCULATION.ambientElapsed=0;SINGLE_CIRCULATION.motionTime=0;SINGLE_CIRCULATION.freeView=false;sunRadiationPhase=0;document.getElementById('single-explanation')?.close();
   updateSingleDemoUI();
 }
 function playSingleDemo() {
-  if (STATE.singleDemo.complete) resetSingleDemo();
-  STATE.singleDemo.running = true;
+  document.getElementById('single-explanation')?.close();
+  STATE.singleDemo.running = !STATE.singleDemo.complete;
   STATE.playing = true;
   updateSingleDemoUI();
 }
 function getSingleDemoPhase() {
   const e = STATE.singleDemo.elapsed;
-  if (STATE.demoMode==='step') {
-    const index=STATE.singleDemo.node||0;
-    return {index,text:SINGLE_FLOW_STAGES[index].text};
-  }
+  if (e < SINGLE_SOLAR_ARRIVAL) return {index:0,text:'① 阳光抵达大气层'};
+  if (e < SINGLE_EQUATOR_HEAT_END) return {index:0,text:'① 赤道附近大气逐渐受热'};
   const index = Math.max(0,SINGLE_FLOW_STAGES.findIndex(s => e < s.until));
   const stageIndex = e >= SINGLE_DEMO_DURATION ? 3 : index;
   return {index:stageIndex,text:SINGLE_FLOW_STAGES[stageIndex].text};
@@ -3067,53 +3229,34 @@ function updateSingleDemoUI() {
   const button = document.getElementById('single-demo-play');
   if (status) status.textContent = singleNodeRevealed() ? (STATE.singleDemo.complete ? '完成：受热上升 → 高空输送 → 冷却下沉 → 近地面回流' : phase.text) : '先记录你的判断，再播放观察；本节点结论尚未显示。';
   if (progress) progress.value = STATE.singleDemo.elapsed;
-  if (button) button.textContent = STATE.singleDemo.running && STATE.playing ? '暂停' : STATE.singleDemo.complete ? '再次播放' : STATE.singleDemo.elapsed > 0 ? '继续过程' : '播放过程';
+  if (button) button.textContent = STATE.singleDemo.complete ? (singleAmbientRunning()?'暂停流动':'继续流动') : STATE.singleDemo.running && STATE.playing ? '暂停' : STATE.singleDemo.elapsed > 0 ? '继续过程' : '播放过程';
   updateDemoNodeControls('single');
   syncSinglePredictionControls();
-  verticalLabels.forEach(({obj, data}) => {
-    if (!obj.element) return;
-    if (data.lat === 0) obj.element.textContent = phase.index === 0 ? '赤道受热上升 ↑' : '赤道上升 ↑';
-    if (Math.abs(data.lat) === 90) obj.element.textContent = phase.index === 2 ? '极地冷却下沉 ↓' : (data.lat > 0 ? '北极下沉 ↓' : '南极下沉 ↓');
-    obj.element.style.transform = '';
-    obj.element.style.borderColor = 'rgba(136,204,255,0.6)';
-    obj.element.style.color = '#BFE8FF';
-    if (phase.index === 0 && data.lat === 0 || phase.index === 2 && Math.abs(data.lat) === 90) {
-      obj.element.style.borderColor = '#FFD166';
-      obj.element.style.color = '#FFE9A8';
-      obj.element.style.transform = 'scale(1.08)';
-    }
-  });
-  const range = SINGLE_FLOW_STAGES[phase.index];
-  ['singleNH', 'singleSH'].forEach(key => {
-    const cell = cellObjects[key];
-    if (!cell) return;
-    cell.arrows.forEach(a => {
-      const focused = !STATE.singleDemo.complete && a.phase >= range.start && a.phase < range.end;
-      const material = a.mesh.children[0]?.material;
-      if (material) {
-        material.opacity = focused ? .98 : (STATE.singleDemo.complete ? .95 : .25);
-        material.emissiveIntensity = focused ? .9 : .2;
-      }
-      a.mesh.scale.setScalar(focused ? 1.18 : .86);
-    });
-  });
+  updateSingleVisualUI();
 }
 function updateSingleDemo(dt) {
   const demo = STATE.singleDemo;
+  if(!demo.complete)SINGLE_CIRCULATION.ambientElapsed=0;
+  if(singleAmbientRunning())SINGLE_CIRCULATION.ambientElapsed+=Math.min(dt,.1)*STATE.speed;
   if (demo.running && STATE.playing) {
     advanceDemoNodeTime('single',dt);
   }
+  const index=getSingleDemoPhase().index;
+  if(demo.node!==index){demo.node=index;demo.answerShown=false;}
   updateSingleDemoUI();
 }
 function getMechanismDemoDuration() { return sequenceDuration(); }
 function resetMechanismDemo() {
   STATE.mechanismDemo = { elapsed: 0, running: false, complete: false, node:0 };
+  releaseSequenceCamera();
   CIRCULATION_SEQUENCE.ambientElapsed=0;CIRCULATION_SEQUENCE.ambientPaused=false;
+  CIRCULATION_SEQUENCE.cameraMode='overview';CIRCULATION_SEQUENCE.autoRidePending=true;CIRCULATION_SEQUENCE.cameraIntroStart=0;
 }
 function playMechanismDemo() {
   document.getElementById('sequence-explanation')?.close();
   CIRCULATION_SEQUENCE.ambientPaused=false;CIRCULATION_SEQUENCE.inspectedNote=null;
   if (STATE.mechanismDemo.complete) { updateMechanismDemoUI();return; }
+  if(sequenceElapsed()===0){CIRCULATION_SEQUENCE.cameraMode='overview';CIRCULATION_SEQUENCE.autoRidePending=true;CIRCULATION_SEQUENCE.cameraIntroStart=0;}
   STATE.mechanismDemo.running = true; STATE.playing = true;
   updateMechanismDemoUI();
 }
@@ -3275,7 +3418,7 @@ function getSunDiagnostics() {
       const shaftPoints=shaft.geometry.attributes.position;
       const shaftStart = shaft.localToWorld(new THREE.Vector3().fromBufferAttribute(shaftPoints,0).add(new THREE.Vector3().fromBufferAttribute(shaftPoints,1)).multiplyScalar(.5)).project(camera);
       const shaftEnd = shaft.localToWorld(new THREE.Vector3().fromBufferAttribute(shaftPoints,2).add(new THREE.Vector3().fromBufferAttribute(shaftPoints,3)).multiplyScalar(.5)).project(camera);
-      return { lat, radius: CONFIG.earth.atmosphereRadius + SUN_ARROW_RIM_MARGIN, distance: head.userData.targetDistance,
+      return { lat, radius: head.userData.targetRadius, distance: head.userData.targetDistance,
         radiation: radiation ? {enabled:radiation.enabled.value===1,phase:radiation.phase.value,count:radiation.count.value,solidLineVisible:line.visible,
           screenStart:[(shaftStart.x+1)*innerWidth/2,(1-shaftStart.y)*innerHeight/2],screenEnd:[(shaftEnd.x+1)*innerWidth/2,(1-shaftEnd.y)*innerHeight/2]} : null,
         tip: tip.toArray(), target: target.toArray(),
@@ -3332,7 +3475,9 @@ function getDiagnostics() {
 try {
   window.__threeCellDebug = {
     STATE, cellObjects, getDiagnostics, getSunDiagnostics, getSceneFraming, setMechanismStage, transitionToStep,
+    TEACHING_INTRO, showTeachingIntro, hideTeachingIntro, playTeachingIntro, setEarthSurfaceStyle,
     get cameraTarget(){return controls.target.clone();},
+    get gridGroup(){return gridGroup;},
     get mechanismGroups() { return mechanismGroups; },
     get mechanismLabels() { return mechanismLabels; },
     getSingleDropPosition, getThreeCellDropPosition,
@@ -3487,7 +3632,46 @@ try {
   };
 } catch (e) { /* 忽略 */ }
 
-/* ========== 引导模式通知（仅第一步使用：第二、三步直接进入动态演示，不弹模态框） ========== */
+/* ========== 第一、第二步播放前的教学提示 ========== */
+function showTeachingIntro(step) {
+  if (![0, 1].includes(step)) return;
+  const intro = document.getElementById('teaching-intro');
+  if (!intro) return;
+  const first = step === 0;
+  TEACHING_INTRO.step = step;
+  TEACHING_INTRO.open = true;
+  STATE.playing = false;
+  STATE.singleDemo.running = false;
+  STATE.mechanismDemo.running = false;
+  if (earthGroup) {
+    setEarthSurfaceStyle('smooth');
+    earthGroup.rotation.y = 0;
+  }
+  document.getElementById('teaching-intro-step').textContent = first ? '第一步 · 理想模型' : '第二步 · 加入地转偏向力';
+  intro.classList.add('is-compact');
+  intro.classList.toggle('is-first-step', first);
+  intro.classList.toggle('is-prompt-step', true);
+  document.getElementById('teaching-intro-title').textContent = first ? '假设地表均一、地球不自转' : '加入地转偏向力，单圈变三圈';
+  document.getElementById('teaching-intro-copy').textContent = first ? '预测：赤道与两极受热不同，空气分别怎样运动？' : '观察：北半球高空气流怎样从向北运动转为向东运动，并在30°附近下沉？';
+  document.getElementById('teaching-intro-play').textContent = '开始播放';
+  intro.classList.add('show');
+}
+
+function hideTeachingIntro() {
+  const intro = document.getElementById('teaching-intro');
+  if (!intro) return;
+  intro.classList.remove('show');
+  TEACHING_INTRO.open = false;
+  TEACHING_INTRO.step = null;
+}
+
+function playTeachingIntro() {
+  const step = TEACHING_INTRO.step;
+  hideTeachingIntro();
+  if (step === 0) playSingleDemo();
+  else if (step === 1) playMechanismDemo();
+}
+
 function showStepNotification(step) {
   const info = STEP_INFO[step];
   if (!info) return;
@@ -3514,7 +3698,7 @@ function getSceneFraming() {
   const diagram = document.getElementById('diagram-panel').getBoundingClientRect();
   const left = uiHidden ? 16 : Math.min(panel.right + 20, w * .36);
   let right = !uiHidden && STATE.showDiagram && w > 768 ? diagram.width + 20 : 24;
-  const top = uiHidden ? 20 : w <= 600 && (STATE.step === 1 || STATE.step === 2) ? 100 : 58;
+  const top = uiHidden ? 20 : w <= 600 && STATE.step <= 2 ? 100 : 58;
   let bottom = uiHidden ? h - 20 : control.top - 16;
   const compactPanel = !uiHidden && w <= 600;
   if (compactPanel) bottom = Math.min(bottom, panel.top - 12);
@@ -3525,8 +3709,9 @@ function getSceneFraming() {
   const availableW = Math.max(160, w - sceneLeft - right), availableH = Math.max(140, bottom - top);
   const earthCentered = STATE.step === 1 || STATE.step === 2;
   // 隐去太阳后，地球使用整个可用区；保留大气层外的环流与标签边距。
-  const tangent = Math.tan(degToRad(camera.fov / 2)) * Math.min(availableW, availableH) / h * (earthCentered ? .96 : .78);
-  const distance = (STATE.step===1?7.2:STATE.step===3?5.7:CONFIG.earth.atmosphereRadius + 1.1) / Math.sin(Math.atan(tangent));
+  const singleNarrow=STATE.step===0&&!compactPanel&&availableW<600;
+  const tangent = Math.tan(degToRad(camera.fov / 2)) * Math.min(availableW, availableH) / h * (earthCentered ? .96 : STATE.step===0&&!singleNarrow ? .85 : .78);
+  const distance = (singleNarrow?CONFIG.earth.atmosphereRadius+1.1:STATE.step<=1?7.2:STATE.step===3?5.7:CONFIG.earth.atmosphereRadius + 1.1) / Math.sin(Math.atan(tangent));
   return { w, h, left:sceneLeft, availableW, availableH, top, centerX: sceneLeft + availableW * (0.5 + (earthCentered || STATE.step===3 ? 0 : EARTH_SCREEN_BIAS)), centerY: top + availableH / 2, distance };
 }
 function frameScene(fitDistance = false) {
@@ -3545,6 +3730,7 @@ function frameScene(fitDistance = false) {
 let viewAnimation = 0;
 function setView(view) {
   if (STATE.viewLocked) return;
+  if(STATE.step===0){releaseSingleCamera(true);SINGLE_CIRCULATION.freeView=false;SINGLE_CIRCULATION.cameraSuppressed=STATE.singleDemo.elapsed>0;}
   if(STATE.step===1&&view==='reset'){
     const seq=CIRCULATION_SEQUENCE;
     releaseSequenceCamera(true);seq.cameraMode='overview';seq.freeView=false;
@@ -3953,11 +4139,12 @@ function presetGuided() {
   document.getElementById('custom-params').style.display = 'none';
   transitionToStep(0);
   setView('side');
-  STATE.showGrid = true; STATE.showParticles = true; STATE.showPaths = true; STATE.showPressure = false;
+  STATE.showGrid = true; STATE.showParticles = true; STATE.showPaths = true; STATE.showPressure = true;
   applyToggleStates();
   if (STATE.showDiagram) toggleDiagramPanel(false);
   hideKnowledge();
   showDemoOverlay('引导模式', '步骤0：单圈环流（无偏转）。侧视视角，粒子与轨迹开启。', 3500);
+  if (STATE.step === 0) showTeachingIntro(0);
 }
 
 // 预设状态2：自定义探索（步骤1，斜视，全部显示，偏转 12°）
@@ -4020,7 +4207,7 @@ function runDemoSequence() {
   setView('side');
   STATE.mechanismStage = 0; STATE.mechanismRevealed = [false,false,false,false];
   transitionToStep(1);
-  showDemoOverlay('连续形成过程', '点击播放连续观察四个形成环节；可随时暂停并查看当前解释，也可拖动进度或从头重播。', 2500);
+  showDemoOverlay('连续过程', '点击播放连续观察过程；可随时暂停并查看当前解释，也可拖动进度或从头重播。', 2500);
 }
 
 // 课堂实录视频弹窗
@@ -4099,7 +4286,7 @@ function resetToInitial() {
   document.getElementById('btn-mode').textContent = '引导模式';
   document.getElementById('custom-params').style.display = 'none';
   STATE.showGrid = true; STATE.showParticles = true; STATE.showPaths = true;
-  STATE.showPressure = false; STATE.showLabels = true; STATE.showLegend = true;
+  STATE.showPressure = true; STATE.showLabels = true; STATE.showLegend = true;
   applyToggleStates();
   document.getElementById('legend').style.display = 'block';
   document.getElementById('legend').style.removeProperty('left');
@@ -4263,17 +4450,20 @@ function bindControls() {
     document.getElementById('custom-params').style.display = 'flex';
   });
 
+  document.getElementById('teaching-intro-play').addEventListener('click', playTeachingIntro);
+
   // 欢迎弹窗
   document.getElementById('btn-start-guided').addEventListener('click', () => {
     document.getElementById('welcome-modal').classList.remove('show');
     STATE.mode = 'guided';
-    setTimeout(() => showStepNotification(0), 500);
+    showTeachingIntro(0);
   });
   document.getElementById('btn-start-free').addEventListener('click', () => {
     document.getElementById('welcome-modal').classList.remove('show');
     STATE.mode = 'custom';
     document.getElementById('btn-mode').textContent = '自定义模式';
     document.getElementById('custom-params').style.display = 'flex';
+    showTeachingIntro(0);
   });
 
   // 教师控制
@@ -4407,10 +4597,14 @@ function animate() {
     return;
   }
 
-  // 第一步假设地球不自转：不转纹理；拖动相机仅改变观察角度。
+  // 第一步始终是无自转的理想模型；完成后的气流可以继续流动，但地球
+  // 仍保持静止。第二步只有点击播放后才启动自转。
   if (earthGroup && (STATE.playing || sequenceAmbientRunning()) && STATE.step > 0 && STATE.step < 3) {
-    earthGroup.rotation.y += STATE.earthRotationSpeed;
+    const multiplier=STATE.step===1?SECOND_STEP_ROTATION_MULTIPLIER:1;
+    earthGroup.rotation.y += STATE.earthRotationSpeed * multiplier * Math.min(dt,.1) * 60 * STATE.speed;
   }
+  // 经纬网格独立于地球网格组创建，但必须共享同一自转角，才能贴在球面上。
+  if (earthGroup && gridGroup) gridGroup.rotation.y = earthGroup.rotation.y;
 
   syncLabelAnchorTransform();
   // 环流剖面的屏幕锚定：跟随相机方位 → 环流圈始终停在地球屏幕左侧（与三列标签同侧对齐）
@@ -4504,13 +4698,20 @@ function animate() {
     }
   }
 
-  if(!CIRCULATION_SEQUENCE.cameraActive)controls.update();
+  if(!CIRCULATION_SEQUENCE.cameraActive&&!SINGLE_CIRCULATION.cameraActive)controls.update();
   updateSequenceCamera();
-  if(STATE.step===0)applySinglePredictionVisual();
+  if(STATE.step===0 || STATE.step===1){
+    // Keep the single-cell model synchronized on the exact handoff frame;
+    // after the twelve-second morph it must be hidden and restored cleanly.
+    if(STATE.step===0 || (typeof secondStepSingleVisible==='function' && secondStepSingleVisible()))applySinglePredictionVisual(dt);
+    else if(typeof syncSingleCirculation==='function')syncSingleCirculation();
+    updateSunScreenPosition();updateSunArrowTargets();
+  }
   syncBridgeHighlight();
   renderer.render(scene, camera);
   labelRenderer.render(scene, camera);
   updateSequenceAnnotations();
+  updateSingleCirculationAnnotations();
 
   // 图示回归面板：高亮闪烁时持续重绘 Canvas
   if (STATE.showDiagram && (diagramHighlightId || diagramHighlightTimer)) {

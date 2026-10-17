@@ -69,7 +69,7 @@ try{
  const fast=await ev('window.__threeCellDebug.getSunDiagnostics().arrowTargets.filter(a=>a.radiation).map(a=>a.radiation.phase)');
  check(fast.every((phase,i)=>((phase-phasePaused[i]+1)%1/fastDuration)/normalRate>1.6&&((phase-phasePaused[i]+1)%1/fastDuration)/normalRate<2.4),'速度调节同步作用于辐射流动');
  await ev('window.__threeCellDebug.transitionToStep(1)');await sleep(150);
- check((await ev('window.__threeCellDebug.getSunDiagnostics().arrowTargets')).filter(a=>a.radiation).every(a=>!a.radiation.enabled&&a.radiation.solidLineVisible),'切入三圈机制后恢复原箭杆样式');
+ check((await ev('window.__threeCellDebug.getSunDiagnostics().arrowTargets')).filter(a=>a.radiation).every(a=>!a.radiation.enabled&&!a.radiation.solidLineVisible),'切入三圈机制后隐藏太阳射线并停用虚线');
  await ev('window.__threeCellDebug.transitionToStep(0)');await sleep(150);await click('#single-demo-play');await sleep(120);await click('#single-demo-play');
  const localPaused=await ev('window.__threeCellDebug.getSunDiagnostics().arrowTargets.filter(a=>a.radiation).map(a=>a.radiation.phase)');await sleep(180);
  check(JSON.stringify(localPaused)===JSON.stringify(await ev('window.__threeCellDebug.getSunDiagnostics().arrowTargets.filter(a=>a.radiation).map(a=>a.radiation.phase)')),'单圈局部暂停同时冻结辐射流动');

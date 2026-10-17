@@ -14,12 +14,6 @@
 #classroom-task{font-size:12px;line-height:1.6;color:#c9deec;margin:4px 0 8px;}
 #classroom-lesson-route{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:8px 16px;border-top:1px solid #405766;flex-shrink:0;}
 #classroom-lesson-task{flex:1;min-width:180px;font-size:13px;color:#c9deec;}
-.teaching-extra{font-size:12px;line-height:1.7;border-top:1px solid #405766;padding-top:8px;margin-top:10px;}
-.teaching-extra summary{color:#aac9df;cursor:pointer;margin-bottom:8px;}
-.teaching-extra>.btn{margin:4px 0;}
-.teaching-focus-toggle{display:flex;align-items:center;gap:6px;font-size:12px;padding:5px 0 8px;color:#c9deec;}
-.teaching-focus-toggle input{accent-color:#89cfff;width:16px;height:16px;}
-.teaching-focus-toggle .btn{margin-left:auto;font-size:11px;}
 #step-demo-controls{overflow:auto;max-height:52vh;min-height:0;}
 #step-demo-controls .formation-controls{margin:5px 0;}
 #step-demo-controls .formation-answer{max-height:100px;overflow:auto;}
@@ -30,7 +24,7 @@ body.classroom-route-active #classroom-task{display:none;}
 body.classroom-route-active #legend{display:none;}
 body.classroom-route-active .model-note{font-size:12px;}
 @media(max-height:800px){#step-demo-controls{max-height:43vh;}#classroom-route{padding:5px 10px;}.classroom-route-head .btn{min-height:28px;padding:3px 6px;}#classroom-route label{margin:4px 0;}}
-@media(max-width:600px){#step-demo-controls{max-height:24vh!important;}#classroom-route{padding:4px 8px;}.classroom-route-head{display:none;}#classroom-route label{margin:2px 0;}.classroom-route-actions .btn{min-height:28px;padding:3px 6px;}#classroom-lesson-task{flex-basis:100%;font-size:11px;}#classroom-lesson-route{padding:5px 8px;gap:5px;}.teaching-focus-toggle{font-size:11px;}#lesson-entry{left:8px;right:8px;top:59px;justify-content:flex-end;}#lesson-entry .btn{padding:4px 7px;font-size:11px;}body.classroom-route-active #step-panel{max-height:48vh;}}
+@media(max-width:600px){#step-demo-controls{max-height:24vh!important;}#classroom-route{padding:4px 8px;}.classroom-route-head{display:none;}#classroom-route label{margin:2px 0;}.classroom-route-actions .btn{min-height:28px;padding:3px 6px;}#classroom-lesson-task{flex-basis:100%;font-size:11px;}#classroom-lesson-route{padding:5px 8px;gap:5px;}#lesson-entry{left:8px;right:8px;top:59px;justify-content:flex-end;}#lesson-entry .btn{padding:4px 7px;font-size:11px;}body.classroom-route-active #step-panel{max-height:48vh;}}
 /* Shared fixed question and node controls for all globe/map teaching stages. */
 #step-core-question{padding:0 12px;flex-shrink:0;max-height:112px;overflow:auto;}
 #step-core-question .mechanism-question{font-size:12px;margin:6px 0;padding:8px;}
@@ -50,7 +44,6 @@ body.classroom-route-active .model-note{font-size:12px;}
 .teaching-settings .landsea-controls,.teaching-settings .mc-controls{margin-top:8px;}
 .teaching-settings>label{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-top:8px;}
 .teaching-settings select{background:#1c3045;color:#edf5fb;border:1px solid #5c829e;border-radius:5px;padding:5px;min-width:0;max-width:170px;}
-.teaching-extra[open] .btn{display:inline-block;}
 body.classroom-route-active #legend{display:none!important;}
 @media(max-width:600px){#step-core-question{max-height:50px;}#step-core-question .mechanism-question{font-size:11px;padding:5px;margin:3px 0;}#step-node-dock{padding:5px 8px;gap:4px;}#step-node-dock .btn{font-size:11px;min-height:28px;padding:3px 5px;}#step-demo-controls{max-height:16vh!important;}body.landsea-active #step-panel,body.classroom-route-active #step-panel{max-height:47vh;}#step-panel .sp-head{padding:6px 10px;}#step-panel .sp-head h3{font-size:13px;}#mechanism-navigation{padding:4px 8px;flex-wrap:nowrap;}#mechanism-navigation .btn{font-size:11px;padding:3px 5px;min-height:28px;}#classroom-route .classroom-route-actions{display:flex;}#step-panel .formation-status{font-size:11px;line-height:1.4;}}
 @media(max-width:600px){body.landsea-active #step-demo-controls,body.monsoon-climate-active #step-demo-controls{flex-shrink:0;}#landsea-formation{bottom:calc(var(--controls-height,120px) + 47vh + 16px);}#monsoon-climate-stage{bottom:calc(var(--controls-height,120px) + 47vh + 16px);}.teaching-settings>label{font-size:11px;}}

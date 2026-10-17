@@ -47,6 +47,7 @@ function lessonSeasonTarget(){return LESSON_STATE.season==='summer'?1:LESSON_STA
 function lessonWind(){return LESSON_WINDS.find(w=>w.id===LESSON_STATE.wind);}
 function lessonText(id,value){const el=document.getElementById(id);if(el&&el.textContent!==value)el.textContent=value;}
 function openLesson(tab=LESSON_STATE.tab){
+  hideTeachingIntro();
   if(!LESSON_STATE.open){
     lessonReturnFocus=document.activeElement;lessonPreviousPlaying=STATE.playing;STATE.playing=false;
     lessonBackgroundIds.forEach(id=>{const el=document.getElementById(id);if(el){lessonInertBefore.set(id,el.inert);el.inert=true;}});
