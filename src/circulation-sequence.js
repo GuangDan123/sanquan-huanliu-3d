@@ -23,6 +23,10 @@ const CIRCULATION_SEQUENCE = {
     {start:33,title:'三圈已闭合，对照中纬与高纬环流',text:'中纬与高纬高空回流各自连接本圈的上升支与下沉支，两圈同步闭合。低纬、中纬、高纬是三条独立闭合的路线，各自的气流持续保留，连接处首尾相接。最后的镜头依次观察两圈的路线，演示结束后南北半球完整三圈环流同时显示，可自由拖动观察。费雷尔环流为间接环流。光带为平均环流示意，并非一团空气实际走遍三圈。'}
   ]
 };
+// 第三步的简化环流示意：复用前两步的宽幅 ribbon 流带，不带入第二步过程标注。
+const THIRD_STEP_SCHEMATIC = {
+  root:null, flows:[], arrows:[], elapsed:0
+};
 function sequenceElapsed(){return CIRCULATION_SEQUENCE.starts[STATE.mechanismStage]+STATE.mechanismDemo.elapsed;}
 function sequenceDisplayedCurve(kind,h=1,e=sequenceElapsed()){
   const flow=CIRCULATION_SEQUENCE.flows.find(f=>f.kind===kind&&f.h===h);
@@ -307,14 +311,14 @@ function createCirculationAtmosphere(){
     #include <encodings_fragment>
     }`}));
 }
-function createAirflowVisual(root,{sample,start,end,color,kind,h,lon,endColor=color,curve=new SequenceCurve(sample),sourceCurve=curve,cells=CIRCULATION_SEQUENCE.cells,thermalProgress=sequenceThermalProgress,thermalPalette=null,ribbonWidth=sequenceRibbonWidth,streamline=false}){
+function createAirflowVisual(root,{sample,start,end,color,kind,h,lon,endColor=color,curve=new SequenceCurve(sample),sourceCurve=curve,cells=CIRCULATION_SEQUENCE.cells,thermalProgress=sequenceThermalProgress,thermalPalette=null,ribbonWidth=sequenceRibbonWidth,streamline=false,closed=false}){
     const group=new THREE.Group();root.add(group);
     // A translucent ribbon with feathered edges reads as air, rather than a solid pipe.
     const owners=Object.keys(cells).filter(cell=>cells[cell].includes(kind));
     const positions=[],centers=[],uvs=[],thermalMix=[],indices=[],across=8,segments=100;
     for(let i=0;i<=segments;i++){
       const t=i/segments,center=curve.getPoint(t),width=ribbonWidth(kind,t);
-      const side=curve.getTangent(t).cross(new THREE.Vector3(Math.cos(degToRad(80)),.15,-Math.sin(degToRad(80)))).normalize();
+      const side=curve.getTangent(t).cross(closed?new THREE.Vector3(0,0,1):new THREE.Vector3(Math.cos(degToRad(80)),.15,-Math.sin(degToRad(80)))).normalize();
       for(let j=0;j<=across;j++){const p=center.clone().addScaledVector(side,(j/across-.5)*width);if(p.length()<CONFIG.earth.radius+.045)p.setLength(CONFIG.earth.radius+.045);positions.push(p.x,p.y,p.z);centers.push(center.x,center.y,center.z);uvs.push(t,j/across);thermalMix.push(thermalProgress(kind,center,t,curve));}
     }
     for(let i=0;i<segments;i++)for(let j=0;j<across;j++){const a=i*(across+1)+j,b=a+across+1;indices.push(a,b,a+1,b,b+1,a+1);}
@@ -341,7 +345,7 @@ function createAirflowVisual(root,{sample,start,end,color,kind,h,lon,endColor=co
       #include <encodings_fragment>
       }`});
     const ribbon=new THREE.Mesh(ribbonGeometry,material);group.add(ribbon);
-    const filamentGeometry=new THREE.TubeGeometry(curve,100,.025,4,false),filamentColors=[];
+    const filamentGeometry=new THREE.TubeGeometry(curve,100,.025,4,closed),filamentColors=[];
     for(let i=0;i<=100;i++){const t=i/100,mix=thermalProgress(kind,curve.getPoint(t),t,curve),index=Math.min(2,Math.floor(mix*3)),c=palette?palette[index].clone().lerp(palette[index+1],mix*3-index):new THREE.Color(color).lerp(new THREE.Color(endColor),mix);for(let j=0;j<=4;j++)filamentColors.push(c.r,c.g,c.b);}
     filamentGeometry.setAttribute('color',new THREE.Float32BufferAttribute(filamentColors,3));
     const filament=new THREE.Mesh(filamentGeometry,new THREE.MeshBasicMaterial({vertexColors:true,transparent:true,opacity:.8,depthWrite:false}));group.add(filament);
@@ -350,6 +354,176 @@ function createAirflowVisual(root,{sample,start,end,color,kind,h,lon,endColor=co
     geometry.setAttribute('color',new THREE.Float32BufferAttribute(new Float32Array(42*3),3));
     const particles=new THREE.Points(geometry,new THREE.PointsMaterial({vertexColors:true,size:.10,map:particleTexture,transparent:true,opacity:.24,depthWrite:false,blending:THREE.AdditiveBlending}));particles.frustumCulled=false;group.add(particles);
     return {curve,sourceCurve,sourceColor:new THREE.Color(color),endColor:new THREE.Color(endColor),owners,group,tubes,ribbon,particles,start,end,kind,h,lon,ribbonWidth,thermalProgress,thermalPalette};
+}
+// Outline points follow the user's annotated 1370 x 1080 reference image.
+const THIRD_STEP_REFERENCE={
+  hadley:[
+    [[325,524],[258,529],[193,522],[179,508],[185,464],[202,423],[236,381],[274,351],[310,330],[350,334],[369,348],[366,388],[351,444],[340,497]],
+    [[325,580],[258,575],[193,582],[179,596],[185,640],[202,681],[236,723],[274,753],[310,774],[350,770],[369,756],[366,716],[351,660],[340,607]]
+  ],
+  ferrel:[
+    [[362,319],[343,295],[344,259],[361,216],[390,174],[429,137],[470,118],[505,115],[520,120],[519,137],[500,198],[483,244],[438,284],[395,313]],
+    [[362,773],[343,797],[344,833],[361,876],[390,918],[429,955],[470,974],[505,977],[520,972],[519,955],[500,894],[483,848],[438,808],[395,779]]
+  ],
+  polar:[
+    [[535,229],[521,214],[531,177],[542,142],[559,107],[590,83],[633,64],[673,56],[708,58],[724,68],[732,91],[732,125],[725,153],[710,158],[697,163],[681,166],[665,171],[648,180],[631,190],[610,202],[589,212]],
+    [[535,863],[521,878],[531,915],[542,950],[559,985],[590,1009],[633,1028],[673,1036],[708,1034],[724,1024],[732,1001],[732,967],[725,939],[710,934],[697,929],[681,926],[665,921],[648,912],[631,902],[610,890],[589,880]]
+  ]
+};
+function thirdStepReferencePoint([px,py]){
+  // Reference coordinates are converted to a meridional section below.
+  const depth=3.2,scale=(18.674-depth)/1330;
+  return new THREE.Vector3((px-719)*scale,(546-py)*scale,depth);
+}
+function createThirdStepSchematic(){
+  const s=THIRD_STEP_SCHEMATIC,root=new THREE.Group();root.position.x=SCENE_OFFSET_X;root.visible=false;scene.add(root);s.root=root;
+  const defs=[
+    {name:'hadley',top:30,low:0,palette:[0xff5538,0xffb52e,0x83d5f2,0x2468d8],width:.58},
+    {name:'ferrel',top:60,low:30,palette:[0xff9848,0xffd05a,0x72c5ed,0x315fc4],width:.52},
+    {name:'polar',top:90,low:60,palette:[0x68c9ff,0x379be8,0x6579df,0x7855ce],width:.46}
+  ];
+  for(const h of [1,-1])for(const d of defs){
+    const reference=THIRD_STEP_REFERENCE[d.name][h>0?0:1];
+    const spline=new THREE.CatmullRomCurve3(reference.map(thirdStepReferencePoint),true,'centripetal');
+    spline.arcLengthDivisions=1000;
+    const referenceSamples=spline.getPoints(256),radii=referenceSamples.map(p=>Math.hypot(p.x,p.y));
+    const inner=Math.min(...radii),outer=Math.max(...radii);
+    const curve=new SequenceCurve(t=>{
+      const point=spline.getPointAt(d.name==='ferrel'?1-t:t),radius=Math.hypot(point.x,point.y);
+      const sectionRadius=CONFIG.earth.radius+.16+(radius-inner)*.9;
+      point.x*=sectionRadius/radius;point.y*=sectionRadius/radius;point.z=0;
+      return point;
+    });
+    curve.getTangent=(t,target=new THREE.Vector3())=>target.copy(curve.getPoint((t+.0001)%1)).sub(curve.getPoint((t-.0001+1)%1)).normalize();
+    curve.arcLengthDivisions=1000;
+    const low=d.low+.9,high=d.top-.9;
+    const thermalProgress=(k,p,t)=>{
+      const diagramPoint=spline.getPointAt(d.name==='ferrel'?1-t:t);
+      const radius=Math.hypot(diagramPoint.x,diagramPoint.y);
+      const latitude=Math.abs(Math.atan2(diagramPoint.y,-diagramPoint.x)*180/Math.PI);
+      const altitude=clamp((radius-inner)/(outer-inner),0,1);
+      return clamp(.08+.64*altitude+.24*(latitude-low)/(high-low),0,1);
+    };
+    const flow=createAirflowVisual(root,{curve,start:0,end:1,color:d.palette[0],endColor:d.palette[3],kind:'schematic-'+d.name,h,lon:0,cells:{[d.name]:['schematic-'+d.name]},thermalProgress,thermalPalette:d.palette,ribbonWidth:()=>d.width,streamline:false,closed:true});
+    flow.reference={pixels:reference,spline};
+    flow.group.visible=true;flow.ribbon.material.uniforms.uOpacity.value=.5;flow.tubes[0].material.opacity=.9;
+    const arrows=[];
+    for(let i=0;i<2;i++){
+      const segments=20,geometry=new THREE.BufferGeometry(),indices=[];
+      geometry.setAttribute('position',new THREE.Float32BufferAttribute(new Float32Array((segments+1)*6),3));
+      for(let j=0;j<segments;j++){const a=j*2;indices.push(a,a+1,a+2,a+1,a+3,a+2);}
+      geometry.setIndex(indices);
+      const mesh=new THREE.Mesh(geometry,new THREE.MeshBasicMaterial({color:d.palette[0],transparent:true,opacity:.95,depthWrite:false,side:THREE.DoubleSide}));
+      mesh.frustumCulled=false;root.add(mesh);arrows.push({mesh,phase:i/3,segments});
+    }
+    s.flows.push(flow);s.arrows.push({flow,arrows,palette:d.palette.map(c=>new THREE.Color(c)),thermalProgress});
+  }
+  root.traverse(obj=>{if(!obj.material)return;const ms=Array.isArray(obj.material)?obj.material:[obj.material];ms.forEach(m=>{m.depthTest=true;m.depthWrite=false;});obj.renderOrder=3;});
+  window.__threeStepSchematicDebug={schematic:s};
+}
+function updateThirdStepSchematic(dt){
+  const s=THIRD_STEP_SCHEMATIC;if(!s.root)return;
+  s.elapsed+=Math.min(dt,.1)*Math.max(STATE.speed||1,0.25);
+  s.flows.forEach(flow=>{flow.group.visible=s.root.visible&&STATE.showPaths;flow.ribbon.material.uniforms.uTime.value=s.elapsed*2.2;});
+  s.arrows.forEach(({flow,arrows,palette,thermalProgress})=>arrows.forEach(a=>{
+    a.phase=(a.phase+dt*.055*Math.max(STATE.speed||1,.25))%1;
+    const t=flow.curve.getUtoTmapping(a.phase),p=flow.curve.getPoint(t);
+    const scaled=thermalProgress(flow.kind,p,t,flow.curve)*3,index=Math.min(2,Math.floor(scaled)),color=palette[index].clone().lerp(palette[index+1],scaled-index);
+    // Bend the whole arrow along the loop, including its head at tight corners.
+    const positions=a.mesh.geometry.attributes.position,span=.34/flow.curve.getLength();
+    for(let j=0;j<=a.segments;j++){
+      const progress=j/a.segments,u=(a.phase-(1-progress)*span+1)%1;
+      const center=flow.curve.getPointAt(u),side=flow.curve.getTangentAt(u).cross(new THREE.Vector3(0,0,1)).normalize();
+      const halfWidth=progress<.4?.012:.08*(1-progress)/.6;
+      for(let k=0;k<2;k++){
+        const vertex=center.clone().addScaledVector(side,(k===0?-1:1)*halfWidth);
+        positions.setXYZ(j*2+k,vertex.x,vertex.y,vertex.z+.035);
+      }
+    }
+    positions.needsUpdate=true;
+    a.mesh.material.color.copy(color);a.mesh.visible=s.root.visible&&STATE.showPaths;
+  }));
+}
+function setThirdStepSchematicVisible(v){
+  if(!THIRD_STEP_SCHEMATIC.root)return;
+  THIRD_STEP_SCHEMATIC.root.visible=v;
+  if(v) updateThirdStepSchematic(0);
+}
+function faceThirdStepSchematic(){
+  const root=THIRD_STEP_SCHEMATIC.root;if(!root?.visible)return;
+  // Match the earlier steps: keep the section on the left meridian while
+  // preserving Earth's north/south axis and the camera's real perspective.
+  const az=Math.atan2(camera.position.z-earthGroup.position.z,camera.position.x-earthGroup.position.x);
+  root.rotation.set(0,Math.PI/2-az,0);
+  root.scale.setScalar(1);
+}
+window.__thirdStepSchematic={create:createThirdStepSchematic,setVisible:setThirdStepSchematicVisible,update:updateThirdStepSchematic,faceCamera:faceThirdStepSchematic};
+function layoutThirdStepBeltLabels(){
+  const items=[...pressureLabels.filter(l=>Math.abs(l.data.lat)>=60).map(l=>({obj:l.obj,lat:l.data.lat})),
+    ...windLabels.filter(l=>Math.abs(l.obj.userData.windLat)>=60).map(l=>({obj:l.obj,lat:l.obj.userData.windLat}))];
+  const state=layoutThirdStepBeltLabels.state||(layoutThirdStepBeltLabels.state={lines:new Map()});
+  if(STATE.step!==2){
+    items.forEach(({obj})=>{obj.element.style.translate='';obj.element.classList.remove('third-step-callout');});
+    if(state.layer)state.layer.hidden=true;
+    return;
+  }
+  if(!state.layer){
+    state.layer=document.createElement('div');state.layer.id='third-step-label-leaders';
+    state.layer.style.cssText='position:absolute;inset:0;pointer-events:none;z-index:1;overflow:hidden;';
+    labelRenderer.domElement.style.zIndex='2';
+    labelRenderer.domElement.before(state.layer);
+  }
+  state.layer.hidden=false;state.lines.forEach(line=>line.hidden=true);
+  const compact=innerWidth<=600,gap=compact?4:7,margin=compact?7:14;
+  const center=earthGroup.position.clone().project(camera),cx=(center.x+1)*innerWidth/2,cy=(1-center.y)*innerHeight/2;
+  const distance=camera.position.distanceTo(earthGroup.position),focal=innerHeight/(2*Math.tan(degToRad(camera.fov/2)))*camera.zoom;
+  const radius=focal*(CONFIG.earth.radius*1.005)/Math.sqrt(distance*distance-(CONFIG.earth.radius*1.005)**2);
+  const framing=getSceneFraming(),minY=framing.top,maxY=framing.top+framing.availableH;
+  const allLabels=[...latLabels,...pressureLabels,...windLabels];
+  const moving=new Set(items.map(item=>item.obj));
+  const obstacles=allLabels.filter(l=>l.obj.visible&&!moving.has(l.obj)).map(l=>l.obj.element.getBoundingClientRect());
+  for(const h of [1,-1]){
+    const group=items.filter(item=>item.lat*h>0&&item.obj.visible).sort((a,b)=>h*(Math.abs(b.lat)-Math.abs(a.lat)));
+    if(!group.length)continue;
+    const rows=group.map(item=>{
+      const el=item.obj.element;el.classList.add('third-step-callout');
+      const p=item.obj.getWorldPosition(new THREE.Vector3()).project(camera);
+      return {...item,el,x:(p.x+1)*innerWidth/2,y:(1-p.y)*innerHeight/2,width:el.offsetWidth,height:el.offsetHeight};
+    });
+    const width=Math.max(...rows.map(row=>row.width)),height=rows.reduce((sum,row)=>sum+row.height,0)+gap*(rows.length-1);
+    let top=clamp(rows.reduce((sum,row)=>sum+row.y,0)/rows.length-height/2,minY,maxY-height),positions;
+    for(let attempt=0;attempt<100;attempt++){
+      let y=top;
+      positions=rows.map(row=>{const position={...row,top:y};y+=row.height+gap;return position;});
+      let left=Math.max(cx+radius*.45,...positions.map(row=>{
+        const closestY=clamp(cy,row.top,row.top+row.height),dy=closestY-cy;
+        return cx+Math.sqrt(Math.max(0,radius*radius-dy*dy))+margin;
+      }));
+      const initialLeft=left;
+      for(let shift=0;shift<=obstacles.length;shift++){
+        const conflicts=positions.flatMap(row=>obstacles.filter(r=>left<r.right+3&&left+row.width>r.left-3&&row.top<r.bottom+3&&row.top+row.height>r.top-3));
+        if(!conflicts.length)break;
+        left=Math.max(...conflicts.map(r=>r.right+4));
+      }
+      if(left+width>innerWidth-8)left=initialLeft;
+      positions.forEach(row=>row.left=left);
+      const clear=left+width<=innerWidth-8&&positions.every(row=>!obstacles.some(r=>row.left<r.right+3&&row.left+row.width>r.left-3&&row.top<r.bottom+3&&row.top+row.height>r.top-3));
+      if(clear)break;
+      const next=top-h*2;
+      if(next<minY||next+height>maxY)break;
+      top=next;
+    }
+    positions.forEach(row=>{
+      const left=Math.min(row.left,innerWidth-row.width-8);
+      row.el.style.translate=`${(left+row.width/2-row.x).toFixed(2)}px ${(row.top+row.height/2-row.y).toFixed(2)}px`;
+      let line=state.lines.get(row.obj);
+      if(!line){line=document.createElement('div');line.className='third-step-label-leader';state.layer.append(line);state.lines.set(row.obj,line);}
+      const endY=row.top+row.height/2,dx=left-5-row.x,dy=endY-row.y;
+      line.hidden=false;line.style.left=row.x+'px';line.style.top=row.y+'px';
+      line.style.width=Math.hypot(dx,dy)+'px';line.style.transform=`rotate(${Math.atan2(dy,dx)}rad)`;
+      line.style.background=row.el.style.color||'#8bd3ef';
+    });
+  }
 }
 function createCirculationSequence(){
   const seq=CIRCULATION_SEQUENCE,root=new THREE.Group();root.position.x=SCENE_OFFSET_X;root.visible=false;scene.add(root);seq.root=root;
@@ -508,7 +682,7 @@ function updateSequenceUI(){
   document.querySelectorAll('[data-sequence-stage]').forEach(b=>b.setAttribute('aria-current',Number(b.dataset.sequenceStage)===STATE.mechanismStage?'step':'false'));
 }
 function syncCirculationSequence(){
-  const seq=CIRCULATION_SEQUENCE,active=STATE.step===1;document.body.classList.toggle('sequence-active',active);
+  const seq=CIRCULATION_SEQUENCE,active=STATE.step===1;document.body.classList.toggle('sequence-active',STATE.step===1);
   const atmosphere=earthGroup.userData.sequenceAtmosphere||[];
   if(seq.sceneStyled!==active){
     if(active){seq.atmosphereVisible=SINGLE_CIRCULATION.styled?[...SINGLE_CIRCULATION.atmosphereVisible]:atmosphere.map(m=>m.visible);atmosphere.forEach(m=>m.visible=false);STATE.showPressure=true;document.getElementById('tog-pressure').classList.add('active');}
@@ -526,7 +700,7 @@ function syncCirculationSequence(){
   if(gridGroup)gridGroup.visible=STATE.showGrid;
   latLabels.forEach(({obj})=>obj.visible=false);
   coriolisNodes.forEach(n=>n.group.visible=false);coriolisLabels.forEach(l=>l.obj.visible=false);showDeflectionIndicators(false);
-  pressureBeltMeshes.forEach(m=>m.visible=false);
+  if(STATE.step===1)pressureBeltMeshes.forEach(m=>m.visible=false);
   renderSequenceFlows();
 }
 function renderSequenceFlows(){
@@ -534,7 +708,7 @@ function renderSequenceFlows(){
   if(!seq.cameraActive&&!seq.freeView){const az=Math.atan2(camera.position.z,camera.position.x-SCENE_OFFSET_X);seq.root.rotation.y=-(az+degToRad(80));}
   seq.root.updateMatrixWorld(true);
   const explaining=!!document.getElementById('sequence-explanation')?.open;
-  const signature=[e,motionTime,STATE.showGrid,STATE.showPaths,STATE.showParticles,STATE.showPressure,STATE.showLabels,STATE.lowPerf,STATE.density,explaining,seq.cameraActive].join('|');
+  const signature=[STATE.step,e,motionTime,STATE.showGrid,STATE.showPaths,STATE.showParticles,STATE.showPressure,STATE.showLabels,STATE.lowPerf,STATE.density,explaining,seq.cameraActive].join('|');
   if(seq.lastSignature===signature){updateSequenceLabels(e);return;}seq.lastSignature=signature;
   for(const f of seq.flows){
     seq.activeCell=e<=23?'hadley':e<30?'ferrel':e<38?'polar':'ferrel';
@@ -580,6 +754,19 @@ function renderSequenceFlows(){
   seq.force.position.copy(pos);seq.force.setDirection(velocity.clone().cross(radial).normalize());seq.force.visible=!seq.cameraActive&&STATE.showPaths&&explaining&&e>4&&e<15;
   seq.reference.visible=false;
   updateSequenceLabels(e);
+  if(STATE.step===2){
+    seq.labels.forEach(({obj})=>obj.visible=false);
+    seq.bands.forEach(({mesh})=>mesh.visible=false);
+    seq.guides.forEach(({line})=>line.visible=false);
+    seq.fronts.forEach(({mesh})=>mesh.visible=false);
+    seq.pressureWaves.forEach(({mesh,word})=>{mesh.visible=false;word.hidden=true;});
+    [...seq.accumulations,seq.equatorAir].forEach(cloud=>{if(cloud?.group)cloud.group.visible=false;});
+    [...seq.ascentColumns,...seq.descentColumns].forEach(column=>{if(column?.group)column.group.visible=false;});
+    if(seq.parcel)seq.parcel.visible=false;
+    if(seq.velocity)seq.velocity.visible=false;
+    if(seq.force)seq.force.visible=false;
+    if(seq.annotationLayer)seq.annotationLayer.hidden=true;
+  }
 }
 function renderSequenceArrows(e,motionTime){
   // Use the fixed complete loop; growing reveal lengths must never redistribute arrows.

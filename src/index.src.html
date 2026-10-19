@@ -102,6 +102,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg-dark);font-
 .legend-dot{width:14px;height:14px;border-radius:50%;flex-shrink:0;}
 .flow-legend-item{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:12px;}
 #flow-legend{border-top:1px solid var(--panel-border);margin-top:10px;padding-top:10px;}
+#legend,#tog-legend{display:none!important;}
 
 /* ========== 知识卡片 ========== */
 #knowledge-card{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:7000;background:rgba(20,24,40,0.95);border:1px solid var(--panel-border);border-radius:16px;padding:28px 32px;max-width:460px;width:90%;box-shadow:var(--shadow);backdrop-filter:blur(10px);opacity:0;pointer-events:none;transition:opacity 0.3s;}
@@ -144,12 +145,20 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg-dark);font-
 .sp-body{padding:10px 16px 14px;overflow-y:auto;min-height:0;}
 #step-demo-controls{flex-shrink:0;padding:0 12px;}
 #step-demo-controls:empty{display:none;}
+#step-panel[data-step-view="3"] .sp-body{padding-top:8px;padding-bottom:10px;}
+.classroom-entry{width:100%;margin-top:8px;}
+#step-panel[data-step-view="3"] .classroom-entry{position:sticky;bottom:0;z-index:2;box-shadow:0 -8px 12px var(--panel-bg);}
+.season-shift-control{display:grid;gap:6px;margin:8px 0 10px;padding:8px 10px;border:1px solid var(--panel-border);border-radius:6px;}
+.season-shift-control span{font-size:14px;line-height:1.45;font-weight:700;color:var(--text);letter-spacing:.2px;}
+.season-shift-control .btn{width:100%;}
 #mechanism-explanation[hidden]{display:none;}
 .mechanism-question{padding:10px;border:1px solid var(--accent);border-radius:8px;line-height:1.7;margin:8px 0;}
 .mechanism-actions{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;}
 .mechanism-actions .btn{font-size:12px;padding:6px 9px;}
 #mechanism-navigation{padding:7px 12px;margin:0;flex-shrink:0;border-top:1px solid var(--panel-border);}
 #mechanism-navigation:empty{display:none;}
+#step-panel[data-step-view="3"] #mechanism-navigation{display:flex;gap:8px;}
+#step-panel[data-step-view="3"] #mechanism-navigation .btn{flex:1;}
 .model-note{font-size:11px;color:var(--text-dim);line-height:1.6;}
 .mechanism-demo{padding:8px 10px;border:1px solid var(--panel-border);border-radius:8px;margin:8px 0;}
 .mechanism-demo-status{font-size:12px;line-height:1.6;color:#FFE4AA;}
@@ -194,7 +203,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg-dark);font-
 /* ========== CSS2D标签样式 ========== */
 .lat-label{background:rgba(15,17,25,0.8);border:1px solid rgba(100,120,180,0.3);border-radius:6px;padding:3px 8px;font-size:11px;color:#E8E8EC;white-space:nowrap;pointer-events:auto;cursor:pointer;transition:background 0.2s;}
 .lat-label:hover{background:rgba(93,173,226,0.2);}
-.pressure-label{background:rgba(15,17,25,0.85);border:1px solid rgba(255,200,100,0.3);border-radius:6px;padding:3px 10px;font-size:11px;color:#F5D76E;white-space:nowrap;pointer-events:auto;cursor:pointer;transition:background 0.2s;}
+.pressure-label{background:rgba(15,17,25,0.9);border:1px solid rgba(255,200,100,0.5);border-radius:6px;padding:4px 10px;font-size:13px;font-weight:700;color:#F5D76E;white-space:nowrap;pointer-events:auto;cursor:pointer;transition:background 0.2s;text-shadow:0 1px 2px rgba(0,0,0,.8);}
 .pressure-label:hover{background:rgba(245,215,110,0.15);}
 .coriolis-label{background:rgba(15,17,25,0.85);border:1px solid rgba(255,224,102,0.4);border-radius:6px;padding:2px 8px;font-size:11px;color:#FFE9A8;white-space:nowrap;pointer-events:none;}
 /* 第一步垂直运动标签（赤道上升/两极下沉）：放大醒目，贴合大气层外缘放置 */
@@ -636,7 +645,10 @@ const STATE = {
   stepTransitioning: false,
   pendingStep: null,        // 过渡期间挂起的跳转请求（过渡结束后立即执行）
   transitionCoriolis: null, // 过渡中的瞬时偏转量（粒子与管道几何同步），null=非过渡中
-  showDiagram: false       // 图示回归面板是否展开
+  showDiagram: false,      // 图示回归面板是否展开
+  seasonalShift: 0,
+  seasonalRunning: false,
+  seasonalElapsed: 0
 };
 
 // 播放前的两步教学说明；第二步播放时先静止展示完整单圈，再启动自转。
@@ -702,13 +714,7 @@ const STEP_PANEL = [
   },
   {
     tag: 'STEP 3 / 5', title: '三圈环流成型', color: '#FF6B35',
-    points: [
-      ['低纬环流 0°~30°', '赤道上升→30°下沉，热力<b>直接环流</b>（哈德莱）'],
-      ['中纬环流 30°~60°', '30°下沉→60°抬升，<b>间接环流</b>（费雷尔，方向与两侧相反）'],
-      ['高纬环流 60°~90°', '极地下沉→60°抬升，直接环流（极地环流）'],
-      ['七个气压带', '赤道低压 · 副热带高压 · 副极地低压 · 极地高压（南北对称分布）'],
-      ['六个风带', '信风带 · 盛行西风带 · 极地东风带（近地面风向偏转的结果）']
-    ]
+    points: []
   },
   {
     tag: 'STEP 4 / 5', title: '海陆分布与季风', color: '#7EE0D1', points: []
@@ -2066,8 +2072,8 @@ class CirculationCell {
     }
   }
 
-  update(dt, speed, coriolis) {
-    if (!STATE.playing) return;
+  update(dt, speed, coriolis, ambient = false) {
+    if (!STATE.playing && !ambient) return;
     // 累加流动时间，驱动管道条纹着色器（与粒子/箭头同步暂停）
     // 低性能模式下降低更新频率：隔帧更新
     this._flowTimeAccum = (this._flowTimeAccum || 0) + dt * speed;
@@ -2875,10 +2881,8 @@ function updateStepPanel(step) {
     if (step === 0) {
       body.insertAdjacentHTML('afterbegin', `<div class="mechanism-demo"><div id="single-demo-phase" class="mechanism-demo-status" aria-live="polite"></div><progress id="single-demo-progress" max="16" value="0" aria-label="单圈成因演示进度"></progress><div class="mechanism-actions"><button class="btn" id="single-demo-play">播放过程</button><button class="btn" id="single-demo-replay">从头重播</button></div></div>`);
     }
-    if (step !== 0) body.insertAdjacentHTML('beforeend', '<p class="model-note">教材理想模型 / 机制示意，非动力数值模拟；30°和60°为近似位置。</p>');
-    body.insertAdjacentHTML('beforeend',`<button class="btn btn-sm" id="step-related">${step===0?'先看气压差与水平风':'第四步：加入海陆分布'}</button>`);
-    document.getElementById('step-related').onclick=()=>step===0?openLesson('pressure'):transitionToStep(3);
-    if(step===2){body.insertAdjacentHTML('beforeend','<button class="btn btn-sm" id="step-season">探究气压带的季节移动</button>');document.getElementById('step-season').onclick=()=>openLesson('season');}
+    if (step === 1) body.insertAdjacentHTML('beforeend', '<p class="model-note">教材理想模型 / 机制示意，非动力数值模拟；30°和60°为近似位置。</p>');
+    if(step===0){body.insertAdjacentHTML('beforeend','<button class="btn btn-sm" id="step-related">先看气压差与水平风</button>');document.getElementById('step-related').onclick=()=>openLesson('pressure');}
     if (step === 0) {
       document.getElementById('single-demo-play').onclick = () => {
         if ((STATE.singleDemo.running && STATE.playing) || singleAmbientRunning()) { STATE.singleDemo.running = false; STATE.playing = false; }
@@ -2889,9 +2893,23 @@ function updateStepPanel(step) {
       updateSingleDemoUI();
     }
   }
+  if(step<=2){
+    const topic=step===0?'pressure':step===1?'wind':'season';
+    body.insertAdjacentHTML('beforeend',`<button class="btn classroom-entry" id="step-classroom-entry">课堂探究入口</button>`);
+    document.getElementById('step-classroom-entry').onclick=()=>openLesson(topic);
+  }
+  if(step===2){
+    navigation.innerHTML='<button class="btn btn-sm" id="step-back-second">第二步</button><button class="btn btn-sm" id="step-forward-fourth">第四步</button>';
+    document.getElementById('step-back-second').onclick=()=>transitionToStep(1);
+    document.getElementById('step-forward-fourth').onclick=()=>transitionToStep(3);
+    demoControls.insertAdjacentHTML('beforeend','<div class="season-shift-control"><span id="season-shift-status" aria-live="polite">春秋分附近 · 赤道附近</span><button class="btn btn-sm" id="season-shift-toggle" aria-pressed="false">播放季节移动</button></div>');
+    const seasonButton=document.getElementById('season-shift-toggle');
+    seasonButton.onclick=()=>{STATE.seasonalRunning=!STATE.seasonalRunning;updateSeasonShiftUI();};
+    updateSeasonShiftUI();
+  }
   const demoPanel = body.querySelector('.mechanism-demo');
   if (demoPanel) demoControls.appendChild(demoPanel);
-  if(step<3)body.insertAdjacentHTML('afterbegin',modelAssumptionsHTML(step===0?'single':step===1&&STATE.mechanismStage===0?'coriolis':'three'));
+  if(step<2)body.insertAdjacentHTML('afterbegin',modelAssumptionsHTML(step===0?'single':step===1&&STATE.mechanismStage===0?'coriolis':'three'));
   if (demoPanel && step === 0) {mountDemoNodes('single',demoPanel,true);mountSingleVisualControls(demoPanel);}
   mountClassroomControls(step,body,demoControls);
   if(step===1){const reveal=document.getElementById('mechanism-reveal'),wrapper=reveal.parentElement;document.getElementById('step-node-dock').append(reveal);wrapper.remove();}
@@ -2900,6 +2918,7 @@ function updateStepPanel(step) {
   document.getElementById('sp-progress').style.width = ((step + 1) / STEP_PANEL.length * 100) + '%';
   // 内容切换闪烁提示（强制重排以重新触发动画）
   const panel = document.getElementById('step-panel');
+  panel.dataset.stepView=String(step+1);
   panel.dataset.mechanismStage = step === 1 ? String(STATE.mechanismStage) : '';
   panel.classList.remove('sp-flash');
   void panel.offsetWidth;
@@ -2915,6 +2934,44 @@ const MORPH_STYLE = {
   polar:  { power: 1.4, gain: 1.00, floor: 0.92 },
   ferrel: { power: 2.6, gain: 0.85, floor: 0.80 }
 };
+
+function applySeasonalShift() {
+  const shift = degToRad(STATE.seasonalShift || 0);
+  const shiftGeometry = mesh => {
+    const geometry = mesh.geometry, position = geometry?.attributes?.position;
+    if (!position) return;
+    if (!mesh.userData.seasonBase) mesh.userData.seasonBase = Float32Array.from(position.array);
+    const base = mesh.userData.seasonBase, target = position.array;
+    for (let i=0;i<base.length;i+=3) {
+      const x=base[i], y=base[i+1], z=base[i+2], r=Math.hypot(x,y,z);
+      const lat=clamp(Math.asin(clamp(y/r,-1,1))+shift,degToRad(-89.5),degToRad(89.5)), lon=Math.atan2(z,x), ring=r*Math.cos(lat);
+      target[i]=ring*Math.cos(lon);target[i+1]=r*Math.sin(lat);target[i+2]=ring*Math.sin(lon);
+    }
+    position.needsUpdate=true;geometry.computeVertexNormals();
+  };
+  pressureBeltMeshes.forEach((mesh,index)=>{
+    shiftGeometry(mesh);
+    const zone=pressureBeltZones[index];if(zone)mesh.userData.seasonBaseZone ||= zone.slice();
+    if(zone&&mesh.userData.seasonBaseZone){zone[0]=mesh.userData.seasonBaseZone[0]+STATE.seasonalShift;zone[1]=mesh.userData.seasonBaseZone[1]+STATE.seasonalShift;}
+  });
+  windArrowMeshes.forEach(shiftGeometry);
+  pressureLabels.forEach(({obj,data},index)=>{
+    const base=data.anchorLat??data.lat;
+    obj.position.copy(beltAnchorPos(base+STATE.seasonalShift,(data.dLon||0)+16));
+    obj.userData.beltIndex=index;
+  });
+  windLabels.forEach(({obj})=>{
+    const lat=obj.userData.windLat;
+    if(Number.isFinite(lat)){obj.userData.windAnchor=windAnchorPos(lat+STATE.seasonalShift,-24);obj.position.copy(obj.userData.windAnchor);}
+  });
+}
+
+function updateSeasonShiftUI() {
+  const button=document.getElementById('season-shift-toggle');
+  if(button){button.textContent=STATE.seasonalRunning?'暂停季节移动':'播放季节移动';button.setAttribute('aria-pressed',String(STATE.seasonalRunning));}
+  const status=document.getElementById('season-shift-status');
+  if(status){const season=STATE.seasonalShift>1?'北半球夏季（6月） · 整体偏北':STATE.seasonalShift< -1?'北半球冬季（12月） · 整体偏南':'春秋分附近 · 赤道附近';status.textContent=season;}
+}
 
 let _lastSingleGradient = -1;
 function applyThreeCellMorph(m) {
@@ -2950,6 +3007,8 @@ function setStepVisual(step) {
   // 第一步无自转/无偏转；第二步手动机制环节；第三步三圈稳定态
   const coriolis = step >= 1 ? STATE.coriolisDeflection : 0;
   STATE.step = step;
+  if(step!==2){STATE.seasonalRunning=false;STATE.seasonalElapsed=0;STATE.seasonalShift=0;applySeasonalShift();}
+  else{STATE.seasonalElapsed=0;STATE.seasonalShift=0;applySeasonalShift();}
   if (step <= 1) setEarthSurfaceStyle('smooth');
   else setEarthSurfaceStyle('textured');
   if (step === 0 && earthGroup) earthGroup.rotation.y = 0;
@@ -3013,6 +3072,30 @@ function setStepVisual(step) {
   });
   pressureBeltMeshes.forEach(m => { m.visible = showP; });
   windArrowMeshes.forEach(a => { a.visible = showP; });
+  // 第三步三圈沿用地球尺寸，路径半径保持在地表与大气层外缘之间。
+  // 剖面通过相机方位锚定在地球左侧；缩放整组会把路径压入地球内部。
+  if(crossSectionRoot){
+    crossSectionRoot.visible = (step === 0);
+    crossSectionRoot.position.x = SCENE_OFFSET_X;
+    crossSectionRoot.scale.setScalar(1);
+    crossSectionRoot.traverse(obj => {
+      if (!obj.material) return;
+      const materials = Array.isArray(obj.material) ? obj.material : [obj.material];
+      materials.forEach(mat => { mat.depthTest = true; mat.depthWrite = false; });
+      obj.renderOrder = 2;
+    });
+  }
+
+  // 第三步使用与前两步相同的宽幅流带示意，三条闭合路线位于地球表面与大气层外缘之间。
+  if (step === 2) {
+    const schematic=window.__thirdStepSchematic;
+    if (schematic) {
+      if (!window.__threeStepSchematicDebug?.schematic?.root) schematic.create();
+      schematic.setVisible(true);
+    }
+  } else if (window.__thirdStepSchematic) {
+    window.__thirdStepSchematic.setVisible(false);
+  }
 
   if (step === 1) updateMechanismCurves();
   applyMechanismVisual();
@@ -3480,6 +3563,7 @@ try {
     get gridGroup(){return gridGroup;},
     get mechanismGroups() { return mechanismGroups; },
     get mechanismLabels() { return mechanismLabels; },
+    get threeCellGroups() { return threeCellGroups; },
     getSingleDropPosition, getThreeCellDropPosition,
     get coriolisGroup() { return coriolisGroup; },
     get coriolisNodes() { return coriolisNodes; },
@@ -3489,6 +3573,7 @@ try {
     get latLabels() { return latLabels; },
     get pressureLabels() { return pressureLabels; },
     get pressureBeltMeshes() { return pressureBeltMeshes; },
+    get windArrowMeshes() { return windArrowMeshes; },
     get windLabels() { return windLabels; },
     get verticalLabels() { return verticalLabels; },
     // 纬度标签当前的 z 分量（用于校验标签分置两侧、不互相遮挡）
@@ -3711,7 +3796,7 @@ function getSceneFraming() {
   // 隐去太阳后，地球使用整个可用区；保留大气层外的环流与标签边距。
   const singleNarrow=STATE.step===0&&!compactPanel&&availableW<600;
   const tangent = Math.tan(degToRad(camera.fov / 2)) * Math.min(availableW, availableH) / h * (earthCentered ? .96 : STATE.step===0&&!singleNarrow ? .85 : .78);
-  const distance = (singleNarrow?CONFIG.earth.atmosphereRadius+1.1:STATE.step<=1?7.2:STATE.step===3?5.7:CONFIG.earth.atmosphereRadius + 1.1) / Math.sin(Math.atan(tangent));
+  const distance = (singleNarrow?CONFIG.earth.atmosphereRadius+1.1:STATE.step<=2?6.5:STATE.step===3?5.7:CONFIG.earth.atmosphereRadius + 1.1) / Math.sin(Math.atan(tangent));
   return { w, h, left:sceneLeft, availableW, availableH, top, centerX: sceneLeft + availableW * (0.5 + (earthCentered || STATE.step===3 ? 0 : EARTH_SCREEN_BIAS)), centerY: top + availableH / 2, distance };
 }
 function frameScene(fitDistance = false) {
@@ -4591,15 +4676,21 @@ function animate() {
   requestAnimationFrame(animate);
   const dt = clock.getDelta();
   updateLessonAnimation(dt);
+  if(STATE.step===2&&STATE.seasonalRunning){
+    STATE.seasonalElapsed=(STATE.seasonalElapsed+Math.min(dt,.1))%16;
+    STATE.seasonalShift=8*Math.sin(STATE.seasonalElapsed*Math.PI*2/16);
+    applySeasonalShift();updateSeasonShiftUI();
+  }
   if (document.hidden) return;
   if (STATE.step === 4) {
     updateMonsoonClimateAnimation(dt);
     return;
   }
 
-  // 第一步始终是无自转的理想模型；完成后的气流可以继续流动，但地球
-  // 仍保持静止。第二步只有点击播放后才启动自转。
-  if (earthGroup && (STATE.playing || sequenceAmbientRunning()) && STATE.step > 0 && STATE.step < 3) {
+  // 第一步始终是无自转的理想模型；第三步进入稳定态后地球和三圈示意
+  // 持续运动，季节播放只负责气压带、风带的南北移动。
+  const thirdStepAmbient = STATE.step === 2;
+  if (earthGroup && (STATE.playing || sequenceAmbientRunning() || thirdStepAmbient) && STATE.step > 0 && STATE.step < 3) {
     const multiplier=STATE.step===1?SECOND_STEP_ROTATION_MULTIPLIER:1;
     earthGroup.rotation.y += STATE.earthRotationSpeed * multiplier * Math.min(dt,.1) * 60 * STATE.speed;
   }
@@ -4609,6 +4700,7 @@ function animate() {
   syncLabelAnchorTransform();
   // 环流剖面的屏幕锚定：跟随相机方位 → 环流圈始终停在地球屏幕左侧（与三列标签同侧对齐）
   updateCrossSectionFacing();
+  if (STATE.step === 2) window.__thirdStepSchematic?.update(dt);
   updateSunScreenPosition();
   updateSunArrowTargets();
 
@@ -4678,22 +4770,23 @@ function animate() {
   });
   if (STATE.step === 0) updateSingleDemo(dt);
   if (STATE.step === 1) updateCirculationSequence(dt);
+  else if (CIRCULATION_SEQUENCE.root?.visible) syncCirculationSequence();
 
   // 更新环流圈粒子（按组可见性驱动：过渡期间两组同屏时都保持流动）
-  if (STATE.playing) {
+  if (STATE.playing || STATE.step === 2) {
     // 过渡中读取瞬时偏转量，保证粒子与管道几何形态同步
     // 第二步（step>=1）单圈带即应体现偏转，故阈值取 1 而非 2
     const coriolis = STATE.transitionCoriolis != null ? STATE.transitionCoriolis
       : (STATE.step >= 1 ? STATE.coriolisDeflection : 0);
     if (singleCellGroup && singleCellGroup.visible) {
       // 必须传入同一偏转量：此前硬编码 0，导致每帧把第二步的弯折重新拉直
-      cellObjects['singleNH']?.update(dt, STATE.speed, coriolis);
-      cellObjects['singleSH']?.update(dt, STATE.speed, coriolis);
+      cellObjects['singleNH']?.update(dt, STATE.speed, coriolis, STATE.step === 2);
+      cellObjects['singleSH']?.update(dt, STATE.speed, coriolis, STATE.step === 2);
     }
     if (Object.values(threeCellGroups).some(g => g.visible)) {
       ['hadley', 'ferrel', 'polar'].forEach(key => {
-        cellObjects[key + 'NH']?.update(dt, STATE.speed, coriolis);
-        cellObjects[key + 'SH']?.update(dt, STATE.speed, coriolis);
+        cellObjects[key + 'NH']?.update(dt, STATE.speed, coriolis, STATE.step === 2);
+        cellObjects[key + 'SH']?.update(dt, STATE.speed, coriolis, STATE.step === 2);
       });
     }
   }
@@ -4708,8 +4801,10 @@ function animate() {
     updateSunScreenPosition();updateSunArrowTargets();
   }
   syncBridgeHighlight();
+  window.__thirdStepSchematic?.faceCamera();
   renderer.render(scene, camera);
   labelRenderer.render(scene, camera);
+  layoutThirdStepBeltLabels();
   updateSequenceAnnotations();
   updateSingleCirculationAnnotations();
 
