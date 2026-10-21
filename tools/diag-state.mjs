@@ -1,3 +1,4 @@
+import { tmpProfile } from './lib/tmp-profile.mjs';
 // 快速定位：打印 STATE 关键值与直接调用路径函数的返回
 import { spawn } from 'node:child_process';
 import { mkdir, rm } from 'node:fs/promises';
@@ -11,7 +12,7 @@ await rm(join(outDir, 'profile'), { recursive: true, force: true });
 const PORT = 9416;
 const chrome = spawn('C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe', [
   '--headless=new', '--disable-gpu', '--no-first-run',
-  `--remote-debugging-port=${PORT}`, `--user-data-dir=${join(outDir, 'profile')}`,
+  `--remote-debugging-port=${PORT}`, `--user-data-dir=${tmpProfile()}`,
   '--window-size=1280,800', 'about:blank'
 ], { stdio: 'ignore' });
 const bail = async (c) => { try { chrome.kill('SIGKILL'); } catch {} await sleep(300); process.exit(c); };

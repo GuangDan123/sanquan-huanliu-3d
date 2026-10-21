@@ -1,3 +1,4 @@
+import { tmpProfile } from './lib/tmp-profile.mjs';
 // 环流剖面（环流圈）屏幕锚定验收：确认"重启后环流圈停在地球屏幕左侧"。
 //
 // 判据（在真实页面里用真实相机矩阵量测，非纸面推导）：
@@ -20,7 +21,7 @@ await mkdir(join(outDir, 'profile'), { recursive: true });
 const chrome = spawn(CHROME, [
   '--headless=new', '--disable-gpu', '--no-sandbox', '--no-first-run', '--no-default-browser-check',
   '--hide-scrollbars', '--force-device-scale-factor=1',
-  `--remote-debugging-port=${PORT}`, `--user-data-dir=${join(outDir, 'profile')}`,
+  `--remote-debugging-port=${PORT}`, `--user-data-dir=${tmpProfile()}`,
   '--window-size=1600,1000', 'about:blank'
 ], { stdio: 'ignore' });
 

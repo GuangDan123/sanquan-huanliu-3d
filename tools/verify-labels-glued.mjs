@@ -1,3 +1,4 @@
+import { tmpProfile } from './lib/tmp-profile.mjs';
 // 验证：气压带/风带标签锚定到地球模型（earthGroup 子对象）后，
 // 在 重置/俯视/侧视 三个视角下截图 —— 标签应随球面联动，不再停在屏幕固定位置。
 import { spawn } from 'node:child_process';
@@ -18,7 +19,7 @@ await mkdir(profile, { recursive: true });
 const chrome = spawn(CHROME, [
   '--headless=new', '--disable-gpu', '--no-sandbox', '--no-first-run', '--no-default-browser-check',
   '--hide-scrollbars', '--force-device-scale-factor=1',
-  `--remote-debugging-port=${PORT}`, `--user-data-dir=${profile}`,
+  `--remote-debugging-port=${PORT}`, `--user-data-dir=${tmpProfile()}`,
   '--window-size=1600,1000', 'about:blank'
 ], { stdio: 'ignore' });
 

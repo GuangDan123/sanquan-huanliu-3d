@@ -10,7 +10,7 @@ const check=(ok,name,evidence)=>{checks.push({ok,name,evidence});console.log(`${
 const seek=async t=>{await page.evaluate(t=>window.__singleCirculationDebug.seek(t),t);await page.waitForTimeout(100);};
 const snapshot=()=>page.evaluate(()=>{const m=window.__singleCirculationDebug.model,d=window.__threeCellDebug;return{camera:d.camera.position.toArray(),target:d.cameraTarget.toArray(),rotation:d.camera.quaternion.toArray(),cloud:Array.from(m.equatorAir.particles.geometry.attributes.position.array),rings:m.pressureWaves.map(w=>w.mesh.material.uniforms.uRadii.value),arrows:m.columns.flatMap(c=>c.arrows.map(a=>a.helper.position.toArray()))};});
 try{
-  await page.goto(pathToFileURL(resolve('三圈环流3D交互式教学平台.html')).href+'?state=guided');await page.waitForFunction(()=>window.__singleCirculationDebug&&document.getElementById('loading-screen').classList.contains('hidden'));await page.waitForTimeout(900);
+  await page.goto(pathToFileURL(resolve('气压带与风带3D交互式教学平台.html')).href+'?state=guided');await page.waitForFunction(()=>window.__singleCirculationDebug&&document.getElementById('loading-screen').classList.contains('hidden'));await page.waitForTimeout(900);
   check(await page.evaluate(()=>window.__singleCirculationDebug.model.pressureWaves.every(w=>!w.mesh.visible)),'Pressure remains hidden before the ascent');
   await page.locator('#single-demo-play').click();await page.waitForTimeout(450);
   check(await page.evaluate(()=>!window.__singleCirculationDebug.model.cameraActive&&window.__threeCellDebug.STATE.singleDemo.running),'The normal Play button starts with the solar arrival phase');await seek(1.6);

@@ -9,7 +9,7 @@ const browser=await chromium.launch({executablePath:'C:/Program Files/Google/Chr
 const page=await browser.newPage(),report={checks:[],runs:[],errors:[]};
 page.on('pageerror',e=>report.errors.push(String(e)));
 const check=(ok,name,data)=>{report.checks.push({ok,name,data});console.log(`${ok?'PASS':'FAIL'} ${name}${data?' '+JSON.stringify(data):''}`);assert(ok,name);};
-const url=pathToFileURL(resolve('三圈环流3D交互式教学平台.html')).href;
+const url=pathToFileURL(resolve('气压带与风带3D交互式教学平台.html')).href;
 
 async function samplePlayback(step){
   return page.evaluate(step=>new Promise(resolve=>{

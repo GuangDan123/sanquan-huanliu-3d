@@ -1,3 +1,4 @@
+import { tmpProfile } from './lib/tmp-profile.mjs';
 // 探针8：决定性实验 —— 单圈箭头组"隐藏后画面有差异"到底是
 //   (a) 材质 opacity=0 却仍在渲染（shader/状态异常），还是
 //   (b) 隐藏对象改变透明排序，扰动其他半透明物造成的假阳性。
@@ -24,7 +25,7 @@ await mkdir(profile, { recursive: true });
 const chrome = spawn(CHROME, [
   '--headless=new', '--disable-gpu', '--no-sandbox', '--no-first-run', '--no-default-browser-check',
   '--hide-scrollbars', '--force-device-scale-factor=1',
-  `--remote-debugging-port=${PORT}`, `--user-data-dir=${profile}`,
+  `--remote-debugging-port=${PORT}`, `--user-data-dir=${tmpProfile()}`,
   '--window-size=1600,1000', 'about:blank'
 ], { stdio: 'ignore' });
 

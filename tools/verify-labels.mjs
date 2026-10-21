@@ -1,3 +1,4 @@
+import { tmpProfile } from './lib/tmp-profile.mjs';
 // 验收脚本：标签是否落在地球"视轮廓外侧"（不遮挡地球与环流圈）
 // 判据：把标签的世界坐标投影到屏幕，其到屏幕中心的像素距离
 //       必须大于地球球体的投影半径（切线半径）。
@@ -17,7 +18,7 @@ await rm(profile, { recursive: true, force: true });
 
 const chrome = spawn(CHROME, [
   '--headless=new', '--disable-gpu', '--no-first-run', '--no-default-browser-check',
-  `--remote-debugging-port=${PORT}`, `--user-data-dir=${profile}`,
+  `--remote-debugging-port=${PORT}`, `--user-data-dir=${tmpProfile()}`,
   '--window-size=1600,1000', 'about:blank'
 ], { stdio: 'ignore' });
 const bail = async (c) => { try { chrome.kill('SIGKILL'); } catch {} await sleep(300); process.exit(c); };

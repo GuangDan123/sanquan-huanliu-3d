@@ -1,3 +1,4 @@
+import { tmpProfile } from './lib/tmp-profile.mjs';
 // 验收脚本：第二步"单圈环流 → 三圈环流"演变 + 标注归属正确性
 // 断言：
 //   1) 第一步不出现任何地转偏向力相关标注（强度指示/自转方向/弯折节点）
@@ -20,7 +21,7 @@ await rm(profile, { recursive: true, force: true });
 
 const chrome = spawn(CHROME, [
   '--headless=new', '--disable-gpu', '--no-first-run', '--no-default-browser-check',
-  `--remote-debugging-port=${PORT}`, `--user-data-dir=${profile}`,
+  `--remote-debugging-port=${PORT}`, `--user-data-dir=${tmpProfile()}`,
   '--window-size=1600,1000', 'about:blank'
 ], { stdio: 'ignore' });
 const bail = async (c) => { try { chrome.kill('SIGKILL'); } catch {} await sleep(300); process.exit(c); };

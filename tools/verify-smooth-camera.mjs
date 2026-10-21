@@ -9,7 +9,7 @@ const page=await browser.newPage({viewport:{width:1366,height:768}});page.on('pa
 const seek=async t=>{await page.evaluate(t=>window.__circulationSequenceDebug.seek(t),t);await page.waitForTimeout(100);};
 const pose=()=>page.evaluate(()=>({p:window.__threeCellDebug.camera.position.toArray(),q:window.__threeCellDebug.camera.quaternion.toArray(),fov:window.__threeCellDebug.camera.fov,near:window.__threeCellDebug.camera.near}));
 try{
- await page.goto(pathToFileURL(resolve('三圈环流3D交互式教学平台.html')).href+'?state=explore');await page.waitForFunction(()=>window.__circulationSequenceDebug&&document.getElementById('loading-screen').classList.contains('hidden'));
+ await page.goto(pathToFileURL(resolve('气压带与风带3D交互式教学平台.html')).href+'?state=explore');await page.waitForFunction(()=>window.__circulationSequenceDebug&&document.getElementById('loading-screen').classList.contains('hidden'));
  for(const [width,height] of [[1366,768],[390,844]]){
   await page.setViewportSize({width,height});await page.evaluate(()=>{window.__circulationSequenceDebug.seek(0);window.__circulationSequenceDebug.cameraMode('ride');});await page.waitForTimeout(200);
   check(await page.evaluate(()=>window.__circulationSequenceDebug.sequence.rideFrames?.length===1601&&!window.__circulationSequenceDebug.sequence.cameraActive),`${width}: camera path is prepared before playback begins`);

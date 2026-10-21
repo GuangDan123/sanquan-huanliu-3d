@@ -151,6 +151,11 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg-dark);font-
 .season-shift-control{display:grid;gap:6px;margin:8px 0 10px;padding:8px 10px;border:1px solid var(--panel-border);border-radius:6px;}
 .season-shift-control span{font-size:14px;line-height:1.45;font-weight:700;color:var(--text);letter-spacing:.2px;}
 .season-shift-control .btn{width:100%;}
+#season-globe-label{position:fixed;z-index:340;pointer-events:none;padding:8px 12px;border:1px solid #bdcee1;border-radius:8px;background:rgba(18,27,42,.94);color:#e7edf5;font-size:16px;font-weight:700;line-height:1.5;white-space:nowrap;box-shadow:0 3px 12px #0005;}
+#season-globe-label[hidden]{display:none;}
+#season-globe-label[data-season="summer"]{border-color:#ffbb65;color:#ffd79f;}
+#season-globe-label[data-season="winter"]{border-color:#83c6ff;color:#bde1ff;}
+@media(max-width:600px){#season-globe-label{font-size:12px;padding:5px 7px;}}
 #mechanism-explanation[hidden]{display:none;}
 .mechanism-question{padding:10px;border:1px solid var(--accent);border-radius:8px;line-height:1.7;margin:8px 0;}
 .mechanism-actions{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0;}
@@ -205,6 +210,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg-dark);font-
 .lat-label:hover{background:rgba(93,173,226,0.2);}
 .pressure-label{background:rgba(15,17,25,0.9);border:1px solid rgba(255,200,100,0.5);border-radius:6px;padding:4px 10px;font-size:13px;font-weight:700;color:#F5D76E;white-space:nowrap;pointer-events:auto;cursor:pointer;transition:background 0.2s;text-shadow:0 1px 2px rgba(0,0,0,.8);}
 .pressure-label:hover{background:rgba(245,215,110,0.15);}
+.pressure-label.third-step-callout{border-left:3px solid currentColor;border-radius:4px;padding:5px 9px;background:rgba(8,14,24,.96);font-size:12px;box-shadow:0 2px 8px rgba(0,0,0,.32);}
+.wind-belt-label{background:#fff;border:1px dashed #67717b;border-radius:4px;padding:4px 8px;font-size:12px;font-weight:700;color:#111;white-space:nowrap;pointer-events:auto;cursor:pointer;text-shadow:none;box-shadow:0 2px 8px rgba(0,0,0,.22);}
+.wind-belt-label:hover{background:#edf2f5;}
+.wind-belt-label.third-step-callout{border-radius:4px;padding:4px 8px;font-size:12px;}
 .coriolis-label{background:rgba(15,17,25,0.85);border:1px solid rgba(255,224,102,0.4);border-radius:6px;padding:2px 8px;font-size:11px;color:#FFE9A8;white-space:nowrap;pointer-events:none;}
 /* 第一步垂直运动标签（赤道上升/两极下沉）：放大醒目，贴合大气层外缘放置 */
 .vertical-label{background:rgba(15,25,40,0.92);border:2px solid rgba(136,204,255,0.6);border-radius:8px;padding:6px 14px;font-size:15px;font-weight:bold;color:#BFE8FF;white-space:nowrap;pointer-events:none;letter-spacing:1px;box-shadow:0 0 10px rgba(136,204,255,0.35);text-shadow:0 0 6px rgba(136,204,255,0.6);}
@@ -398,6 +407,7 @@ body.ui-hidden #teaching-intro{display:none !important;}
 
 <!-- 3D场景容器 -->
 <div id="scene-container"></div>
+<div id="season-globe-label" role="status" aria-live="polite" hidden></div>
 <canvas id="coriolis-comparison" width="584" height="420" hidden aria-label="两半球俯视对照：灰色经线参考，橙色运动轨迹，青色偏向方向"></canvas>
 <canvas id="polar-front" width="584" height="420" hidden aria-label="60度局部剖面：较暖空气沿较冷空气上方抬升"></canvas>
 
@@ -533,7 +543,7 @@ body.ui-hidden #teaching-intro{display:none !important;}
     <button class="btn btn-sm" data-view="top">俯视</button>
     <button class="btn btn-sm" data-view="side">侧视</button>
     <button class="btn btn-sm" data-view="front">平视</button>
-    <button class="btn btn-sm" id="reset-globe-view" data-view="reset" title="恢复地球初始视角与缩放">复位地球</button>
+    <button class="btn btn-sm" id="reset-globe-view" data-view="reset" title="恢复地球视角与默认缩放；第三步同时将气压带、风带复位至春秋分位置">复位地球</button>
   </div>
   <div class="ctrl-group">
     <label>步骤：</label>
@@ -713,7 +723,7 @@ const STEP_PANEL = [
     ]
   },
   {
-    tag: 'STEP 3 / 5', title: '三圈环流成型', color: '#FF6B35',
+    tag: 'STEP 3 / 5', title: '三圈环流与气压带风带的季节移动', color: '#FF6B35',
     points: []
   },
   {
@@ -1254,7 +1264,7 @@ function createEarth() {
   }
 }
 
-/* 教学前两步使用无大陆、无纹理的光滑球体，避免学生把地表细节当成环流机制。 */
+/* 教学前三步使用无大陆、无纹理的光滑球体，避免学生把地表细节当成环流机制。 */
 function setEarthSurfaceStyle(style = 'textured') {
   if (!earthGroup?.userData?.surfaceMesh) return;
   const mesh = earthGroup.userData.surfaceMesh;
@@ -2323,33 +2333,21 @@ function buildDeflectScale() {
     `<span class="ds-val">${d.pct}%</span></div>`
   ).join('');
 }
-/* 标签布局：三组各就各位
-   · 纬度标签（左列）：屏幕左侧弧，x = +LABEL_R_LAT·cos(lat)（位置保持不变）
-   · 气压带标签（中列）：**锚在模型的条状带上** —— 见下方 beltAnchorPos()
-   · 风带标签（右列）：**锚在球面上**（windAnchorPos），经度每帧跟随相机方位 */
-const LABEL_R_LAT = CONFIG.earth.radius + 0.6;           // 5.6：纬度标尺弧半径（同时也是高度基准）
+/* 纬度、气压带、风带标签按真实纬度贴在球面上，经度只随相机方位更新。 */
 const LABEL_R_VERTICAL = CONFIG.earth.atmosphereRadius;  // 垂直运动标签：贴合大气层外缘(7.0)
 
 /* 气压带色带半径：必须与 createPressureBelts() 用的半径一致，否则标签会浮在色带内外。 */
 const PRESSURE_BELT_R = CONFIG.earth.radius + 0.2;       // 5.2
+const PRESSURE_LABEL_DLON = -24;
+const WIND_LABEL_DLON = 16;
+const LAT_LABEL_DLON = 42;
 
 /* 色带纬度顺序：必须与 createPressureBelts() 里 beltData 的追加顺序严格一致。
    beltVisibility()/beltHitAt() 靠这张表把"第 i 条色带"映射回它的中心纬度。 */
 const PRESSURE_BELT_LATS = [0, 30, -30, 60, -60, 85, -85];
 
-/* 标签高度：按纬度标尺半径展开。必须与左侧纬度标签同公式，否则标签会被放大到错误纬度上。 */
-const labelY = (lat) => LABEL_R_LAT * Math.sin(degToRad(lat));
-
-/* 两极纬度标签的额外外推量（仅 |lat|≥80 生效）。
-   标尺弧在极点处 cos(±90°)=0 → 两极标签恰好落在弧的顶点/底点，也就是**屏幕竖直中轴**上；
-   而"极地高气压带"标签的锚点同样落在竖直中轴上（色带环的近侧点必在相机方位面内），
-   侧视/平视（相机恰在赤道面）时两者屏幕 y 只差 3~5px 而标签高 23px → 必然相叠。
-   把两极的纬度标签沿半径再外推 0.4，既分开两者，也不破坏"纬度越高越靠上下两端"的读法。 */
-const LABEL_R_POLE_EXTRA = 0.4;
-const latLabelRadius = (lat) => (Math.abs(lat) >= 80 ? LABEL_R_LAT + LABEL_R_POLE_EXTRA : LABEL_R_LAT);
-
 /* 气压带标签锚点：色带环（半径 PRESSURE_BELT_R、纬度 lat）上的一点。
-   标签层的朝向由 syncLabelAnchorTransform() 每帧设为"平面正对相机"（方位+俯仰），
+   标签层的朝向由 syncLabelAnchorTransform() 每帧仅跟随相机方位角，保留地轴方向，
    因此 dLon=0 时锚点投影在屏幕竖直中轴上（色带在球面正前方的位置），
    dLon 是该点沿纬圈向东/西的偏移（仅用于把整列标签向屏幕左侧错开，仍严格落在环上）。 */
 function beltAnchorPos(lat, dLon = 0) {
@@ -2362,12 +2360,9 @@ function beltAnchorPos(lat, dLon = 0) {
   );
 }
 
-/* 风带标签锚点半径：与纬度标尺同为 5.6。
-   若只高出球面 0.1（5.1），正常视角下锚点恰在地球轮廓切线附近，
-   背面剔除会把"贴着轮廓边缘"的标签误判为被地球挡住（实测东南信风带一度消失）；
-   抬到 5.6 让锚点越过切线，仅当标签真正转入地球背面时才隐藏。 */
+/* 风带标签贴近球面，背面的锚点由遮挡检测隐藏。 */
 const WIND_LABEL_R = CONFIG.earth.radius + 0.1;
-function windAnchorPos(lat, dLon = -24) {
+function windAnchorPos(lat, dLon = WIND_LABEL_DLON) {
   const phi = degToRad(lat), t = degToRad(dLon);
   return new THREE.Vector3(
     WIND_LABEL_R * Math.cos(phi) * Math.sin(t),
@@ -2531,21 +2526,8 @@ function createLabels() {
     { lat: -90,text: '90°S 南极',  cls: 'lat-label', key: 'pressure-90' }
   ];
 
-  /* 气压带标签：锚点落在各自色带环上（dLon = 沿纬圈的经度偏移，仍严格在环上）。
-     所有标签统一叠加同一 PRESSURE_LABEL_DLON：把标签从"色带正前方（屏幕正中）"
-     沿纬圈向**屏幕左侧**滑动一段（用户要求气压带标签整体左移一点），七档队形保持一致。
-     偏的只是锚点在环上的经度，锚点半径恒为 5.2、仍严格落在自己那条色带上。
-     正 dLon = 屏幕左（local +X），已由实测确认。
-     唯一特例：-30°/-60° 两档的锚点在本带内沿纬度微调（anchorLat=-28 / -59，
-     均在带体范围 ±2.5° 之内，锚点仍在自己色带上）。默认俯仰视角下南半球被垂直压缩，
-     -30°/-60° 标签中心仅差约 20px；此前靠 -30° 额外横移 20° 让位，但那会破坏
-     "七档统一队形"（用户指出）。实测（相机 (8,6,12)）：-30° 档锚点北移 1° 标签上移
-     约 2.7px、-60° 档锚点北移 1° 标签下移约 1.1px（底部透视反向），故两档各向本带
-     北缘微调即可把纵向间距从 20px 拉开到约 26px，横向偏移与其他档完全一致。
-     极档（±85°）纬圈极小，滑动量天然可忽略。 */
-  const PRESSURE_LABEL_DLON = 16;
-const LAT_LABEL_DLON = 42;
-const pressureData = [
+  // Southern pressure anchors stay within their bands to leave room for adjacent labels.
+  const pressureData = [
     { lat: 0,   text: '赤道低气压带 ↑',     cls: 'pressure-label', key: 'pressure-0' },
     { lat: 30,  text: '副热带高气压带 ↓',    cls: 'pressure-label', key: 'pressure-30' },
     { lat: -30, anchorLat: -28, text: '副热带高气压带 ↓',    cls: 'pressure-label', key: 'pressure-30' },
@@ -2562,9 +2544,7 @@ const pressureData = [
     el.textContent = d.text;
     el.addEventListener('click', () => showKnowledge(d.key));
     const obj = new CSS2DObject(el);
-    const radius = latLabelRadius(d.lat);
     obj.position.copy(beltAnchorPos(d.lat, LAT_LABEL_DLON));
-    obj.position.multiplyScalar(radius / PRESSURE_BELT_R);
     obj.userData.baseVisible = true; // 纬度标签默认可见
     labelGroup.add(obj);
     latLabels.push({ obj, data: d });
@@ -2631,20 +2611,9 @@ const pressureData = [
 /* ========== 近地面风带箭头阵列 ========== */
 // 创建贴合球面的扁平斜向弯箭头（沿真实风向：经度+纬度同时变化）
 function createFlatArrowOnSphere(latStart, lonStart, latEnd, lonEnd, R) {
-  const shaftW = 0.06;   // 箭杆半宽
-  const headW  = 0.20;   // 箭头根部半宽
+  const shaftW = 0.035;  // 箭杆半宽
+  const headW  = 0.13;   // 箭头根部半宽
   const headStart = 0.65; // 箭头起始位置(0~1)
-
-  // 箭头轮廓：[沿长度t, 垂直宽度w]
-  const outline = [
-    [0,         -shaftW],
-    [headStart, -shaftW],
-    [headStart, -headW],
-    [1,         0],
-    [headStart,  headW],
-    [headStart,  shaftW],
-    [0,          shaftW]
-  ];
 
   // 球面坐标转换（theta取负，让经度方向匹配地理东向：从北极看为逆时针）
   function spherePos(lat, lon) {
@@ -2672,21 +2641,23 @@ function createFlatArrowOnSphere(latStart, lonStart, latEnd, lonEnd, R) {
     return p2.sub(p1).normalize();
   }
 
-  const pts = [];
-  for (const [t, w] of outline) {
-    const center = centerAt(t);
-    const tangent = tangentAt(t);
-    const normal = center.clone().normalize();
-    // 垂直于切线、在球面切平面内的方向（用于箭头加宽）
-    const perp = new THREE.Vector3().crossVectors(normal, tangent).normalize();
-    pts.push(center.clone().add(perp.clone().multiplyScalar(w)));
-  }
-
-  // 扇形三角化
-  const positions = [];
-  for (const p of pts) positions.push(p.x, p.y, p.z);
-  const indices = [];
-  for (let i = 1; i < pts.length - 1; i++) indices.push(0, i, i + 1);
+  // Tessellate the rectangular shaft and triangular head separately. Long
+  // triangles across a concave outline cut through the globe and look hollow.
+  const positions=[],indices=[];
+  const addStrip=(start,end,segments,widthAt)=>{
+    const offset=positions.length/3;
+    for(let i=0;i<=segments;i++){
+      const u=i/segments,t=lerp(start,end,u),center=centerAt(t);
+      const perp=new THREE.Vector3().crossVectors(center.clone().normalize(),tangentAt(t)).normalize();
+      for(const side of [-1,1]){
+        const point=center.clone().addScaledVector(perp,side*widthAt(u)).setLength(R);
+        positions.push(point.x,point.y,point.z);
+      }
+      if(i<segments){const a=offset+i*2;indices.push(a,a+1,a+2,a+1,a+3,a+2);}
+    }
+  };
+  addStrip(0,headStart,16,()=>shaftW);
+  addStrip(headStart,1,12,u=>headW*(1-u));
 
   const geo = new THREE.BufferGeometry();
   geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
@@ -2701,12 +2672,12 @@ function createWindArrows() {
   // 东北信风→吹向西南, 东南信风→吹向西北, 盛行西风(北)→吹向东北, 盛行西风(南)→吹向东南
   // 极地东风(北)→吹向西南, 极地东风(南)→吹向西北
   const windBelts = [
-    { lat: 15,  dir_lon: -1, dir_lat: -1, color: 0xFF8800, name: '东北信风带' },
-    { lat: -15, dir_lon: -1, dir_lat:  1, color: 0xFF8800, name: '东南信风带' },
-    { lat: 45,  dir_lon:  1, dir_lat:  1, color: 0xFF8800, name: '盛行西风带' },
-    { lat: -45, dir_lon:  1, dir_lat: -1, color: 0xFF8800, name: '盛行西风带' },
-    { lat: 75,  dir_lon: -1, dir_lat: -1, color: 0xFF8800, name: '极地东风带' },
-    { lat: -75, dir_lon: -1, dir_lat:  1, color: 0xFF8800, name: '极地东风带' }
+    { lat: 15,  dir_lon: -1, dir_lat: -1, color: 0xffd447, name: '东北信风带' },
+    { lat: -15, dir_lon: -1, dir_lat:  1, color: 0xffd447, name: '东南信风带' },
+    { lat: 45,  dir_lon:  1, dir_lat:  1, color: 0x72d44a, name: '盛行西风带' },
+    { lat: -45, dir_lon:  1, dir_lat: -1, color: 0x72d44a, name: '盛行西风带' },
+    { lat: 75,  dir_lon: -1, dir_lat: -1, color: 0x329bff, name: '极地东风带' },
+    { lat: -75, dir_lon: -1, dir_lat:  1, color: 0x329bff, name: '极地东风带' }
   ];
 
   const R = CONFIG.earth.radius + 0.1; // 贴近地面
@@ -2715,12 +2686,11 @@ function createWindArrows() {
   const latSpan = 10;     // 每个箭头沿纬度方向的跨度(度)，形成斜度
 
   windBelts.forEach(belt => {
-    const mat = new THREE.MeshPhongMaterial({
+    const mat = new THREE.MeshBasicMaterial({
       color: belt.color,
       transparent: true,
-      opacity: 0.9,
-      emissive: belt.color,
-      emissiveIntensity: 0.5,
+      opacity: 1,
+      toneMapped: false,
       side: THREE.DoubleSide,
       depthWrite: false
     });
@@ -2745,21 +2715,18 @@ function createWindArrows() {
     // 在风带对应位置添加名称标签（挂在场景级标签层，不随地球自转，见 windLabelGroup）
     const windKey = Math.abs(belt.lat) <= 30 ? 'hadley' : (Math.abs(belt.lat) <= 60 ? 'ferrel' : 'polar');
     const el = document.createElement('div');
-    el.className = 'pressure-label';
-    el.style.borderColor = 'rgba(100,200,255,0.5)';
-    el.style.color = '#88DDFF';
-    el.style.fontSize = '13px';
+    el.className = 'wind-belt-label';
     el.textContent = belt.name;
     el.addEventListener('click', () => showKnowledge(windKey));
     const obj = new CSS2DObject(el);
     // 风带标签锚定在标签层的局部球面坐标：只随相机方位转到屏幕右侧，不随地球自转
     obj.userData.windLat = belt.lat;
-    obj.userData.windAnchor = windAnchorPos(belt.lat, -24);
+    obj.userData.windAnchor = windAnchorPos(belt.lat, WIND_LABEL_DLON);
     obj.position.copy(obj.userData.windAnchor);
     obj.visible = false;
     obj.userData.baseVisible = false; // 风带标签初始隐藏，第三步显示
     windLabelGroup.add(obj);
-    windLabels.push({ obj, data: { key: 'wind' } });
+    windLabels.push({ obj, data: { key: 'wind', lat: belt.lat } });
   });
 }
 
@@ -2935,8 +2902,14 @@ const MORPH_STYLE = {
   ferrel: { power: 2.6, gain: 0.85, floor: 0.80 }
 };
 
+// The tropical and temperate belts migrate together; poleward of 60° the
+// displacement tapers to zero at the fixed geographic poles.
+function seasonalLatitude(latitude) {
+  const weight=clamp((90-Math.abs(latitude))/30,0,1);
+  return latitude+(STATE.seasonalShift||0)*weight;
+}
+
 function applySeasonalShift() {
-  const shift = degToRad(STATE.seasonalShift || 0);
   const shiftGeometry = mesh => {
     const geometry = mesh.geometry, position = geometry?.attributes?.position;
     if (!position) return;
@@ -2944,7 +2917,7 @@ function applySeasonalShift() {
     const base = mesh.userData.seasonBase, target = position.array;
     for (let i=0;i<base.length;i+=3) {
       const x=base[i], y=base[i+1], z=base[i+2], r=Math.hypot(x,y,z);
-      const lat=clamp(Math.asin(clamp(y/r,-1,1))+shift,degToRad(-89.5),degToRad(89.5)), lon=Math.atan2(z,x), ring=r*Math.cos(lat);
+      const lat=degToRad(seasonalLatitude(Math.asin(clamp(y/r,-1,1))*180/Math.PI)), lon=Math.atan2(z,x), ring=r*Math.cos(lat);
       target[i]=ring*Math.cos(lon);target[i+1]=r*Math.sin(lat);target[i+2]=ring*Math.sin(lon);
     }
     position.needsUpdate=true;geometry.computeVertexNormals();
@@ -2952,18 +2925,19 @@ function applySeasonalShift() {
   pressureBeltMeshes.forEach((mesh,index)=>{
     shiftGeometry(mesh);
     const zone=pressureBeltZones[index];if(zone)mesh.userData.seasonBaseZone ||= zone.slice();
-    if(zone&&mesh.userData.seasonBaseZone){zone[0]=mesh.userData.seasonBaseZone[0]+STATE.seasonalShift;zone[1]=mesh.userData.seasonBaseZone[1]+STATE.seasonalShift;}
+    if(zone&&mesh.userData.seasonBaseZone){zone[0]=seasonalLatitude(mesh.userData.seasonBaseZone[0]);zone[1]=seasonalLatitude(mesh.userData.seasonBaseZone[1]);}
   });
   windArrowMeshes.forEach(shiftGeometry);
   pressureLabels.forEach(({obj,data},index)=>{
     const base=data.anchorLat??data.lat;
-    obj.position.copy(beltAnchorPos(base+STATE.seasonalShift,(data.dLon||0)+16));
+    obj.position.copy(beltAnchorPos(seasonalLatitude(base),(data.dLon||0)+PRESSURE_LABEL_DLON));
     obj.userData.beltIndex=index;
   });
   windLabels.forEach(({obj})=>{
     const lat=obj.userData.windLat;
-    if(Number.isFinite(lat)){obj.userData.windAnchor=windAnchorPos(lat+STATE.seasonalShift,-24);obj.position.copy(obj.userData.windAnchor);}
+    if(Number.isFinite(lat)){obj.userData.windAnchor=windAnchorPos(seasonalLatitude(lat),WIND_LABEL_DLON);obj.position.copy(obj.userData.windAnchor);}
   });
+  window.__thirdStepSchematic?.syncSeason();
 }
 
 function updateSeasonShiftUI() {
@@ -2971,6 +2945,46 @@ function updateSeasonShiftUI() {
   if(button){button.textContent=STATE.seasonalRunning?'暂停季节移动':'播放季节移动';button.setAttribute('aria-pressed',String(STATE.seasonalRunning));}
   const status=document.getElementById('season-shift-status');
   if(status){const season=STATE.seasonalShift>1?'北半球夏季（6月） · 整体偏北':STATE.seasonalShift< -1?'北半球冬季（12月） · 整体偏南':'春秋分附近 · 赤道附近';status.textContent=season;}
+}
+
+function resetSeasonalShift() {
+  STATE.seasonalRunning=false;
+  STATE.seasonalElapsed=0;
+  STATE.seasonalShift=0;
+  applySeasonalShift();
+  updateSeasonShiftUI();
+}
+
+function updateSeasonGlobeLabel() {
+  const label=document.getElementById('season-globe-label');
+  label.hidden=STATE.step!==2;
+  if(label.hidden)return;
+  const hemisphere=STATE.seasonalShift>1?1:STATE.seasonalShift< -1?-1:0;
+  const season=hemisphere>0?'summer':hemisphere<0?'winter':'equinox';
+  if(label.dataset.season!==season){
+    label.dataset.season=season;
+    label.textContent=hemisphere>0?'北半球夏季（6月）':hemisphere<0?'北半球冬季（12月）':'春秋分附近';
+  }
+  // Place the season outside the atmosphere, including the nearest label edge.
+  const center=earthGroup.position.clone().project(camera);
+  const right=new THREE.Vector3().setFromMatrixColumn(camera.matrixWorld,0);
+  const rim=earthGroup.position.clone().addScaledVector(right,CONFIG.earth.radius).project(camera);
+  const cx=(center.x+1)*innerWidth/2,cy=(1-center.y)*innerHeight/2;
+  const radius=Math.abs(rim.x-center.x)*innerWidth/2;
+  const framing=getSceneFraming(),width=label.offsetWidth,height=label.offsetHeight;
+  const y=clamp(cy-hemisphere*radius*.55-height/2,framing.top,Math.max(framing.top,framing.top+framing.availableH-height));
+  const shells=earthGroup.userData.sequenceAtmosphere||[];
+  const outerRadius=Math.max(CONFIG.earth.radius,...shells.filter(mesh=>mesh.visible).map(mesh=>mesh.geometry.parameters.radius*Math.max(mesh.scale.x,mesh.scale.y,mesh.scale.z)));
+  const distance=camera.position.distanceTo(earthGroup.position);
+  const focal=innerHeight/(2*Math.tan(degToRad(camera.fov/2)))*camera.zoom;
+  const outerPixels=focal*outerRadius/Math.sqrt(Math.max(1,distance*distance-outerRadius*outerRadius));
+  const nearestY=Math.max(0,Math.abs(y+height/2-cy)-height/2);
+  const outerEdge=cx+Math.sqrt(Math.max(0,outerPixels*outerPixels-nearestY*nearestY));
+  const compact=innerWidth<=600,gap=compact?16:24;
+  const rightEdge=compact?innerWidth-12:framing.left+framing.availableW;
+  const x=clamp(outerEdge+gap,framing.left,Math.max(framing.left,rightEdge-width));
+  label.style.left=`${x}px`;
+  label.style.top=`${y}px`;
 }
 
 let _lastSingleGradient = -1;
@@ -3009,7 +3023,7 @@ function setStepVisual(step) {
   STATE.step = step;
   if(step!==2){STATE.seasonalRunning=false;STATE.seasonalElapsed=0;STATE.seasonalShift=0;applySeasonalShift();}
   else{STATE.seasonalElapsed=0;STATE.seasonalShift=0;applySeasonalShift();}
-  if (step <= 1) setEarthSurfaceStyle('smooth');
+  if (step <= 2) setEarthSurfaceStyle('smooth');
   else setEarthSurfaceStyle('textured');
   if (step === 0 && earthGroup) earthGroup.rotation.y = 0;
   if(step!==0){syncSingleCirculation();restoreSingleGeometry();}
@@ -3786,6 +3800,8 @@ function getSceneFraming() {
   const top = uiHidden ? 20 : w <= 600 && STATE.step <= 2 ? 100 : 58;
   let bottom = uiHidden ? h - 20 : control.top - 16;
   const compactPanel = !uiHidden && w <= 600;
+  // Leave room beside the small-screen globe for all three season labels.
+  if(STATE.step===2&&w<=600)right=Math.max(right,172);
   if (compactPanel) bottom = Math.min(bottom, panel.top - 12);
   if (!uiHidden && STATE.showDiagram && w <= 768) bottom = Math.min(bottom, diagram.top - 12);
   const formationPanel=document.getElementById('landsea-formation');
@@ -3796,7 +3812,8 @@ function getSceneFraming() {
   // 隐去太阳后，地球使用整个可用区；保留大气层外的环流与标签边距。
   const singleNarrow=STATE.step===0&&!compactPanel&&availableW<600;
   const tangent = Math.tan(degToRad(camera.fov / 2)) * Math.min(availableW, availableH) / h * (earthCentered ? .96 : STATE.step===0&&!singleNarrow ? .85 : .78);
-  const distance = (singleNarrow?CONFIG.earth.atmosphereRadius+1.1:STATE.step<=2?6.5:STATE.step===3?5.7:CONFIG.earth.atmosphereRadius + 1.1) / Math.sin(Math.atan(tangent));
+  // 第三步高空流带沿大气层内缘展开，取景时保留高纬圈与标题栏之间的边距。
+  const distance = (singleNarrow?CONFIG.earth.atmosphereRadius+1.1:STATE.step===2?7.05:STATE.step<=1?6.5:STATE.step===3?5.7:CONFIG.earth.atmosphereRadius + 1.1) / Math.sin(Math.atan(tangent));
   return { w, h, left:sceneLeft, availableW, availableH, top, centerX: sceneLeft + availableW * (0.5 + (earthCentered || STATE.step===3 ? 0 : EARTH_SCREEN_BIAS)), centerY: top + availableH / 2, distance };
 }
 function frameScene(fitDistance = false) {
@@ -3815,6 +3832,11 @@ function frameScene(fitDistance = false) {
 let viewAnimation = 0;
 function setView(view) {
   if (STATE.viewLocked) return;
+  if(STATE.step===2&&view==='reset'){
+    resetSeasonalShift();
+    earthGroup.rotation.y=0;
+    gridGroup.rotation.y=0;
+  }
   if(STATE.step===0){releaseSingleCamera(true);SINGLE_CIRCULATION.freeView=false;SINGLE_CIRCULATION.cameraSuppressed=STATE.singleDemo.elapsed>0;}
   if(STATE.step===1&&view==='reset'){
     const seq=CIRCULATION_SEQUENCE;
@@ -3834,7 +3856,7 @@ function setView(view) {
     case 'top':    direction = new THREE.Vector3(0, 1, .001); break;
     case 'side':   direction = new THREE.Vector3(1, 0, 0); break;
     case 'front':  direction = new THREE.Vector3(0, 0, 1); break;
-    case 'reset':  direction = new THREE.Vector3(8, 6, 12); break;
+    case 'reset':  direction = new THREE.Vector3(8, 0, 12); break;
     default: return;
   }
   controls.target.set(SCENE_OFFSET_X, 0, 0);
@@ -4671,6 +4693,38 @@ function initLegendDrag() {
   document.addEventListener('mouseup', () => { dragging = false; legend.style.cursor = 'move'; });
 }
 
+function updateGlobeLabels(){
+  syncLabelAnchorTransform();
+  updateLabelGroupFacing();
+  const point=updateGlobeLabels._point||(updateGlobeLabels._point=new THREE.Vector3());
+  const direction=updateGlobeLabels._direction||(updateGlobeLabels._direction=new THREE.Vector3());
+  const closest=updateGlobeLabels._closest||(updateGlobeLabels._closest=new THREE.Vector3());
+  const isOccluded=obj=>{
+    obj.getWorldPosition(point);
+    direction.copy(camera.position).sub(point);
+    closest.copy(point).sub(earthGroup.position);
+    const t=clamp(-closest.dot(direction)/direction.lengthSq(),0,1);
+    return closest.addScaledVector(direction,t).lengthSq()<CONFIG.earth.radius**2;
+  };
+  latLabels.forEach(({obj})=>{
+    obj.visible=STATE.step>=2&&obj.userData.baseVisible&&!isOccluded(obj);
+  });
+  pressureLabels.forEach(({obj})=>{
+    if(!obj.userData.baseVisible){obj.visible=false;return;}
+    obj.getWorldPosition(point);
+    obj.visible=!beltAnchorCovered(point,obj.userData.beltIndex);
+  });
+  windLabels.forEach(({obj})=>{
+    obj.visible=obj.userData.baseVisible&&!isOccluded(obj);
+  });
+  verticalLabels.forEach(({obj})=>{
+    obj.visible=!SINGLE_CIRCULATION.styled&&obj.userData.baseVisible&&!isOccluded(obj);
+  });
+  coriolisLabels.forEach(({obj})=>{
+    obj.visible=!!coriolisGroup?.visible&&!CIRCULATION_SEQUENCE.root?.visible&&obj.userData.baseVisible&&!isOccluded(obj);
+  });
+}
+
 /* ========== 动画循环 ========== */
 function animate() {
   requestAnimationFrame(animate);
@@ -4707,61 +4761,6 @@ function animate() {
   updateSunRadiation(dt);
   updateLandSeaAnimation(dt);
   updateMonsoonClimateAnimation(dt);
-
-  // 标签背面剔除：标签与相机的连线被地球球体挡住时隐藏
-  if (latLabels.length > 0 || pressureLabels.length > 0 || windLabels.length > 0 || verticalLabels.length > 0 || coriolisLabels.length > 0) {
-    // 标签朝向跟随相机：气压带(右)、风带(中)、纬度(左)
-    updateLabelGroupFacing();
-    const _tmpVec = animate._tmpVec || (animate._tmpVec = new THREE.Vector3());
-    const _occlD = animate._occlD || (animate._occlD = new THREE.Vector3());
-    const _occlQ = animate._occlQ || (animate._occlQ = new THREE.Vector3());
-    const _rEarth2 = CONFIG.earth.radius * CONFIG.earth.radius;
-    // 视线遮挡判断（_tmpVec 已装入标签世界坐标）：
-    // 求标签→相机线段上离球心最近的点，落在球内即被地球遮挡。
-    // 旧的"点积>0"正面判断会把大气层外缘（半径≈7）的侧向标签
-    // （如赤道上升标签）误判为背面而丢失；对贴球面（≈5.6）标签两者等价。
-    const isOccluded = () => {
-      _occlD.copy(camera.position).sub(_tmpVec);
-      _occlQ.copy(_tmpVec).sub(earthGroup.position);
-      const t = clamp(-_occlQ.dot(_occlD) / _occlD.lengthSq(), 0, 1);
-      _occlQ.addScaledVector(_occlD, t);
-      return _occlQ.lengthSq() < _rEarth2;
-    };
-    // 三列标签分别贴各自的锚点弧/色带环排布；上下拖动改变俯仰时，锚点随纬度圈
-    // 改变屏幕位置（与地球视角联动），转入地球背面的标签由遮挡判定自动隐藏 ——
-    // 保证标签始终贴在地球轮廓上，不会悬浮在地球圆盘上方（"飘起来"）。
-    latLabels.forEach(l => {
-      if (!l.obj.userData.baseVisible) { l.obj.visible = false; return; }
-      l.obj.getWorldPosition(_tmpVec);
-      l.obj.visible = !isOccluded();
-    });
-    // 气压带标签：锚点就在色带环上（半径 5.2），"贴带"与"可见"是同一件事 ——
-    // 锚点被地球挡住、或被别的色带挡在前面 = 该处色带在屏幕上根本不存在，
-    // 此时一并隐藏标签，转到真能看见它的视角时标签自动出现并贴回色带。
-    pressureLabels.forEach(pl => {
-      if (!pl.obj.userData.baseVisible) { pl.obj.visible = false; return; }
-      pl.obj.getWorldPosition(_tmpVec);
-      pl.obj.visible = !beltAnchorCovered(_tmpVec, pl.obj.userData.beltIndex);
-    });
-    // 风带标签：与纬度标签相同的背面剔除（锚点半径 5.6，越过轮廓切线防误判）。
-    windLabels.forEach(wl => {
-      if (!wl.obj.userData.baseVisible) { wl.obj.visible = false; return; }
-      wl.obj.getWorldPosition(_tmpVec);
-      wl.obj.visible = !isOccluded();
-    });
-    verticalLabels.forEach(vl => {
-      if (!vl.obj.userData.baseVisible) { vl.obj.visible = false; return; }
-      vl.obj.getWorldPosition(_tmpVec);
-      vl.obj.visible = !isOccluded();
-    });
-    // 偏转节点标签：需同时检查所在组的可见性（CSS2D不继承父级visible）
-    const corVisible = coriolisGroup ? coriolisGroup.visible : false;
-    coriolisLabels.forEach(cl => {
-      if (!corVisible || !cl.obj.userData.baseVisible) { cl.obj.visible = false; return; }
-      cl.obj.getWorldPosition(_tmpVec);
-      cl.obj.visible = !isOccluded();
-    });
-  }
 
   // 不按播放时间推进教学环节；CSS2D 显隐显式同步（不依赖父级 visible）。
   mechanismLabels.forEach(({obj,group}) => {
@@ -4802,8 +4801,11 @@ function animate() {
   }
   syncBridgeHighlight();
   window.__thirdStepSchematic?.faceCamera();
+  // Use the final camera pose for both anchoring and visibility in this frame.
+  updateGlobeLabels();
   renderer.render(scene, camera);
   labelRenderer.render(scene, camera);
+  updateSeasonGlobeLabel();
   layoutThirdStepBeltLabels();
   updateSequenceAnnotations();
   updateSingleCirculationAnnotations();

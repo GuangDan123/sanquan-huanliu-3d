@@ -5,7 +5,7 @@ import {pathToFileURL} from 'node:url';
 const out=resolve(process.argv[2]||'artifacts/rounded-corners-20261013/accepted/junctions');await mkdir(out,{recursive:true});
 const browser=await chromium.launch({executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe',headless:true});
 const page=await browser.newPage({viewport:{width:1366,height:768}}),errors=[];page.on('pageerror',e=>errors.push(String(e)));
-await page.goto(pathToFileURL(resolve('三圈环流3D交互式教学平台.html')).href+'?state=explore');await page.waitForFunction(()=>window.__circulationSequenceDebug&&document.getElementById('loading-screen').classList.contains('hidden'));
+await page.goto(pathToFileURL(resolve('气压带与风带3D交互式教学平台.html')).href+'?state=explore');await page.waitForFunction(()=>window.__circulationSequenceDebug&&document.getElementById('loading-screen').classList.contains('hidden'));
 await page.waitForTimeout(800);
 const evidence=await page.evaluate(()=>{const s=window.__circulationSequenceDebug.sequence;
  const joints=[];

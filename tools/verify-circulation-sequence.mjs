@@ -1,3 +1,4 @@
+import { tmpProfile } from './lib/tmp-profile.mjs';
 import {spawn} from 'node:child_process';
 import {setTimeout as sleep} from 'node:timers/promises';
 import {mkdir,writeFile} from 'node:fs/promises';
@@ -5,7 +6,7 @@ import {resolve,join} from 'node:path';
 import {pathToFileURL} from 'node:url';
 const out=resolve(process.argv[2]||'artifacts/continuous-formation-20261012');await mkdir(out,{recursive:true});
 const report={checks:[],errors:[],shots:[]},port=28000+process.pid%1000;
-const chrome=spawn('C:/Program Files/Google/Chrome/Application/chrome.exe',['--headless=new','--no-first-run','--no-default-browser-check',`--remote-debugging-port=${port}`,`--user-data-dir=${join(out,'profile-'+process.pid)}`,'about:blank'],{stdio:'ignore',windowsHide:true});
+const chrome=spawn('C:/Program Files/Google/Chrome/Application/chrome.exe',['--headless=new','--no-first-run','--no-default-browser-check',`--remote-debugging-port=${port}`,`--user-data-dir=${tmpProfile()}`,'about:blank'],{stdio:'ignore',windowsHide:true});
 let tab;for(let i=0;i<100;i++){try{const r=await fetch(`http://127.0.0.1:${port}/json/new?about:blank`,{method:'PUT'});if(r.ok){tab=await r.json();break;}}catch{}await sleep(100);}if(!tab){chrome.kill();throw Error('Chrome startup timeout');}
 const ws=new WebSocket(tab.webSocketDebuggerUrl);let messageId=0;const pending=new Map();
 ws.addEventListener('message',event=>{const m=JSON.parse(event.data);if(m.id&&pending.has(m.id)){const p=pending.get(m.id);pending.delete(m.id);m.error?p.reject(m.error):p.resolve(m.result);}if(m.method==='Runtime.exceptionThrown')report.errors.push(m.params.exceptionDetails);});await new Promise(r=>ws.addEventListener('open',r));
@@ -37,7 +38,7 @@ const routeFraming=()=>{
  return s.cameraActive&&c.position.distanceTo(s.root.localToWorld(d.route(d.elapsed()).point.clone()))>1.5&&span>10&&points.every(p=>p.x>left&&p.x<innerWidth-24&&p.y>98&&p.y<bottom&&p.z>-1&&p.z<1&&p.clear);
 };
 try{
- await page.goto(pathToFileURL(resolve('三圈环流3D交互式教学平台.html')).href+'?state=explore');
+ await page.goto(pathToFileURL(resolve('气压带与风带3D交互式教学平台.html')).href+'?state=explore');
  await page.waitForFunction(()=>window.__circulationSequenceDebug&&document.getElementById('loading-screen').classList.contains('hidden'));
  await page.waitForTimeout(900);
  check(await page.evaluate(()=>window.__threeCellDebug.STATE.step===1),'Offline artifact opens second step');await shot('initial');

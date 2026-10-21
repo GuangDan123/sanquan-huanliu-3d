@@ -1,3 +1,4 @@
+import { tmpProfile } from './lib/tmp-profile.mjs';
 // 验收：第三步「气压带标签是否真的贴在模型的条状带上」——用逐像素射线检测判定（精确，不受几何抽样疏密影响）。
 //
 // 判据 0（结构）：每个气压带标签的锚点到球心距离 == 色带半径 5.2 → 锚点确实落在色带环上。
@@ -26,7 +27,7 @@ await mkdir(outDir, { recursive: true });
 const chrome = spawn(CHROME, [
   '--headless=new', '--disable-gpu', '--no-sandbox', '--no-first-run', '--no-default-browser-check',
   '--hide-scrollbars', '--force-device-scale-factor=1',
-  `--remote-debugging-port=${PORT}`, `--user-data-dir=${join(outDir, 'profile', String(PORT))}`,
+  `--remote-debugging-port=${PORT}`, `--user-data-dir=${tmpProfile()}`,
   '--window-size=1600,1000', 'about:blank'
 ], { stdio: 'ignore' });
 const cleanup = async (c) => { try { ws?.close(); } catch {} try { chrome.kill('SIGKILL'); } catch {} await sleep(200); process.exit(c); };

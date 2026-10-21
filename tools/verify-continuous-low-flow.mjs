@@ -7,7 +7,7 @@ const report={checks:[],errors:[]},check=(ok,name,data)=>{report.checks.push({ok
 const browser=await chromium.launch({executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe',headless:true});
 const page=await browser.newPage({viewport:{width:1366,height:768}});page.on('pageerror',e=>report.errors.push(String(e)));
 try{
- await page.goto(pathToFileURL(resolve('三圈环流3D交互式教学平台.html')).href+'?state=explore');await page.waitForFunction(()=>window.__circulationSequenceDebug&&document.getElementById('loading-screen').classList.contains('hidden'));
+ await page.goto(pathToFileURL(resolve('气压带与风带3D交互式教学平台.html')).href+'?state=explore');await page.waitForFunction(()=>window.__circulationSequenceDebug&&document.getElementById('loading-screen').classList.contains('hidden'));
  for(const mode of ['ride','overview'])for(const time of [3.8,4.1,9.8,10.2,11,11.9,12,12.1,13.5,14.9,15,15.1,18.9,19.1,23,40]){
   await page.evaluate(({mode,time})=>{window.__circulationSequenceDebug.cameraMode(mode);window.__circulationSequenceDebug.seek(time);},{mode,time});await page.waitForTimeout(100);
   const data=await page.evaluate(()=>{const s=window.__circulationSequenceDebug.sequence;return [1,-1].map(h=>s.cells.hadley.map(kind=>{const f=s.flows.find(f=>f.h===h&&f.kind===kind);return {h,kind,visible:f.group.visible,ribbon:f.ribbon.geometry.drawRange.count/48,core:f.tubes[0].geometry.drawRange.count/24,particleMax:Math.max(...Array.from({length:f.particles.geometry.drawRange.count},(_,i)=>{const p=f.particles.geometry.attributes.position;return f.curve.getPoint(0).distanceTo(window.__threeCellDebug.makeVector3(p.getX(i),p.getY(i),p.getZ(i)));}))};}));});

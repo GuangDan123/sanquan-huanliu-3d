@@ -15,7 +15,7 @@ const pixels=()=>new Promise(resolve=>requestAnimationFrame(()=>{
  resolve({visible,samples});
 }));
 try{
- await page.goto(pathToFileURL(resolve('三圈环流3D交互式教学平台.html')).href+'?state=explore');await page.waitForFunction(()=>window.__circulationSequenceDebug&&document.getElementById('loading-screen').classList.contains('hidden'));
+ await page.goto(pathToFileURL(resolve('气压带与风带3D交互式教学平台.html')).href+'?state=explore');await page.waitForFunction(()=>window.__circulationSequenceDebug&&document.getElementById('loading-screen').classList.contains('hidden'));
  await seek(40);
  check(await page.evaluate(()=>{const s=window.__circulationSequenceDebug.sequence;return s.bands.every(b=>b.mesh.material.uniforms.uColor.value.getHex()===(Math.abs(b.lat)<10?0xffd447:Math.abs(b.lat)<45?0x72d44a:Math.abs(b.lat)<80?0x329bff:0xb986ff));}),'All seven pressure belts use yellow, green, blue and purple by latitude');
  check(await page.evaluate(()=>{const s=window.__circulationSequenceDebug.sequence;return s.bands.every((b,i)=>b.mesh.material.uniforms.uColor.value.equals(window.__threeCellDebug.pressureBeltMeshes[i].material.color)&&Math.abs(b.mesh.material.uniforms.uOpacity.value-.92)<1e-8&&b.mesh.material.blending===1);}), 'Formation pressure belts match the third-step colors with clearly visible solid fill');

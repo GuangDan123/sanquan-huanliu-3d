@@ -1,3 +1,4 @@
+import { tmpProfile } from './lib/tmp-profile.mjs';
 // 当前离线成品的机制节点、答案显隐、画面冻结、分支与布局验收。
 import {spawn} from 'node:child_process';
 import {mkdir,writeFile,readFile} from 'node:fs/promises';
@@ -7,8 +8,8 @@ import {pathToFileURL} from 'node:url';
 import {setTimeout as sleep} from 'node:timers/promises';
 const out=resolve(process.argv[2]||'artifacts/formation-final-20261010');await mkdir(out,{recursive:true});
 const report={date:'2026-10-10',checks:[],errors:[],screenshots:[]},port=20000+process.pid%1000;
-report.buildSha256=createHash('sha256').update(await readFile('三圈环流3D交互式教学平台.html')).digest('hex');
-const chrome=spawn('C:/Program Files/Google/Chrome/Application/chrome.exe',['--headless=new','--no-first-run','--no-default-browser-check',`--remote-debugging-port=${port}`,`--user-data-dir=${join(out,'profile')}`,'about:blank'],{stdio:'ignore',windowsHide:true});let ws;
+report.buildSha256=createHash('sha256').update(await readFile('气压带与风带3D交互式教学平台.html')).digest('hex');
+const chrome=spawn('C:/Program Files/Google/Chrome/Application/chrome.exe',['--headless=new','--no-first-run','--no-default-browser-check',`--remote-debugging-port=${port}`,`--user-data-dir=${tmpProfile()}`,'about:blank'],{stdio:'ignore',windowsHide:true});let ws;
 const check=(ok,name,evidence)=>{report.checks.push({ok,name,evidence});console.log(`${ok?'PASS':'FAIL'} ${name}`);};
 try{
  let tab;for(let i=0;i<60;i++){try{const r=await fetch(`http://127.0.0.1:${port}/json/new?about:blank`,{method:'PUT'});if(r.ok){tab=await r.json();break;}}catch{}await sleep(200);}if(!tab)throw Error('浏览器未启动');
@@ -22,7 +23,7 @@ try{
  const state=kind=>ev(`JSON.parse(JSON.stringify(window.__${kind==='landsea'?'landSea':'monsoonClimate'}Debug.formation))`);
  const finishNode=async(kind)=>{await click('#'+kind+'-formation-next');check(await ready('!window.__threeCellDebug.STATE.playing'),kind+' 当前节点自动停顿');};
  await send('Runtime.enable');await send('Page.enable');await send('Network.enable');await send('Network.emulateNetworkConditions',{offline:true,latency:0,downloadThroughput:0,uploadThroughput:0});await send('Emulation.setDeviceMetricsOverride',{width:1600,height:1000,deviceScaleFactor:1,mobile:false});
- await send('Page.navigate',{url:pathToFileURL(resolve('三圈环流3D交互式教学平台.html')).href+'?state=landsea'});check(await ready('window.__landSeaDebug&&window.__threeCellDebug.STATE.step===3'),'离线第四步入口');
+ await send('Page.navigate',{url:pathToFileURL(resolve('气压带与风带3D交互式教学平台.html')).href+'?state=landsea'});check(await ready('window.__landSeaDebug&&window.__threeCellDebug.STATE.step===3'),'离线第四步入口');
  check(await ev('window.__landSeaDebug.formation.node===0&&!window.__threeCellDebug.STATE.playing&&window.__landSeaDebug.stages().length===6'),'第四步机制默认等待，含季节衔接与五节点');
  check(await ev('!window.__landSeaDebug.group.children[0].visible&&!window.__landSeaDebug.group.children[2].visible&&window.__landSeaDebug.group.children[4].visible'),'首节点只显示理想背景，未提前展示区域气压与季风');await shot('landsea-bridge.png');
  // 验证真实时序及暂停，随后加速课堂时间以覆盖所有节点。

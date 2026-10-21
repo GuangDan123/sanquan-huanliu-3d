@@ -1,16 +1,23 @@
 // 生成只包含成品和说明材料的交付目录，避免复制浏览器缓存与开发中间文件。
-import {mkdir,mkdtemp,copyFile,writeFile} from 'node:fs/promises';
+import {mkdir,copyFile,writeFile,readdir,stat,rm} from 'node:fs/promises';
 import {dirname,join,resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
+import {execFileSync} from 'node:child_process';
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const release=join(root,'release');await mkdir(release,{recursive:true});
-const out=await mkdtemp(join(release,'三圈环流3D交互式教学平台-'));
-const html='三圈环流3D交互式教学平台.html';
+const now=new Date();
+const stamp=`${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}`;
+let hash='nogit';
+try{hash=execFileSync('git',['rev-parse','--short','HEAD'],{cwd:root,encoding:'utf8'}).trim()}catch{}
+const out=join(release,`气压带与风带-${stamp}-${hash}`);
+await rm(out,{recursive:true,force:true});
+await mkdir(out,{recursive:true});
+const html='气压带与风带3D交互式教学平台.html';
 await copyFile(join(root,html),join(out,html));
 await copyFile(join(root,'README.md'),join(out,'README.md'));
 await mkdir(join(out,'docs'));
 for(const name of ['作品说明书.md','技术说明.md','课堂教学优化.md','验收记录.md','教学适用性评审-20261008.md','教学改进验收清单.md','课堂任务单.html','形成机制实施与验证-20261010.md','课堂演示改进-20261010.md','教学评审修改与验收-20261011.md','气候资料来源-20261011.md','第二步连续形成过程-20261012.md','第二步两条环流圈视觉调整-20261012.md','气压形成特写与位置解释验收-20261013.md','第一步单圈风格统一-20261013.md'])await copyFile(join(root,'docs',name),join(out,'docs',name));
-await writeFile(join(out,'使用说明.md'),`# 三圈环流3D交互式教学平台
+await writeFile(join(out,'使用说明.md'),`# 气压带与风带3D交互式教学平台
 
 双击“${html}”即可运行，无需联网或安装。建议使用最新版Chrome或Edge。
 
@@ -60,4 +67,12 @@ await writeFile(join(out,'使用说明.md'),`# 三圈环流3D交互式教学平�
 
 目录只包含教学成品及说明材料，不包含开发缓存。若三维功能不可用，页面会显示原因及重新加载按钮。完整开发项目中的README提供构建与验收方法。
 `,'utf8');
+const generated=(await readdir(release,{withFileTypes:true}))
+  .filter(entry=>entry.isDirectory()&&/^(气压带与风带|三圈环流3D交互式教学平台)-/.test(entry.name))
+  .map(entry=>({name:entry.name,path:join(release,entry.name)}));
+for(const entry of generated) entry.mtime=(await stat(entry.path)).mtimeMs;
+generated.sort((a,b)=>b.mtime-a.mtime);
+const removed=[];
+for(const entry of generated.slice(3)){await rm(entry.path,{recursive:true,force:true});removed.push(entry.name)}
 console.log(`交付目录：${out}`);
+if(removed.length)console.log(`已清理旧交付：${removed.length} 份（保留最新 3 份）`);

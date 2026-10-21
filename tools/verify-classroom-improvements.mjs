@@ -1,3 +1,4 @@
+import { tmpProfile } from './lib/tmp-profile.mjs';
 // Browser verification for classroom route, true particle alpha, power saving and hidden rendering.
 import {spawn} from 'node:child_process';
 import {mkdir,writeFile,readFile} from 'node:fs/promises';
@@ -6,8 +7,8 @@ import {pathToFileURL} from 'node:url';
 import {createHash} from 'node:crypto';
 import {setTimeout as sleep} from 'node:timers/promises';
 const out=resolve(process.argv[2]||'artifacts/classroom-improvements-20261010');await mkdir(out,{recursive:true});
-const report={checks:[],errors:[],screenshots:[],buildSha256:createHash('sha256').update(await readFile('三圈环流3D交互式教学平台.html')).digest('hex')};
-const port=23000+process.pid%1000,chrome=spawn('C:/Program Files/Google/Chrome/Application/chrome.exe',['--headless=new','--no-first-run','--no-default-browser-check',`--remote-debugging-port=${port}`,`--user-data-dir=${join(out,'profile')}`,'about:blank'],{stdio:'ignore',windowsHide:true});let ws;
+const report={checks:[],errors:[],screenshots:[],buildSha256:createHash('sha256').update(await readFile('气压带与风带3D交互式教学平台.html')).digest('hex')};
+const port=23000+process.pid%1000,chrome=spawn('C:/Program Files/Google/Chrome/Application/chrome.exe',['--headless=new','--no-first-run','--no-default-browser-check',`--remote-debugging-port=${port}`,`--user-data-dir=${tmpProfile()}`,'about:blank'],{stdio:'ignore',windowsHide:true});let ws;
 const check=(ok,name,evidence)=>{report.checks.push({ok,name,evidence});console.log(`${ok?'PASS':'FAIL'} ${name}`);};
 try{
  let tab;for(let i=0;i<80;i++){try{const r=await fetch(`http://127.0.0.1:${port}/json/new?about:blank`,{method:'PUT'});if(r.ok){tab=await r.json();break;}}catch{}await sleep(100);}if(!tab)throw Error('Chrome startup timeout');
@@ -22,7 +23,7 @@ try{
  const shot=async name=>{const r=await send('Page.captureScreenshot',{format:'png'});await writeFile(join(out,name+'.png'),Buffer.from(r.data,'base64'));report.screenshots.push(name+'.png');};
  await send('Runtime.enable');await send('Page.enable');await send('Network.enable');await send('Network.emulateNetworkConditions',{offline:true,latency:0,downloadThroughput:0,uploadThroughput:0});await viewport(1600,1000);
  await send('Page.addScriptToEvaluateOnNewDocument',{source:`window.__auditDraws=0;for(const p of [WebGLRenderingContext.prototype,WebGL2RenderingContext.prototype])for(const name of ['drawArrays','drawElements']){const original=p[name];p[name]=function(...args){window.__auditDraws++;return original.apply(this,args);};}window.__auditCanvasDraws=0;const original=CanvasRenderingContext2D.prototype.clearRect;CanvasRenderingContext2D.prototype.clearRect=function(...args){window.__auditCanvasDraws++;return original.apply(this,args);};`});
- await send('Page.navigate',{url:pathToFileURL(resolve('三圈环流3D交互式教学平台.html')).href+'?state=landsea'});
+ await send('Page.navigate',{url:pathToFileURL(resolve('气压带与风带3D交互式教学平台.html')).href+'?state=landsea'});
  check(await ready('window.__landSeaDebug&&window.__threeCellDebug.STATE.step===3&&document.getElementById("landsea-formation-next")&&document.getElementById("loading-screen").classList.contains("hidden")'),'Offline platform loads');
  await ev('window.__threeCellDebug.STATE.speed=20');
  for(let i=0;i<3;i++){await click('#landsea-formation-next');check(await ready('!window.__threeCellDebug.STATE.playing'),'Automatic pause at node '+i);}

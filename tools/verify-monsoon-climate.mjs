@@ -1,3 +1,4 @@
+import { tmpProfile } from './lib/tmp-profile.mjs';
 // 第五步：真实浏览器检查地图、月份、气候图、暂停、开关、步骤回退及离线布局。
 import {spawn} from 'node:child_process';
 import {mkdir,writeFile} from 'node:fs/promises';
@@ -6,7 +7,7 @@ import {pathToFileURL} from 'node:url';
 import {setTimeout as sleep} from 'node:timers/promises';
 const out=resolve(process.argv[2]||'artifacts/monsoon-climate-step5-20261009');await mkdir(out,{recursive:true});
 const report={checks:[],errors:[]},port=16000+process.pid%1000;
-const chrome=spawn('C:/Program Files/Google/Chrome/Application/chrome.exe',['--headless=new','--no-first-run','--no-default-browser-check',`--remote-debugging-port=${port}`,`--user-data-dir=${join(out,'profile')}`,'about:blank'],{stdio:'ignore',windowsHide:true});let ws;
+const chrome=spawn('C:/Program Files/Google/Chrome/Application/chrome.exe',['--headless=new','--no-first-run','--no-default-browser-check',`--remote-debugging-port=${port}`,`--user-data-dir=${tmpProfile()}`,'about:blank'],{stdio:'ignore',windowsHide:true});let ws;
 const check=(ok,name,evidence)=>{report.checks.push({ok,name,evidence});console.log(`${ok?'PASS':'FAIL'} ${name}`);};
 try{
  let tab;for(let i=0;i<60;i++){try{const r=await fetch(`http://127.0.0.1:${port}/json/new?about:blank`,{method:'PUT'});if(r.ok){tab=await r.json();break;}}catch{}await sleep(200);}if(!tab)throw Error('浏览器未启动');
@@ -22,7 +23,7 @@ try{
  };
  await send('Runtime.enable');await send('Log.enable');await send('Page.enable');await send('Emulation.setDeviceMetricsOverride',{width:1600,height:1000,deviceScaleFactor:1,mobile:false});
  await send('Network.enable');await send('Network.emulateNetworkConditions',{offline:true,latency:0,downloadThroughput:0,uploadThroughput:0});
- await send('Page.navigate',{url:pathToFileURL(resolve('三圈环流3D交互式教学平台.html')).href+'?state=monsoon'});
+ await send('Page.navigate',{url:pathToFileURL(resolve('气压带与风带3D交互式教学平台.html')).href+'?state=monsoon'});
  for(let i=0;i<80;i++){if(await ev('window.__threeCellDebug?.STATE.step===4&&window.__monsoonClimateDebug?.ready'))break;await sleep(200);}await sleep(500);
  check(await ev("window.__threeCellDebug.STATE.step===4&&document.querySelectorAll('.step-dot').length===5&&document.getElementById('sp-tag').textContent==='STEP 5 / 5'"),'第五步离线入口、五个步骤和面板同步');
  await ev("document.getElementById('climate-formation-view').value='result';document.getElementById('climate-formation-view').dispatchEvent(new Event('change'));document.getElementById('mc-play').click()");

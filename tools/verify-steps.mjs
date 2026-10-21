@@ -1,3 +1,4 @@
+import { tmpProfile } from './lib/tmp-profile.mjs';
 // 验收脚本 3：完整走查引导流程（含关闭第一步弹窗后再逐步切换），
 // 断言"仅第一步弹出引导弹窗，第二、三步无弹窗且气流持续流动"。
 // 依赖页面内 window.__threeCellDebug.getDiagnostics()
@@ -18,7 +19,7 @@ await rm(profile, { recursive: true, force: true });
 
 const chrome = spawn(CHROME, [
   '--headless=new', '--disable-gpu', '--no-first-run', '--no-default-browser-check',
-  `--remote-debugging-port=${PORT}`, `--user-data-dir=${profile}`,
+  `--remote-debugging-port=${PORT}`, `--user-data-dir=${tmpProfile()}`,
   '--window-size=1440,900', 'about:blank'
 ], { stdio: 'ignore' });
 

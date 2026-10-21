@@ -1,3 +1,4 @@
+import { tmpProfile } from './lib/tmp-profile.mjs';
 // 第四步浏览器验收：离线成品、冬夏切换、地理位置、图层、暂停和步骤回退。
 import {spawn} from 'node:child_process';
 import {mkdir,writeFile} from 'node:fs/promises';
@@ -6,7 +7,7 @@ import {pathToFileURL} from 'node:url';
 import {setTimeout as sleep} from 'node:timers/promises';
 const out=resolve(process.argv[2]||'artifacts/landsea-step4-20261009');await mkdir(out,{recursive:true});
 const report={checks:[],errors:[]},port=14000+process.pid%1000;
-const chrome=spawn('C:/Program Files/Google/Chrome/Application/chrome.exe',['--headless=new','--no-first-run','--no-default-browser-check',`--remote-debugging-port=${port}`,`--user-data-dir=${join(out,'profile')}`,'about:blank'],{stdio:'ignore',windowsHide:true});
+const chrome=spawn('C:/Program Files/Google/Chrome/Application/chrome.exe',['--headless=new','--no-first-run','--no-default-browser-check',`--remote-debugging-port=${port}`,`--user-data-dir=${tmpProfile()}`,'about:blank'],{stdio:'ignore',windowsHide:true});
 let ws;
 const check=(ok,name,evidence)=>{report.checks.push({ok,name,evidence});console.log(`${ok?'PASS':'FAIL'} ${name}`);};
 try{
@@ -19,7 +20,7 @@ try{
  const click=async selector=>{await ev(`(()=>{let p=document.querySelector(${JSON.stringify(selector)})?.parentElement;while(p){if(p.tagName==='DETAILS')p.open=true;p=p.parentElement;}})()`);await ev(`document.querySelector(${JSON.stringify(selector)}).scrollIntoView({block:'nearest'})`);check(await ev(`(()=>{const e=document.querySelector(${JSON.stringify(selector)}),r=e.getBoundingClientRect();return e.contains(document.elementFromPoint(r.x+r.width/2,r.y+r.height/2))})()`),'控件可见且可点击 '+selector);await ev(`document.querySelector(${JSON.stringify(selector)}).click()`);await sleep(200);};
  await send('Runtime.enable');await send('Log.enable');await send('Page.enable');await send('Emulation.setDeviceMetricsOverride',{width:1600,height:1000,deviceScaleFactor:1,mobile:false});
  await send('Network.enable');await send('Network.emulateNetworkConditions',{offline:true,latency:0,downloadThroughput:0,uploadThroughput:0});
- await send('Page.navigate',{url:pathToFileURL(resolve('三圈环流3D交互式教学平台.html')).href+'?state=landsea'});
+ await send('Page.navigate',{url:pathToFileURL(resolve('气压带与风带3D交互式教学平台.html')).href+'?state=landsea'});
  for(let i=0;i<80;i++){if(await ev('window.__threeCellDebug?.STATE.step===3'))break;await sleep(200);}await sleep(900);
  check(await ev("window.__threeCellDebug.STATE.step===3&&document.querySelectorAll('.step-dot').length===5&&document.getElementById('sp-tag').textContent==='STEP 4 / 5'"),'离线直接进入第四步，五个主步骤与面板同步');
  await ev("document.getElementById('landsea-formation-view').value='result';document.getElementById('landsea-formation-view').dispatchEvent(new Event('change'))");

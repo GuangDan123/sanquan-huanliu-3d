@@ -1,3 +1,4 @@
+import { tmpProfile } from './lib/tmp-profile.mjs';
 // 复核无预设的首次打开、太阳遮挡、箭头间距，以及不同视角和窗口尺寸。
 import {spawn} from 'node:child_process';
 import {mkdir,writeFile} from 'node:fs/promises';
@@ -9,7 +10,7 @@ const out=resolve(process.argv[3]||'.verify-start-sun');await mkdir(out,{recursi
 const report={checks:[],errors:[],screenshots:[]};
 const check=(ok,name,evidence)=>{report.checks.push({ok,name,evidence});console.log(`${ok?'PASS':'FAIL'} ${name}`);};
 const port=12000+process.pid%1000;
-const chrome=spawn('C:/Program Files/Google/Chrome/Application/chrome.exe',['--headless=new','--no-first-run','--no-default-browser-check',`--remote-debugging-port=${port}`,`--user-data-dir=${join(out,'profile')}`,'about:blank'],{stdio:'ignore',windowsHide:true});let ws;
+const chrome=spawn('C:/Program Files/Google/Chrome/Application/chrome.exe',['--headless=new','--no-first-run','--no-default-browser-check',`--remote-debugging-port=${port}`,`--user-data-dir=${tmpProfile()}`,'about:blank'],{stdio:'ignore',windowsHide:true});let ws;
 try{
  let tab;for(let i=0;i<60;i++){try{const r=await fetch(`http://127.0.0.1:${port}/json/new?about:blank`,{method:'PUT'});if(r.ok){tab=await r.json();break;}}catch{}await sleep(200);}if(!tab)throw Error('浏览器未启动');
  ws=new WebSocket(tab.webSocketDebuggerUrl);let id=0;const pending=new Map();
@@ -92,7 +93,7 @@ try{
    if(view==='side')await shot(`${width}-side.png`);
   }
  }
- await viewport(1366,768);await send('Network.enable');await send('Network.emulateNetworkConditions',{offline:true,latency:0,downloadThroughput:0,uploadThroughput:0});await nav(pathToFileURL(resolve('三圈环流3D交互式教学平台.html')).href);check((await panel()).buttonVisible,'断网双击入口第一步提示完整');await click('#btn-start-free');await shot('offline-initial.png');
+ await viewport(1366,768);await send('Network.enable');await send('Network.emulateNetworkConditions',{offline:true,latency:0,downloadThroughput:0,uploadThroughput:0});await nav(pathToFileURL(resolve('气压带与风带3D交互式教学平台.html')).href);check((await panel()).buttonVisible,'断网双击入口第一步提示完整');await click('#btn-start-free');await shot('offline-initial.png');
  check((await ev('window.__threeCellDebug.getSunDiagnostics().arrowTargets')).every(a=>a.radiation.enabled),'断网单文件入口两条虚线可用');
  check(report.errors.length===0,'首次打开及视角调整无未捕获异常',report.errors);
 }catch(e){report.errors.push(String(e));check(false,'检查执行',String(e));}finally{report.passed=report.errors.length===0&&report.checks.every(x=>x.ok);await writeFile(join(out,'check.json'),JSON.stringify(report,null,2));ws?.close();chrome.kill();}

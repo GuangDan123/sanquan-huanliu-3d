@@ -303,7 +303,8 @@ function roundSequenceJunctions(definitions,cells=CIRCULATION_SEQUENCE.cells){
   }
 }
 function createCirculationAtmosphere(){
-  return new THREE.Mesh(new THREE.SphereGeometry(CONFIG.earth.radius+2.05,64,48),new THREE.ShaderMaterial({transparent:true,depthWrite:false,side:THREE.FrontSide,blending:THREE.AdditiveBlending,
+  // 辉光壳半径随第三步环流示意一起放大（R+2.6=7.6），保证抬升后的环流带仍包在大气层内。
+  return new THREE.Mesh(new THREE.SphereGeometry(CONFIG.earth.radius+2.6,64,48),new THREE.ShaderMaterial({transparent:true,depthWrite:false,side:THREE.FrontSide,blending:THREE.AdditiveBlending,
     uniforms:{uColor:{value:new THREE.Color(0x78ccff)}},
     vertexShader:'varying vec3 vNormal;varying vec3 vView;void main(){vec4 p=modelViewMatrix*vec4(position,1.0);vNormal=normalize(normalMatrix*normal);vView=-p.xyz;gl_Position=projectionMatrix*p;}',
     fragmentShader:`varying vec3 vNormal;varying vec3 vView;uniform vec3 uColor;void main(){float rim=pow(1.0-clamp(dot(normalize(vNormal),normalize(vView)),0.0,1.0),3.0);gl_FragColor=vec4(uColor,.025+.42*rim);
@@ -311,14 +312,14 @@ function createCirculationAtmosphere(){
     #include <encodings_fragment>
     }`}));
 }
-function createAirflowVisual(root,{sample,start,end,color,kind,h,lon,endColor=color,curve=new SequenceCurve(sample),sourceCurve=curve,cells=CIRCULATION_SEQUENCE.cells,thermalProgress=sequenceThermalProgress,thermalPalette=null,ribbonWidth=sequenceRibbonWidth,streamline=false,closed=false}){
+function createAirflowVisual(root,{sample,start,end,color,kind,h,lon,endColor=color,curve=new SequenceCurve(sample),sourceCurve=curve,cells=CIRCULATION_SEQUENCE.cells,thermalProgress=sequenceThermalProgress,thermalPalette=null,ribbonWidth=sequenceRibbonWidth,streamline=false,closed=false,sectionNormal=new THREE.Vector3(0,0,1)}){
     const group=new THREE.Group();root.add(group);
     // A translucent ribbon with feathered edges reads as air, rather than a solid pipe.
     const owners=Object.keys(cells).filter(cell=>cells[cell].includes(kind));
     const positions=[],centers=[],uvs=[],thermalMix=[],indices=[],across=8,segments=100;
     for(let i=0;i<=segments;i++){
       const t=i/segments,center=curve.getPoint(t),width=ribbonWidth(kind,t);
-      const side=curve.getTangent(t).cross(closed?new THREE.Vector3(0,0,1):new THREE.Vector3(Math.cos(degToRad(80)),.15,-Math.sin(degToRad(80)))).normalize();
+      const side=curve.getTangent(t).cross(closed?sectionNormal:new THREE.Vector3(Math.cos(degToRad(80)),.15,-Math.sin(degToRad(80)))).normalize();
       for(let j=0;j<=across;j++){const p=center.clone().addScaledVector(side,(j/across-.5)*width);if(p.length()<CONFIG.earth.radius+.045)p.setLength(CONFIG.earth.radius+.045);positions.push(p.x,p.y,p.z);centers.push(center.x,center.y,center.z);uvs.push(t,j/across);thermalMix.push(thermalProgress(kind,center,t,curve));}
     }
     for(let i=0;i<segments;i++)for(let j=0;j<across;j++){const a=i*(across+1)+j,b=a+across+1;indices.push(a,b,a+1,b,b+1,a+1);}
@@ -353,58 +354,108 @@ function createAirflowVisual(root,{sample,start,end,color,kind,h,lon,endColor=co
     const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(new Float32Array(42*3),3));
     geometry.setAttribute('color',new THREE.Float32BufferAttribute(new Float32Array(42*3),3));
     const particles=new THREE.Points(geometry,new THREE.PointsMaterial({vertexColors:true,size:.10,map:particleTexture,transparent:true,opacity:.24,depthWrite:false,blending:THREE.AdditiveBlending}));particles.frustumCulled=false;group.add(particles);
-    return {curve,sourceCurve,sourceColor:new THREE.Color(color),endColor:new THREE.Color(endColor),owners,group,tubes,ribbon,particles,start,end,kind,h,lon,ribbonWidth,thermalProgress,thermalPalette};
+    return {curve,sourceCurve,sourceColor:new THREE.Color(color),endColor:new THREE.Color(endColor),owners,group,tubes,ribbon,particles,start,end,kind,h,lon,ribbonWidth,thermalProgress,thermalPalette,sectionNormal};
 }
-// Outline points follow the user's annotated 1370 x 1080 reference image.
+// Trace the red outlines in the user's 1196 x 1082 image, then mirror south.
 const THIRD_STEP_REFERENCE={
-  hadley:[
-    [[325,524],[258,529],[193,522],[179,508],[185,464],[202,423],[236,381],[274,351],[310,330],[350,334],[369,348],[366,388],[351,444],[340,497]],
-    [[325,580],[258,575],[193,582],[179,596],[185,640],[202,681],[236,723],[274,753],[310,774],[350,770],[369,756],[366,716],[351,660],[340,607]]
-  ],
-  ferrel:[
-    [[362,319],[343,295],[344,259],[361,216],[390,174],[429,137],[470,118],[505,115],[520,120],[519,137],[500,198],[483,244],[438,284],[395,313]],
-    [[362,773],[343,797],[344,833],[361,876],[390,918],[429,955],[470,974],[505,977],[520,972],[519,955],[500,894],[483,848],[438,808],[395,779]]
-  ],
-  polar:[
-    [[535,229],[521,214],[531,177],[542,142],[559,107],[590,83],[633,64],[673,56],[708,58],[724,68],[732,91],[732,125],[725,153],[710,158],[697,163],[681,166],[665,171],[648,180],[631,190],[610,202],[589,212]],
-    [[535,863],[521,878],[531,915],[542,950],[559,985],[590,1009],[633,1028],[673,1036],[708,1034],[724,1024],[732,1001],[732,967],[725,939],[710,934],[697,929],[681,926],[665,921],[648,912],[631,902],[610,890],[589,880]]
-  ]
+  hadley:[[256,533],[200,533],[149,531],[131,515],[127,493],[138,462],[156,430],[184,397],[216,370],[248,350],[276,343],[299,349],[311,363],[311,387],[305,420],[296,459],[289,493],[279,519]],
+  ferrel:[[289,323],[276,308],[277,283],[289,255],[310,225],[337,195],[366,172],[398,152],[432,136],[457,127],[470,130],[471,140],[459,168],[447,204],[433,242],[414,268],[388,294],[359,315],[331,326],[307,329]],
+  polar:[[477,220],[468,215],[469,190],[480,161],[497,135],[521,114],[552,99],[583,86],[613,81],[634,82],[649,94],[657,111],[659,138],[658,165],[653,178],[628,181],[598,184],[565,192],[531,202],[501,210]]
 };
-function thirdStepReferencePoint([px,py]){
-  // Reference coordinates are converted to a meridional section below.
-  const depth=3.2,scale=(18.674-depth)/1330;
-  return new THREE.Vector3((px-719)*scale,(546-py)*scale,depth);
+function fitThirdStepTracedOutline(samples,low,high,groundRadius){
+  const sourceAngles=samples.map(p=>Math.atan2(p.y,-p.x));
+  const axis=(Math.min(...sourceAngles)+Math.max(...sourceAngles))/2;
+  const axisX=-Math.cos(axis),axisY=Math.sin(axis);
+  const bounds=offset=>{
+    let min=Infinity,max=-Infinity,inner=Infinity;
+    samples.forEach(p=>{
+      const x=p.x+axisX*offset,y=p.y+axisY*offset,angle=Math.atan2(y,-x);
+      min=Math.min(min,angle);max=Math.max(max,angle);inner=Math.min(inner,Math.hypot(x,y));
+    });
+    return {min,max,inner};
+  };
+  const targetSpan=degToRad(high-low);
+  let start=0,end=Math.max(...samples.map(p=>p.length()))*4;
+  // Translation and uniform scale preserve the traced contour's proportions.
+  for(let i=0;i<40;i++){
+    const middle=(start+end)/2,extent=bounds(middle);
+    if(extent.max-extent.min>targetSpan)start=middle;else end=middle;
+  }
+  const extent=bounds(end),scale=groundRadius/extent.inner;
+  const rotation=degToRad((low+high)/2)-(extent.min+extent.max)/2;
+  return point=>{
+    const x=point.x+axisX*end,y=point.y+axisY*end;
+    const latitude=Math.atan2(y,-x)+rotation,radius=Math.hypot(x,y)*scale;
+    return {latitude,radius};
+  };
 }
 function createThirdStepSchematic(){
   const s=THIRD_STEP_SCHEMATIC,root=new THREE.Group();root.position.x=SCENE_OFFSET_X;root.visible=false;scene.add(root);s.root=root;
+  const atmosphere=earthGroup.userData.sequenceAtmosphere[1];
+  const atmosphereRadius=atmosphere.geometry.parameters.radius;
+  const atmosphereHorizontal=atmosphereRadius*Math.min(atmosphere.scale.x,atmosphere.scale.z);
+  const atmosphereVertical=atmosphereRadius*atmosphere.scale.y;
+  const meridian=degToRad(30),sectionNormal=new THREE.Vector3(Math.sin(meridian),0,Math.cos(meridian));
+  const outlines=Object.fromEntries(Object.entries(THIRD_STEP_REFERENCE).map(([name,points])=>[
+    name,new THREE.CatmullRomCurve3(points.map(([x,y])=>new THREE.Vector3(x-646,552-y,0)),true,'centripetal')
+  ]));
+  // riseEdge 指明该圈"上升端"在低纬侧还是高纬侧：哈德莱与极地环流在低纬侧上升，
+  // 费雷尔环流是间接环流，在 60° 一侧上升、在 30° 一侧下沉，上升端因此在高纬侧。
+  // palette 的四个色标一律按「上升端 → 下沉端」排列，取色进度 0 落在上升端、1 落在下沉端：
+  //   低纬：赤道橙红（上升）→ 30° 浅蓝（下沉）；
+  //   中纬：60° 深蓝（上升）→ 30° 浅蓝（下沉）；
+  //   极地：60° 深蓝（上升）→ 90° 紫（下沉）。
   const defs=[
-    {name:'hadley',top:30,low:0,palette:[0xff5538,0xffb52e,0x83d5f2,0x2468d8],width:.58},
-    {name:'ferrel',top:60,low:30,palette:[0xff9848,0xffd05a,0x72c5ed,0x315fc4],width:.52},
-    {name:'polar',top:90,low:60,palette:[0x68c9ff,0x379be8,0x6579df,0x7855ce],width:.46}
+    {name:'hadley',top:30,low:0,riseEdge:'low',palette:[0xff5538,0xffb52e,0x83d5f2,0x72c5ed],width:.58},
+    {name:'ferrel',top:60,low:30,riseEdge:'high',palette:[0x315fc4,0x4781d2,0x5ca3df,0x72c5ed],width:.52,latitudeOffset:1,surfaceClearance:.48},
+    {name:'polar',top:90,low:60,riseEdge:'low',palette:[0x315fc4,0x4781d2,0x6579df,0x7855ce],width:.46}
   ];
   for(const h of [1,-1])for(const d of defs){
-    const reference=THIRD_STEP_REFERENCE[d.name][h>0?0:1];
-    const spline=new THREE.CatmullRomCurve3(reference.map(thirdStepReferencePoint),true,'centripetal');
+    const reference=THIRD_STEP_REFERENCE[d.name];
+    const spline=outlines[d.name];
     spline.arcLengthDivisions=1000;
-    const referenceSamples=spline.getPoints(256),radii=referenceSamples.map(p=>Math.hypot(p.x,p.y));
-    const inner=Math.min(...radii),outer=Math.max(...radii);
-    const curve=new SequenceCurve(t=>{
-      const point=spline.getPointAt(d.name==='ferrel'?1-t:t),radius=Math.hypot(point.x,point.y);
-      const sectionRadius=CONFIG.earth.radius+.16+(radius-inner)*.9;
-      point.x*=sectionRadius/radius;point.y*=sectionRadius/radius;point.z=0;
-      return point;
+    const referenceSamples=spline.getPoints(1024);
+    const latitudes=referenceSamples.map(p=>Math.abs(Math.atan2(p.y,-p.x)*180/Math.PI));
+    const latitudeLow=Math.min(...latitudes),latitudeHigh=Math.max(...latitudes);
+    const latitudeAt=point=>degToRad(lerp(d.low+1.5,d.top-1.5,
+      (Math.atan2(point.y,-point.x)*180/Math.PI-latitudeLow)/(latitudeHigh-latitudeLow))+(d.latitudeOffset||0));
+    const innerRadius=Math.min(...referenceSamples.map(p=>Math.hypot(p.x,p.y)));
+    const groundRadius=CONFIG.earth.radius+(d.surfaceClearance??.65);
+    const tracedFit=d.name==='ferrel'?fitThirdStepTracedOutline(referenceSamples,d.low+1.5+d.latitudeOffset,d.top-1.5+d.latitudeOffset,groundRadius):null;
+    const envelopeScale=1-(d.width/2+.06)/Math.min(atmosphereHorizontal,atmosphereVertical);
+    let radialGain=Infinity;
+    referenceSamples.forEach(point=>{
+      const height=Math.hypot(point.x,point.y)-innerRadius;
+      if(height<=1e-6)return;
+      const latitude=latitudeAt(point);
+      const boundary=envelopeScale/Math.hypot(Math.cos(latitude)/atmosphereHorizontal,Math.sin(latitude)/atmosphereVertical);
+      radialGain=Math.min(radialGain,(boundary-groundRadius)/height);
     });
+    const baseCurve=new SequenceCurve(t=>{
+      const point=spline.getPointAt(d.name==='ferrel'?1-t:t);
+      const fitted=tracedFit?.(point);
+      const latitude=fitted?.latitude??latitudeAt(point);
+      const radius=fitted?.radius??(groundRadius+(Math.hypot(point.x,point.y)-innerRadius)*radialGain);
+      // A true meridional section keeps geographic latitude correct as the camera tilts.
+      const horizontal=radius*Math.cos(latitude);
+      return point.set(-horizontal*Math.cos(meridian),h*radius*Math.sin(latitude),horizontal*Math.sin(meridian));
+    });
+    const curve=new SequenceCurve(t=>seasonalSchematicPoint(baseCurve.getPoint(t)));
     curve.getTangent=(t,target=new THREE.Vector3())=>target.copy(curve.getPoint((t+.0001)%1)).sub(curve.getPoint((t-.0001+1)%1)).normalize();
     curve.arcLengthDivisions=1000;
-    const low=d.low+.9,high=d.top-.9;
+    // 颜色只标示"处在环流的哪一段"，不按高度取色：
+    // 进度 0 在上升端、1 在下沉端；两个端点正好分居纬度两端，所以只由纬度判定即可。
+    // 若掺入高度权重，赤道上升支的顶部会被染冷、30° 下沉支的底部反而偏暖，与升降阶段正好错位。
     const thermalProgress=(k,p,t)=>{
       const diagramPoint=spline.getPointAt(d.name==='ferrel'?1-t:t);
-      const radius=Math.hypot(diagramPoint.x,diagramPoint.y);
       const latitude=Math.abs(Math.atan2(diagramPoint.y,-diagramPoint.x)*180/Math.PI);
-      const altitude=clamp((radius-inner)/(outer-inner),0,1);
-      return clamp(.08+.64*altitude+.24*(latitude-low)/(high-low),0,1);
+      const along=(latitude-latitudeLow)/(latitudeHigh-latitudeLow||1);
+      return clamp(d.riseEdge==='high'?1-along:along,0,1);
     };
-    const flow=createAirflowVisual(root,{curve,start:0,end:1,color:d.palette[0],endColor:d.palette[3],kind:'schematic-'+d.name,h,lon:0,cells:{[d.name]:['schematic-'+d.name]},thermalProgress,thermalPalette:d.palette,ribbonWidth:()=>d.width,streamline:false,closed:true});
+    const flow=createAirflowVisual(root,{curve,start:0,end:1,color:d.palette[0],endColor:d.palette[3],kind:'schematic-'+d.name,h,lon:0,cells:{[d.name]:['schematic-'+d.name]},thermalProgress,thermalPalette:d.palette,ribbonWidth:()=>d.width,streamline:false,closed:true,sectionNormal});
+    flow.baseCurve=baseCurve;
+    flow.seasonAttributes=[flow.ribbon.geometry.attributes.position,flow.ribbon.geometry.attributes.center,...flow.tubes.map(mesh=>mesh.geometry.attributes.position)]
+      .map(attribute=>({attribute,base:Float32Array.from(attribute.array)}));
     flow.reference={pixels:reference,spline};
     flow.group.visible=true;flow.ribbon.material.uniforms.uOpacity.value=.5;flow.tubes[0].material.opacity=.9;
     const arrows=[];
@@ -421,8 +472,34 @@ function createThirdStepSchematic(){
   root.traverse(obj=>{if(!obj.material)return;const ms=Array.isArray(obj.material)?obj.material:[obj.material];ms.forEach(m=>{m.depthTest=true;m.depthWrite=false;});obj.renderOrder=3;});
   window.__threeStepSchematicDebug={schematic:s};
 }
+function seasonalSchematicPoint(point){
+  if(!STATE.seasonalShift)return point;
+  const radius=point.length(),latitude=Math.asin(clamp(point.y/radius,-1,1))*180/Math.PI;
+  const shifted=degToRad(seasonalLatitude(latitude)),longitude=Math.atan2(point.z,point.x),ring=radius*Math.cos(shifted);
+  return point.set(ring*Math.cos(longitude),radius*Math.sin(shifted),ring*Math.sin(longitude));
+}
+function syncThirdStepSeason(){
+  const s=THIRD_STEP_SCHEMATIC;if(!s.root||s.seasonalShift===STATE.seasonalShift)return;
+  s.seasonalShift=STATE.seasonalShift;
+  const point=new THREE.Vector3();
+  for(const flow of s.flows){
+    // Refit the original geometry each frame so polar loops can contract and
+    // expand without accumulating drift or changing their circulation colors.
+    for(const {attribute,base} of flow.seasonAttributes){
+      if(!STATE.seasonalShift)attribute.array.set(base);
+      else for(let i=0;i<base.length;i+=3){
+        seasonalSchematicPoint(point.fromArray(base,i));point.toArray(attribute.array,i);
+      }
+      attribute.needsUpdate=true;
+    }
+    flow.curve.updateArcLengths();
+    flow.ribbon.geometry.computeBoundingSphere();
+    flow.tubes.forEach(mesh=>mesh.geometry.computeBoundingSphere());
+  }
+}
 function updateThirdStepSchematic(dt){
   const s=THIRD_STEP_SCHEMATIC;if(!s.root)return;
+  syncThirdStepSeason();
   s.elapsed+=Math.min(dt,.1)*Math.max(STATE.speed||1,0.25);
   s.flows.forEach(flow=>{flow.group.visible=s.root.visible&&STATE.showPaths;flow.ribbon.material.uniforms.uTime.value=s.elapsed*2.2;});
   s.arrows.forEach(({flow,arrows,palette,thermalProgress})=>arrows.forEach(a=>{
@@ -433,7 +510,7 @@ function updateThirdStepSchematic(dt){
     const positions=a.mesh.geometry.attributes.position,span=.34/flow.curve.getLength();
     for(let j=0;j<=a.segments;j++){
       const progress=j/a.segments,u=(a.phase-(1-progress)*span+1)%1;
-      const center=flow.curve.getPointAt(u),side=flow.curve.getTangentAt(u).cross(new THREE.Vector3(0,0,1)).normalize();
+      const center=flow.curve.getPointAt(u),side=flow.curve.getTangentAt(u).cross(flow.sectionNormal).normalize();
       const halfWidth=progress<.4?.012:.08*(1-progress)/.6;
       for(let k=0;k<2;k++){
         const vertex=center.clone().addScaledVector(side,(k===0?-1:1)*halfWidth);
@@ -450,79 +527,35 @@ function setThirdStepSchematicVisible(v){
   if(v) updateThirdStepSchematic(0);
 }
 function faceThirdStepSchematic(){
-  const root=THIRD_STEP_SCHEMATIC.root;if(!root?.visible)return;
+  const s=THIRD_STEP_SCHEMATIC,root=s.root;if(!root?.visible)return;
   // Match the earlier steps: keep the section on the left meridian while
   // preserving Earth's north/south axis and the camera's real perspective.
   const az=Math.atan2(camera.position.z-earthGroup.position.z,camera.position.x-earthGroup.position.x);
   root.rotation.set(0,Math.PI/2-az,0);
   root.scale.setScalar(1);
 }
-window.__thirdStepSchematic={create:createThirdStepSchematic,setVisible:setThirdStepSchematicVisible,update:updateThirdStepSchematic,faceCamera:faceThirdStepSchematic};
+window.__thirdStepSchematic={create:createThirdStepSchematic,setVisible:setThirdStepSchematicVisible,update:updateThirdStepSchematic,faceCamera:faceThirdStepSchematic,syncSeason:syncThirdStepSeason};
 function layoutThirdStepBeltLabels(){
-  const items=[...pressureLabels.filter(l=>Math.abs(l.data.lat)>=60).map(l=>({obj:l.obj,lat:l.data.lat})),
-    ...windLabels.filter(l=>Math.abs(l.obj.userData.windLat)>=60).map(l=>({obj:l.obj,lat:l.obj.userData.windLat}))];
-  const state=layoutThirdStepBeltLabels.state||(layoutThirdStepBeltLabels.state={lines:new Map()});
+  const items=[...pressureLabels,...windLabels];
   if(STATE.step!==2){
-    items.forEach(({obj})=>{obj.element.style.translate='';obj.element.classList.remove('third-step-callout');});
-    if(state.layer)state.layer.hidden=true;
+    items.forEach(({obj})=>{obj.element.style.visibility='';obj.element.classList.remove('third-step-callout');});
     return;
   }
-  if(!state.layer){
-    state.layer=document.createElement('div');state.layer.id='third-step-label-leaders';
-    state.layer.style.cssText='position:absolute;inset:0;pointer-events:none;z-index:1;overflow:hidden;';
-    labelRenderer.domElement.style.zIndex='2';
-    labelRenderer.domElement.before(state.layer);
-  }
-  state.layer.hidden=false;state.lines.forEach(line=>line.hidden=true);
-  const compact=innerWidth<=600,gap=compact?4:7,margin=compact?7:14;
   const center=earthGroup.position.clone().project(camera),cx=(center.x+1)*innerWidth/2,cy=(1-center.y)*innerHeight/2;
   const distance=camera.position.distanceTo(earthGroup.position),focal=innerHeight/(2*Math.tan(degToRad(camera.fov/2)))*camera.zoom;
-  const radius=focal*(CONFIG.earth.radius*1.005)/Math.sqrt(distance*distance-(CONFIG.earth.radius*1.005)**2);
-  const framing=getSceneFraming(),minY=framing.top,maxY=framing.top+framing.availableH;
-  const allLabels=[...latLabels,...pressureLabels,...windLabels];
-  const moving=new Set(items.map(item=>item.obj));
-  const obstacles=allLabels.filter(l=>l.obj.visible&&!moving.has(l.obj)).map(l=>l.obj.element.getBoundingClientRect());
-  for(const h of [1,-1]){
-    const group=items.filter(item=>item.lat*h>0&&item.obj.visible).sort((a,b)=>h*(Math.abs(b.lat)-Math.abs(a.lat)));
-    if(!group.length)continue;
-    const rows=group.map(item=>{
-      const el=item.obj.element;el.classList.add('third-step-callout');
-      const p=item.obj.getWorldPosition(new THREE.Vector3()).project(camera);
-      return {...item,el,x:(p.x+1)*innerWidth/2,y:(1-p.y)*innerHeight/2,width:el.offsetWidth,height:el.offsetHeight};
-    });
-    const width=Math.max(...rows.map(row=>row.width)),height=rows.reduce((sum,row)=>sum+row.height,0)+gap*(rows.length-1);
-    let top=clamp(rows.reduce((sum,row)=>sum+row.y,0)/rows.length-height/2,minY,maxY-height),positions;
-    for(let attempt=0;attempt<100;attempt++){
-      let y=top;
-      positions=rows.map(row=>{const position={...row,top:y};y+=row.height+gap;return position;});
-      let left=Math.max(cx+radius*.45,...positions.map(row=>{
-        const closestY=clamp(cy,row.top,row.top+row.height),dy=closestY-cy;
-        return cx+Math.sqrt(Math.max(0,radius*radius-dy*dy))+margin;
-      }));
-      const initialLeft=left;
-      for(let shift=0;shift<=obstacles.length;shift++){
-        const conflicts=positions.flatMap(row=>obstacles.filter(r=>left<r.right+3&&left+row.width>r.left-3&&row.top<r.bottom+3&&row.top+row.height>r.top-3));
-        if(!conflicts.length)break;
-        left=Math.max(...conflicts.map(r=>r.right+4));
-      }
-      if(left+width>innerWidth-8)left=initialLeft;
-      positions.forEach(row=>row.left=left);
-      const clear=left+width<=innerWidth-8&&positions.every(row=>!obstacles.some(r=>row.left<r.right+3&&row.left+row.width>r.left-3&&row.top<r.bottom+3&&row.top+row.height>r.top-3));
-      if(clear)break;
-      const next=top-h*2;
-      if(next<minY||next+height>maxY)break;
-      top=next;
-    }
-    positions.forEach(row=>{
-      const left=Math.min(row.left,innerWidth-row.width-8);
-      row.el.style.translate=`${(left+row.width/2-row.x).toFixed(2)}px ${(row.top+row.height/2-row.y).toFixed(2)}px`;
-      let line=state.lines.get(row.obj);
-      if(!line){line=document.createElement('div');line.className='third-step-label-leader';state.layer.append(line);state.lines.set(row.obj,line);}
-      const endY=row.top+row.height/2,dx=left-5-row.x,dy=endY-row.y;
-      line.hidden=false;line.style.left=row.x+'px';line.style.top=row.y+'px';
-      line.style.width=Math.hypot(dx,dy)+'px';line.style.transform=`rotate(${Math.atan2(dy,dx)}rad)`;
-      line.style.background=row.el.style.color||'#8bd3ef';
-    });
+  const earthRadius=CONFIG.earth.radius;
+  const radius=focal*earthRadius/Math.sqrt(Math.max(1,distance*distance-earthRadius**2))-2;
+  const occupied=latLabels.filter(({obj})=>obj.visible&&obj.element.style.display!=='none')
+    .map(({obj})=>obj.element.getBoundingClientRect());
+  // Keep the original surface anchors; hide labels that cannot fit without overlap.
+  for(const {obj} of items){
+    const el=obj.element;el.classList.add('third-step-callout');el.style.visibility='';
+    if(!obj.visible||el.style.display==='none')continue;
+    const rect=el.getBoundingClientRect();
+    const onGlobe=[rect.left,rect.right].every(x=>[rect.top,rect.bottom].every(y=>Math.hypot(x-cx,y-cy)<=radius));
+    const overlaps=occupied.some(other=>rect.left<other.right+4&&rect.right>other.left-4&&rect.top<other.bottom+4&&rect.bottom>other.top-4);
+    if(!onGlobe||overlaps)el.style.visibility='hidden';
+    else occupied.push(rect);
   }
 }
 function createCirculationSequence(){

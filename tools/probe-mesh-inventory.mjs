@@ -1,3 +1,4 @@
+import { tmpProfile } from './lib/tmp-profile.mjs';
 // 探针10：第三步/第二步逐 Mesh 量测真实渲染贡献（colorWrite=false，不扰动透明排序）。
 // 列出每个渲染对象的类型/透明度/混合模式/世界坐标/屏幕足迹，找"半透明大箭头"。
 import { spawn } from 'node:child_process';
@@ -18,7 +19,7 @@ await mkdir(profile, { recursive: true });
 const chrome = spawn(CHROME, [
   '--headless=new', '--disable-gpu', '--no-sandbox', '--no-first-run', '--no-default-browser-check',
   '--hide-scrollbars', '--force-device-scale-factor=1',
-  `--remote-debugging-port=${PORT}`, `--user-data-dir=${profile}`,
+  `--remote-debugging-port=${PORT}`, `--user-data-dir=${tmpProfile()}`,
   '--window-size=1600,1000', 'about:blank'
 ], { stdio: 'ignore' });
 

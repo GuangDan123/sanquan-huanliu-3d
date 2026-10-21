@@ -8,7 +8,7 @@ const browser=await chromium.launch({executablePath:'C:/Program Files/Google/Chr
 const page=await browser.newPage({viewport:{width:1366,height:900}}),errors=[],samples=[];
 page.on('pageerror',e=>errors.push(String(e)));page.on('console',m=>{if(m.type()==='error')errors.push(m.text());});
 try{
- await page.goto(pathToFileURL(resolve('三圈环流3D交互式教学平台.html')).href+'?state=guided');
+ await page.goto(pathToFileURL(resolve('气压带与风带3D交互式教学平台.html')).href+'?state=guided');
  await page.waitForFunction(()=>window.__singleCirculationDebug);await page.waitForTimeout(2300);
  await page.evaluate(()=>document.getElementById('teaching-intro-play').click());
  for(const width of [1366,390]){

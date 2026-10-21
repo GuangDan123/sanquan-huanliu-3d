@@ -1,3 +1,4 @@
+import { tmpProfile } from './lib/tmp-profile.mjs';
 // 把一张图片按 3x4 网格分块放大截取，便于精读图内文字与位置。
 // 用法：node tools/shot-image-tiles.mjs <图片HTML路径 or file:// URL> <输出目录> [缩放]
 import { spawn } from 'node:child_process';
@@ -18,7 +19,7 @@ await mkdir(outDir, { recursive: true });
 const chrome = spawn(CHROME, [
   '--headless=new', '--disable-gpu', '--no-sandbox', '--no-first-run', '--no-default-browser-check',
   '--allow-file-access-from-files', '--hide-scrollbars', '--force-device-scale-factor=1',
-  `--remote-debugging-port=${PORT}`, `--user-data-dir=${join(outDir, 'profile')}`,
+  `--remote-debugging-port=${PORT}`, `--user-data-dir=${tmpProfile()}`,
   '--window-size=1700,1100', 'about:blank'
 ], { stdio: 'ignore' });
 

@@ -1,3 +1,4 @@
+import { tmpProfile } from './lib/tmp-profile.mjs';
 // 问题修复专项回归：实际点击、气流方向、暂停、图层、性能、小屏、焦点及失败启动。
 import {spawn} from 'node:child_process';
 import {mkdir,writeFile} from 'node:fs/promises';
@@ -9,7 +10,7 @@ const report={browser:'',checks:[],errors:[],screenshots:[]};
 const check=(ok,name,evidence)=>{report.checks.push({ok,name,evidence});console.log(`${ok?'PASS':'FAIL'} ${name}`);};
 async function browser(disableGL=false){
  const port=10000+process.pid%1000+(disableGL?1000:0);
- const chrome=spawn('C:/Program Files/Google/Chrome/Application/chrome.exe',['--headless=new','--no-first-run','--no-default-browser-check',...(disableGL?['--disable-webgl']:[]),`--remote-debugging-port=${port}`,`--user-data-dir=${join(out,disableGL?'profile-no-gl':'profile-main')}`,'about:blank'],{stdio:'ignore',windowsHide:true});
+ const chrome=spawn('C:/Program Files/Google/Chrome/Application/chrome.exe',['--headless=new','--no-first-run','--no-default-browser-check',...(disableGL?['--disable-webgl']:[]),`--remote-debugging-port=${port}`,`--user-data-dir=${tmpProfile()}`,'about:blank'],{stdio:'ignore',windowsHide:true});
  let ws;
  try{
   let tab;for(let i=0;i<50;i++){try{const r=await fetch(`http://127.0.0.1:${port}/json/new?about:blank`,{method:'PUT'});if(r.ok){tab=await r.json();break;}}catch{}await sleep(200);}if(!tab)throw Error('浏览器未启动');

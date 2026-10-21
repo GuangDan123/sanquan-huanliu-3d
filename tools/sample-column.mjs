@@ -1,3 +1,4 @@
+import { tmpProfile } from './lib/tmp-profile.mjs';
 // 从截图里按列采样真实像素颜色，输出"颜色分段"（起始 y / 结束 y / 颜色 / 高度）。
 // 用途：像素级证明"某标签确实压在对应色带上"——标签左右两侧露出的色带像素应该与色带定义色一致。
 //
@@ -22,7 +23,7 @@ await mkdir(outDir, { recursive: true });
 const chrome = spawn(CHROME, [
   '--headless=new', '--disable-gpu', '--no-sandbox', '--no-first-run', '--no-default-browser-check',
   '--allow-file-access-from-files', '--hide-scrollbars', '--force-device-scale-factor=1',
-  `--remote-debugging-port=${PORT}`, `--user-data-dir=${join(outDir, 'profile')}`,
+  `--remote-debugging-port=${PORT}`, `--user-data-dir=${tmpProfile()}`,
   '--window-size=900,900', 'about:blank'
 ], { stdio: 'ignore' });
 const cleanup = async (c) => { try { ws?.close(); } catch {} try { chrome.kill('SIGKILL'); } catch {} await sleep(150); process.exit(c); };

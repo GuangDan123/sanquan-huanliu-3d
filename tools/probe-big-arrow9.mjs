@@ -1,3 +1,4 @@
+import { tmpProfile } from './lib/tmp-profile.mjs';
 // 探针9：第三步逐组量测真实渲染贡献（colorWrite=false 方式，不扰动透明排序）。
 // 找出屏幕足迹纵贯北极→赤道→南极（box 高度 > 500px）的组 = 用户看到的"半透明大箭头"。
 import { spawn } from 'node:child_process';
@@ -18,7 +19,7 @@ await mkdir(profile, { recursive: true });
 const chrome = spawn(CHROME, [
   '--headless=new', '--disable-gpu', '--no-sandbox', '--no-first-run', '--no-default-browser-check',
   '--hide-scrollbars', '--force-device-scale-factor=1',
-  `--remote-debugging-port=${PORT}`, `--user-data-dir=${profile}`,
+  `--remote-debugging-port=${PORT}`, `--user-data-dir=${tmpProfile()}`,
   '--window-size=1600,1000', 'about:blank'
 ], { stdio: 'ignore' });
 

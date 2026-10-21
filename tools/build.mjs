@@ -12,7 +12,7 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const SRC = join(ROOT, 'src', 'index.src.html');
-const OUT = join(ROOT, '三圈环流3D交互式教学平台.html');
+const OUT = join(ROOT, '气压带与风带3D交互式教学平台.html');
 
 const CORE = join(ROOT, 'libs', 'three', 'three.module.js');
 const ADDONS = [

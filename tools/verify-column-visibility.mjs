@@ -1,3 +1,4 @@
+import { tmpProfile } from './lib/tmp-profile.mjs';
 // Browser verification for classroom route, true particle alpha, power saving and hidden rendering.
 import {spawn} from 'node:child_process';
 import {mkdir,writeFile,readFile} from 'node:fs/promises';
@@ -6,8 +7,8 @@ import {pathToFileURL} from 'node:url';
 import {createHash} from 'node:crypto';
 import {setTimeout as sleep} from 'node:timers/promises';
 const out=resolve(process.argv[2]||'artifacts/classroom-improvements-20261010');await mkdir(out,{recursive:true});
-const report={checks:[],errors:[],screenshots:[],buildSha256:createHash('sha256').update(await readFile('三圈环流3D交互式教学平台.html')).digest('hex')};
-const port=23000+process.pid%1000,chrome=spawn('C:/Program Files/Google/Chrome/Application/chrome.exe',['--headless=new','--no-first-run','--no-default-browser-check',`--remote-debugging-port=${port}`,`--user-data-dir=${join(out,'profile')}`,'about:blank'],{stdio:'ignore',windowsHide:true});let ws;
+const report={checks:[],errors:[],screenshots:[],buildSha256:createHash('sha256').update(await readFile('气压带与风带3D交互式教学平台.html')).digest('hex')};
+const port=23000+process.pid%1000,chrome=spawn('C:/Program Files/Google/Chrome/Application/chrome.exe',['--headless=new','--no-first-run','--no-default-browser-check',`--remote-debugging-port=${port}`,`--user-data-dir=${tmpProfile()}`,'about:blank'],{stdio:'ignore',windowsHide:true});let ws;
 const check=(ok,name,evidence)=>{report.checks.push({ok,name,evidence});console.log(`${ok?'PASS':'FAIL'} ${name}`);};
 try{
  let tab;for(let i=0;i<80;i++){try{const r=await fetch(`http://127.0.0.1:${port}/json/new?about:blank`,{method:'PUT'});if(r.ok){tab=await r.json();break;}}catch{}await sleep(100);}if(!tab)throw Error('Chrome startup timeout');
@@ -21,7 +22,7 @@ try{
  const select=(id,value)=>ev(`(()=>{const e=document.getElementById(${JSON.stringify(id)});e.value=${JSON.stringify(value)};e.dispatchEvent(new Event('change',{bubbles:true}));})()`);
  const shot=async name=>{const r=await send('Page.captureScreenshot',{format:'png'});await writeFile(join(out,name+'.png'),Buffer.from(r.data,'base64'));report.screenshots.push(name+'.png');};
  await send('Runtime.enable');await send('Page.enable');await send('Network.enable');await send('Network.emulateNetworkConditions',{offline:true,latency:0,downloadThroughput:0,uploadThroughput:0});await viewport(1600,1000);
- await send('Page.navigate',{url:pathToFileURL(resolve('三圈环流3D交互式教学平台.html')).href+'?state=landsea'});
+ await send('Page.navigate',{url:pathToFileURL(resolve('气压带与风带3D交互式教学平台.html')).href+'?state=landsea'});
  check(await ready('window.__landSeaDebug&&window.__threeCellDebug.STATE.step===3&&document.getElementById("landsea-formation-next")'),'Platform loads');
  const sample=()=>ev(`(()=>{const d=window.__threeCellDebug,m=window.__landSeaDebug.group.getObjectByName('landsea-mechanism-field'),p=m.children[2],a=p.geometry.attributes.position,rect=document.querySelector('#container canvas')?.getBoundingClientRect()||{width:innerWidth,height:innerHeight};const rows=[...p.geometry.index.array].filter(i=>i>=196).map(i=>{const v=d.makeVector3(a.getX(i),a.getY(i),a.getZ(i)),r=v.length(),screen=m.localToWorld(v.clone()).project(d.camera),lo=m.localToWorld(v.clone().normalize().multiplyScalar(5.2)).project(d.camera),hi=m.localToWorld(v.clone().normalize().multiplyScalar(5.7)).project(d.camera);return {i,r,x:(screen.x+1)*rect.width/2,y:(1-screen.y)*rect.height/2,span:Math.hypot((hi.x-lo.x)*rect.width/2,(hi.y-lo.y)*rect.height/2)}});return {rows,mechanism:window.__landSeaDebug.mechanism(),camera:d.camera.position.toArray()};})()`);
  for(const month of [1,7]){await ev(`window.__landSeaDebug.setMonth(${month});window.__threeCellDebug.STATE.playing=false;window.__landSeaDebug.formation.node=2;window.__landSeaDebug.formation.progress=.25;`);await sleep(500);const a=await sample();await shot('month-'+month+'-before');await ev('window.__landSeaDebug.formation.progress=.375');await sleep(250);const b=await sample();report['month'+month]={a,b,displacements:a.rows.map((p,j)=>({i:p.i,dr:b.rows[j].r-p.r,pixels:Math.hypot(b.rows[j].x-p.x,b.rows[j].y-p.y)}))};const rows=report['month'+month].displacements,sign=month===1?-1:1;check(rows.filter(p=>Math.abs(p.dr)<.1).every(p=>p.dr*sign>0),'Month '+month+' radial motion has correct sign');check(a.rows.every((p,j)=>Math.abs(p.span-b.rows[j].span)<.001),'Month '+month+' tracers stay in their original columns, including wraps');

@@ -1,3 +1,4 @@
+import { tmpProfile } from './lib/tmp-profile.mjs';
 // 诊断：算出"地转偏向力强度标签"的屏幕坐标，判断为何不可见
 // 用法：node tools/diag-deflect-pos.mjs <页面URL>
 import { spawn } from 'node:child_process';
@@ -12,7 +13,7 @@ await rm(join(dir, 'profile'), { recursive: true, force: true });
 const PORT = 9422;
 const chrome = spawn('C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe', [
   '--headless=new', '--disable-gpu', '--no-first-run',
-  `--remote-debugging-port=${PORT}`, `--user-data-dir=${join(dir, 'profile')}`,
+  `--remote-debugging-port=${PORT}`, `--user-data-dir=${tmpProfile()}`,
   '--window-size=1600,1000', 'about:blank'
 ], { stdio: 'ignore' });
 const bail = async (c) => { try { chrome.kill('SIGKILL'); } catch {} await sleep(300); process.exit(c); };

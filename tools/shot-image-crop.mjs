@@ -1,3 +1,4 @@
+import { tmpProfile } from './lib/tmp-profile.mjs';
 // 对一张本地图片按指定区域放大截取（用于精读截图细节）。
 // 用法：node tools/shot-image-crop.mjs <图片路径> <输出png> <x> <y> <w> <h> [scale]
 import { spawn } from 'node:child_process';
@@ -21,7 +22,7 @@ await mkdir(dirname(outPng), { recursive: true });
 const chrome = spawn(CHROME, [
   '--headless=new', '--disable-gpu', '--no-sandbox', '--no-first-run', '--no-default-browser-check',
   '--allow-file-access-from-files', '--hide-scrollbars', '--force-device-scale-factor=1',
-  `--remote-debugging-port=${PORT}`, `--user-data-dir=${join(dirname(outPng), 'profile-crop')}`,
+  `--remote-debugging-port=${PORT}`, `--user-data-dir=${tmpProfile()}`,
   '--window-size=1600,1000', 'about:blank'
 ], { stdio: 'ignore' });
 

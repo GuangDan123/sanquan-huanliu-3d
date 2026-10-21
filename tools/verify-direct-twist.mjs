@@ -18,7 +18,7 @@ const checkCanvas=async width=>{
   check(pixels.globe>1000&&pixels.line>20,`${width} canvas renders both the globe and the retained airflow`);
 };
 try{
-  await page.goto(pathToFileURL(resolve('三圈环流3D交互式教学平台.html')).href+'?state=explore');
+  await page.goto(pathToFileURL(resolve('气压带与风带3D交互式教学平台.html')).href+'?state=explore');
   await page.waitForFunction(()=>window.__singleCirculationDebug&&window.__circulationSequenceDebug);await page.waitForTimeout(2200);
   await page.evaluate(()=>{document.getElementById('teaching-intro-play')?.click();window.__circulationSequenceDebug.cameraMode('overview');});await seek(0);
   await page.evaluate(()=>window.__twistOriginalMeshes=window.__singleCirculationDebug.model.flows.map(f=>f.ribbon));

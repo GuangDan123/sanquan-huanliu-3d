@@ -1,3 +1,4 @@
+import { tmpProfile } from './lib/tmp-profile.mjs';
 import { spawn } from 'node:child_process';
 import { setTimeout as sleep } from 'node:timers/promises';
 import { pathToFileURL } from 'node:url';
@@ -7,7 +8,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 const port = 29300 + (process.pid % 500);
 const chrome = spawn('C:/Program Files/Google/Chrome/Application/chrome.exe', [
   '--headless=new', '--disable-gpu', '--no-first-run', '--no-default-browser-check',
-  `--remote-debugging-port=${port}`, `--user-data-dir=${resolve('.verify-step2-transition/profile')}`,
+  `--remote-debugging-port=${port}`, `--user-data-dir=${tmpProfile()}`,
   '--window-size=1366,768', 'about:blank'
 ], { stdio: 'ignore', windowsHide: true });
 let tab;
@@ -23,7 +24,7 @@ const send = (method, params = {}) => new Promise((resolve, reject) => { const i
 const evaluate = async expression => (await send('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true })).result?.value;
 const capture = async name => { const shot = await send('Page.captureScreenshot', { format: 'png' }); await mkdir('artifacts/step2-transition-check', { recursive: true }); await writeFile(`artifacts/step2-transition-check/${name}.png`, Buffer.from(shot.data, 'base64')); };
 await send('Runtime.enable'); await send('Page.enable');
-await send('Page.navigate', { url: pathToFileURL(resolve('三圈环流3D交互式教学平台.html')).href + '?state=explore' });
+await send('Page.navigate', { url: pathToFileURL(resolve('气压带与风带3D交互式教学平台.html')).href + '?state=explore' });
 for (let i = 0; i < 120; i++) { if (await evaluate(`!!window.__threeCellDebug && document.getElementById('loading-screen')?.classList.contains('hidden')`)) break; await sleep(100); }
 await sleep(900);
 await evaluate('window.__threeCellDebug.transitionToStep(1); window.__threeCellDebug.showTeachingIntro(1); document.getElementById("teaching-intro")?.className'); await sleep(220);

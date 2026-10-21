@@ -11,7 +11,7 @@ const seek=async t=>{await page.evaluate(t=>window.__circulationSequenceDebug.se
 const pose=()=>page.evaluate(()=>{const s=window.__circulationSequenceDebug.sequence,c=window.__threeCellDebug.camera;return {p:c.position.toArray(),q:c.quaternion.toArray(),fov:c.fov,near:c.near,root:s.root.rotation.y};});
 const motion=()=>page.evaluate(()=>{const s=window.__circulationSequenceDebug.sequence,d=window.__threeCellDebug;return JSON.stringify({e:window.__circulationSequenceDebug.elapsed(),playing:d.STATE.playing,rotation:d.earthGroup.rotation.y,arrows:s.arrowLoops.flatMap(l=>l.arrows.map(a=>a.helper.position.toArray())),waves:s.pressureWaves.map(w=>w.mesh.material.uniforms.uRadii.value)});});
 try{
- await page.goto(pathToFileURL(resolve('三圈环流3D交互式教学平台.html')).href+'?state=explore');await page.waitForFunction(()=>window.__circulationSequenceDebug&&document.getElementById('loading-screen').classList.contains('hidden'));
+ await page.goto(pathToFileURL(resolve('气压带与风带3D交互式教学平台.html')).href+'?state=explore');await page.waitForFunction(()=>window.__circulationSequenceDebug&&document.getElementById('loading-screen').classList.contains('hidden'));
  for(const [width,height] of [[1366,768],[390,844]]){
   await page.setViewportSize({width,height});await page.evaluate(()=>window.__circulationSequenceDebug.cameraMode('ride'));
   for(const t of [3.5,18.5,40]){

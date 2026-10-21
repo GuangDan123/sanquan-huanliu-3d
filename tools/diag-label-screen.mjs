@@ -1,3 +1,4 @@
+import { tmpProfile } from './lib/tmp-profile.mjs';
 // 诊断：量出各类标签"原始半径"下在屏幕上的位置，用于确定既保留原有朝向、又不被球体遮挡的半径
 // 用法：node tools/diag-label-screen.mjs <页面URL>
 import { spawn } from 'node:child_process';
@@ -12,7 +13,7 @@ await rm(join(dir, 'profile'), { recursive: true, force: true });
 const PORT = 9420;
 const chrome = spawn('C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe', [
   '--headless=new', '--disable-gpu', '--no-first-run',
-  `--remote-debugging-port=${PORT}`, `--user-data-dir=${join(dir, 'profile')}`,
+  `--remote-debugging-port=${PORT}`, `--user-data-dir=${tmpProfile()}`,
   '--window-size=1600,1000', 'about:blank'
 ], { stdio: 'ignore' });
 const bail = async (c) => { try { chrome.kill('SIGKILL'); } catch {} await sleep(300); process.exit(c); };

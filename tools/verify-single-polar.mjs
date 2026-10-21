@@ -12,7 +12,7 @@ const check=(ok,name)=>{checks.push({ok,name});console.log(`${ok?'PASS':'FAIL'} 
 const seek=async t=>{await page.evaluate(t=>window.__singleCirculationDebug.seek(t),t);await page.waitForTimeout(140);};
 const snapshot=()=>page.evaluate(()=>{const m=window.__singleCirculationDebug.model;return JSON.stringify({clouds:m.polarAccumulations.map(c=>Array.from(c.particles.geometry.attributes.position.array)),arrows:m.descentColumns.map(c=>c.arrows.map(a=>a.helper.position.toArray())),particles:m.descentColumns.map(c=>Array.from(c.particles.geometry.attributes.position.array)),parcels:m.descentColumns.map(c=>c.parcels.map(s=>s.position.toArray()))});});
 try{
-  await page.goto(pathToFileURL(resolve('三圈环流3D交互式教学平台.html')).href+'?state=guided');
+  await page.goto(pathToFileURL(resolve('气压带与风带3D交互式教学平台.html')).href+'?state=guided');
   await page.waitForFunction(()=>window.__singleCirculationDebug);await page.waitForTimeout(2200);
   await page.evaluate(()=>document.getElementById('teaching-intro-play')?.click());await seek(5.2);
   check(await page.evaluate(()=>{const m=window.__singleCirculationDebug.model;return m.polarAccumulations.every(c=>!c.group.visible)&&m.descentColumns.every(c=>!c.group.visible);}), 'Polar effects wait for the arriving upper flow');

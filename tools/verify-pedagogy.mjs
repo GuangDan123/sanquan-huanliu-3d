@@ -1,3 +1,4 @@
+import { tmpProfile } from './lib/tmp-profile.mjs';
 // Behavioral and visual acceptance for the geography teaching review, using the built offline artifact.
 import {spawn} from 'node:child_process';
 import {mkdir,readFile,writeFile,readdir} from 'node:fs/promises';
@@ -6,8 +7,8 @@ import {pathToFileURL} from 'node:url';
 import {createHash} from 'node:crypto';
 import {setTimeout as sleep} from 'node:timers/promises';
 const out=resolve(process.argv[2]||'artifacts/teacher-review-20261011/acceptance');await mkdir(out,{recursive:true});
-const report={checks:[],errors:[],screenshots:[],buildSha256:createHash('sha256').update(await readFile('三圈环流3D交互式教学平台.html')).digest('hex')};
-const port=27000+process.pid%1000,chrome=spawn('C:/Program Files/Google/Chrome/Application/chrome.exe',['--headless=new','--no-first-run','--no-default-browser-check',`--remote-debugging-port=${port}`,`--user-data-dir=${join(out,'profile')}`,'about:blank'],{stdio:'ignore',windowsHide:true});let ws;
+const report={checks:[],errors:[],screenshots:[],buildSha256:createHash('sha256').update(await readFile('气压带与风带3D交互式教学平台.html')).digest('hex')};
+const port=27000+process.pid%1000,chrome=spawn('C:/Program Files/Google/Chrome/Application/chrome.exe',['--headless=new','--no-first-run','--no-default-browser-check',`--remote-debugging-port=${port}`,`--user-data-dir=${tmpProfile()}`,'about:blank'],{stdio:'ignore',windowsHide:true});let ws;
 const check=(ok,name,evidence)=>{report.checks.push({ok,name,evidence});console.log(`${ok?'PASS':'FAIL'} ${name}`);};
 try{
  let tab;for(let i=0;i<100;i++){try{const r=await fetch(`http://127.0.0.1:${port}/json/new?about:blank`,{method:'PUT'});if(r.ok){tab=await r.json();break;}}catch{}await sleep(100);}if(!tab)throw Error('Browser startup timeout');
@@ -22,7 +23,7 @@ try{
  const viewport=async(w,h)=>{await send('Emulation.setDeviceMetricsOverride',{width:w,height:h,deviceScaleFactor:1,mobile:false});await sleep(150);};
  const overlap=async(a,b)=>ev(`(()=>{const a=document.querySelector(${JSON.stringify(a)}).getBoundingClientRect(),b=document.querySelector(${JSON.stringify(b)}).getBoundingClientRect();return Math.max(0,Math.min(a.right,b.right)-Math.max(a.left,b.left))*Math.max(0,Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top))})()`);
  await send('Runtime.enable');await send('Page.enable');await send('Network.enable');await send('Network.emulateNetworkConditions',{offline:true,latency:0,downloadThroughput:0,uploadThroughput:0});await viewport(1366,768);
- report.browser=(await send('Browser.getVersion')).product;const url=pathToFileURL(resolve('三圈环流3D交互式教学平台.html')).href+'?state=guided';
+ report.browser=(await send('Browser.getVersion')).product;const url=pathToFileURL(resolve('气压带与风带3D交互式教学平台.html')).href+'?state=guided';
  await send('Page.navigate',{url});check(await ready('!!window.__pedagogyDebug&&!!window.__classroomDebug&&document.getElementById("loading-screen").classList.contains("hidden")'),'Offline single-file platform loads');
  await sleep(3200);
  check(await ev('!window.__pedagogyDebug.singleRevealed()&&!window.__threeCellDebug.getDiagnostics().visibleGroups.includes("singleNH")'),'Prediction starts without the complete circulation');

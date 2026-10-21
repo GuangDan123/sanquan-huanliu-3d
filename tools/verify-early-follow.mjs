@@ -15,7 +15,7 @@ const seek=async time=>{await page.evaluate(t=>window.__circulationSequenceDebug
 try{
   for(const [width,height] of [[1366,900],[390,844]]){
     await page.setViewportSize({width,height});
-    await page.goto(pathToFileURL(resolve('三圈环流3D交互式教学平台.html')).href+'?state=explore');
+    await page.goto(pathToFileURL(resolve('气压带与风带3D交互式教学平台.html')).href+'?state=explore');
     await page.waitForFunction(()=>window.__circulationSequenceDebug&&window.__singleCirculationDebug);await page.waitForTimeout(2200);
     check(await page.evaluate(()=>{const s=window.__circulationSequenceDebug.sequence;return !s.cameraActive&&s.cameraMode==='overview'&&window.__circulationSequenceDebug.elapsed()===0;}),`${width}: the stationary introduction keeps the overview`);
     await page.evaluate(()=>document.getElementById('teaching-intro-play').click());

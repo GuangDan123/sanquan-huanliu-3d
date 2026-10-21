@@ -16,7 +16,7 @@ const seek=async time=>{await page.evaluate(t=>window.__circulationSequenceDebug
 try{
   for(const [width,height] of [[1366,900],[390,844]]){
     await page.setViewportSize({width,height});
-    await page.goto(pathToFileURL(resolve('三圈环流3D交互式教学平台.html')).href+'?state=explore');
+    await page.goto(pathToFileURL(resolve('气压带与风带3D交互式教学平台.html')).href+'?state=explore');
     await page.waitForFunction(()=>window.__circulationSequenceDebug);await page.waitForTimeout(2200);
     await page.evaluate(()=>document.getElementById('teaching-intro-play').click());
     await seek(29);await page.evaluate(()=>window.__circulationSequenceDebug.cameraMode('ride'));await page.waitForTimeout(500);

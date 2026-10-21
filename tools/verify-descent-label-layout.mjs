@@ -7,7 +7,7 @@ const checks=[],errors=[],evidence=[],check=(ok,name,data)=>{checks.push({ok,nam
 const browser=await chromium.launch({executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe',headless:true});
 const page=await browser.newPage({viewport:{width:1366,height:768}});page.on('pageerror',e=>errors.push(String(e)));
 try{
- await page.goto(pathToFileURL(resolve('三圈环流3D交互式教学平台.html')).href+'?state=explore');await page.waitForFunction(()=>window.__circulationSequenceDebug&&document.getElementById('loading-screen').classList.contains('hidden'));await page.waitForTimeout(800);
+ await page.goto(pathToFileURL(resolve('气压带与风带3D交互式教学平台.html')).href+'?state=explore');await page.waitForFunction(()=>window.__circulationSequenceDebug&&document.getElementById('loading-screen').classList.contains('hidden'));await page.waitForTimeout(800);
  for(const mode of ['ride','overview']){
   await page.evaluate(m=>window.__circulationSequenceDebug.cameraMode(m),mode);
   for(const time of [15.2,16,17,18.8,19,22,25,33,40]){

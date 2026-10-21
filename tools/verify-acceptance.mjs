@@ -1,3 +1,4 @@
+import { tmpProfile } from './lib/tmp-profile.mjs';
 // 浏览器功能验收：node tools/verify-acceptance.mjs [URL] [截图/报告目录]
 import { spawn } from 'node:child_process';
 import { mkdir, writeFile } from 'node:fs/promises';
@@ -10,7 +11,7 @@ await mkdir(out,{recursive:true});
 const port=9700+process.pid%200;
 const chrome=spawn('C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',[
   '--headless=new','--no-first-run','--no-default-browser-check',
-  `--remote-debugging-port=${port}`,`--user-data-dir=${join(out,`profile-${process.pid}`)}`,'about:blank'
+  `--remote-debugging-port=${port}`,`--user-data-dir=${tmpProfile()}`,'about:blank'
 ],{stdio:'ignore',windowsHide:true});
 let ws;
 const report={browser:'',checks:[],errors:[],screenshots:[]};
@@ -183,7 +184,7 @@ try {
   await click('#mechanism-next');await click('#mechanism-next');await sleep(400);const f=await frame();
   check(f.labels.every(x=>x.left>=0&&x.top>=0&&x.right<=760&&x.bottom<=800),'760px机制标注留在视口',f);await snap('small-mechanism.png');
   await setViewport(1366,768);await send('Network.enable');await send('Network.emulateNetworkConditions',{offline:true,latency:0,downloadThroughput:0,uploadThroughput:0});
-  const local=pathToFileURL(resolve('三圈环流3D交互式教学平台.html'));local.searchParams.set('state','explore');await send('Page.navigate',{url:local.href});
+  const local=pathToFileURL(resolve('气压带与风带3D交互式教学平台.html'));local.searchParams.set('state','explore');await send('Page.navigate',{url:local.href});
   check(await ready(1),'断网file入口初始化');await sleep(300);
   await click('.step-dot[data-step="0"]');const a=await ev('window.__threeCellDebug.earthGroup.rotation.y');await sleep(500);const b=await ev('window.__threeCellDebug.earthGroup.rotation.y');
   check(a===b,'第一步符合无自转假设',{a,b});

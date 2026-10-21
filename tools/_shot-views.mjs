@@ -1,3 +1,4 @@
+import { tmpProfile } from './lib/tmp-profile.mjs';
 // 临时：把第 3 步在若干预设视角下各截一张图，便于人眼核对"标签是否真的在色带上"。
 // 用法：node tools/_shot-views.mjs [outDir] [view1,view2,...]
 import { spawn } from 'node:child_process';
@@ -7,7 +8,7 @@ import { setTimeout as sleep } from 'node:timers/promises';
 
 const outDir = resolve(process.argv[2] || '.shots-views');
 const VIEWS = (process.argv[3] || 'reset,side,front,top').split(',');
-const url = 'http://127.0.0.1:8123/' + encodeURIComponent('三圈环流3D交互式教学平台.html') + '?state=none';
+const url = 'http://127.0.0.1:8123/' + encodeURIComponent('气压带与风带3D交互式教学平台.html') + '?state=none';
 const PORT = 9800 + (process.pid % 150);
 const CHROME = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 
@@ -15,7 +16,7 @@ await mkdir(outDir, { recursive: true });
 const chrome = spawn(CHROME, [
   '--headless=new', '--disable-gpu', '--no-sandbox', '--no-first-run', '--no-default-browser-check',
   '--hide-scrollbars', '--force-device-scale-factor=1',
-  `--remote-debugging-port=${PORT}`, `--user-data-dir=${join(outDir, 'profile')}`,
+  `--remote-debugging-port=${PORT}`, `--user-data-dir=${tmpProfile()}`,
   '--window-size=1600,1000', 'about:blank'
 ], { stdio: 'ignore' });
 

@@ -11,7 +11,7 @@ const shot=name=>page.screenshot({path:join(out,name+'.png')});
 const seek=async t=>{await page.evaluate(t=>window.__singleCirculationDebug.seek(t),t);await page.waitForTimeout(120);};
 const motion=()=>page.evaluate(()=>JSON.stringify({clock:window.__singleCirculationDebug.model.motionTime,arrows:window.__singleCirculationDebug.model.loops.flatMap(l=>l.arrows.map(a=>a.helper.position.toArray())),earth:window.__threeCellDebug.earthGroup.rotation.y}));
 try{
-  await page.goto(pathToFileURL(resolve('三圈环流3D交互式教学平台.html')).href+'?state=guided');
+  await page.goto(pathToFileURL(resolve('气压带与风带3D交互式教学平台.html')).href+'?state=guided');
   await page.waitForFunction(()=>window.__singleCirculationDebug&&document.getElementById('loading-screen').classList.contains('hidden'));
   await page.waitForTimeout(900);
   check(await page.evaluate(()=>window.__threeCellDebug.STATE.step===0&&window.__singleCirculationDebug.reveal()===0),'First step waits for a prediction without showing the circulation answer');await shot('1366-ready');

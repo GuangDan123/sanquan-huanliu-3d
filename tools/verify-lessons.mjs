@@ -1,3 +1,4 @@
+import { tmpProfile } from './lib/tmp-profile.mjs';
 // 实际浏览器课堂模块验收：包括预测、控制、风向、季节、评分、键盘、小屏与离线。
 import {spawn} from 'node:child_process';
 import {mkdir,writeFile} from 'node:fs/promises';
@@ -10,7 +11,7 @@ const layoutOnly=process.argv.includes('--layout');
 const seasonOnly=process.argv.includes('--season');
 const monsoonOnly=process.argv.includes('--monsoon');
 const port=9500+process.pid%200;
-const chrome=spawn('C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',['--headless=new','--no-first-run','--no-default-browser-check',`--remote-debugging-port=${port}`,`--user-data-dir=${join(out,`profile-${process.pid}`)}`,'about:blank'],{stdio:'ignore',windowsHide:true});
+const chrome=spawn('C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',['--headless=new','--no-first-run','--no-default-browser-check',`--remote-debugging-port=${port}`,`--user-data-dir=${tmpProfile()}`,'about:blank'],{stdio:'ignore',windowsHide:true});
 let ws;const report={browser:'',checks:[],errors:[],screenshots:[]};
 const check=(ok,name,evidence)=>{report.checks.push({ok,name,evidence});console.log(`${ok?'PASS':'FAIL'} ${name}`);};
 try{
@@ -70,7 +71,7 @@ try{
     await mouseClick('[data-season="winter"]');await sleep(300);await mouseClick('#lesson-play');check((await state()).seasonValue<0&&(await state()).seasonValue>-1,'重选同一个冬季可重新观察移动');
     await mouseClick('[data-season="equinox"]');await sleep(2200);await mouseClick('#lesson-replay');await sleep(300);await mouseClick('#lesson-play');check((await state()).seasonMode==='cycle'&&(await state()).seasonValue>0,'春秋分从头重播会北移，不空走进度');
     await click('#lesson-close');await viewport(760,800);await click('#lesson-open');await tabClick('season');await mouseClick('#lesson-play');await sleep(350);await mouseClick('#lesson-play');check((await state()).seasonMode==='cycle'&&(await state()).seasonValue>0,'小屏真实点击直接播放季节循环');await snap('small-cycle.png');
-    await click('#lesson-close');await viewport(1366,768);await send('Network.enable');await send('Network.emulateNetworkConditions',{offline:true,latency:0,downloadThroughput:0,uploadThroughput:0});const local=pathToFileURL(resolve('三圈环流3D交互式教学平台.html'));local.searchParams.set('state','explore');await send('Page.navigate',{url:local.href});check(await ready(),'季节循环断网file入口初始化');await sleep(1800);await click('#lesson-open');await tabClick('season');const offlineBefore=await imageData();await mouseClick('#lesson-play');await sleep(400);await mouseClick('#lesson-play');check((await state()).seasonValue>0&&await imageData()!==offlineBefore,'离线直接播放，直射点与图像实际改变');await snap('offline-cycle.png');
+    await click('#lesson-close');await viewport(1366,768);await send('Network.enable');await send('Network.emulateNetworkConditions',{offline:true,latency:0,downloadThroughput:0,uploadThroughput:0});const local=pathToFileURL(resolve('气压带与风带3D交互式教学平台.html'));local.searchParams.set('state','explore');await send('Page.navigate',{url:local.href});check(await ready(),'季节循环断网file入口初始化');await sleep(1800);await click('#lesson-open');await tabClick('season');const offlineBefore=await imageData();await mouseClick('#lesson-play');await sleep(400);await mouseClick('#lesson-play');check((await state()).seasonValue>0&&await imageData()!==offlineBefore,'离线直接播放，直射点与图像实际改变');await snap('offline-cycle.png');
   }else if(monsoonOnly){
     await ev("document.getElementById('speed-slider').value=20;document.getElementById('speed-slider').dispatchEvent(new Event('input',{bubbles:true}))");
     await mouseClick('#lesson-open');await tabClick('monsoon');const idealImage=await imageData();
@@ -133,7 +134,7 @@ try{
     await select('#teaching-monsoon-view','monsoon');
     await click('#lesson-close');await viewport(760,800);await mouseClick('#lesson-open');await tabClick('monsoon');await mouseClick('#lesson-add-surface');await mouseClick('#lesson-add-surface');await sleep(250);
     check((await state()).surface==='real'&&(await state()).running,'小屏真实点击独立入口正常');await snap('small-monsoon-entry.png');
-    await click('#lesson-close');await viewport(1366,768);await send('Network.enable');await send('Network.emulateNetworkConditions',{offline:true,latency:0,downloadThroughput:0,uploadThroughput:0});const local=pathToFileURL(resolve('三圈环流3D交互式教学平台.html'));local.searchParams.set('state','explore');await send('Page.navigate',{url:local.href});check(await ready(),'海陆入口断网file初始化');await sleep(1800);await click('#lesson-open');await tabClick('monsoon');await mouseClick('#lesson-add-surface');await sleep(250);check((await state()).surface==='real'&&(await state()).running,'离线独立海陆入口与播放正常');await snap('offline-monsoon-entry.png');
+    await click('#lesson-close');await viewport(1366,768);await send('Network.enable');await send('Network.emulateNetworkConditions',{offline:true,latency:0,downloadThroughput:0,uploadThroughput:0});const local=pathToFileURL(resolve('气压带与风带3D交互式教学平台.html'));local.searchParams.set('state','explore');await send('Page.navigate',{url:local.href});check(await ready(),'海陆入口断网file初始化');await sleep(1800);await click('#lesson-open');await tabClick('monsoon');await mouseClick('#lesson-add-surface');await sleep(250);check((await state()).surface==='real'&&(await state()).running,'离线独立海陆入口与播放正常');await snap('offline-monsoon-entry.png');
   }else{
   await mouseClick('#lesson-open');const initial=await state();
   check(initial.open&&initial.tab==='pressure'&&!initial.running,'真实鼠标打开风的成因，先预测');
@@ -186,7 +187,7 @@ try{
   await viewport(760,800);await mouseClick('#lesson-open');await tabClick('season');await click('[data-season="summer"]');await sleep(2200);
   check(await ev("(()=>{const p=document.getElementById('lesson-panel').getBoundingClientRect(),b=document.getElementById('lesson-close').getBoundingClientRect(),f=document.getElementById('lesson-panel').querySelector('footer').getBoundingClientRect();return p.left>=0&&p.right<=innerWidth&&p.top>=0&&p.bottom<=innerHeight&&b.right<=innerWidth&&b.top>=0&&f.bottom<=innerHeight&&getComputedStyle(document.getElementById('control-panel')).visibility==='hidden';})()"),'小屏课堂充分使用屏幕，关闭与课堂底部操作可见');await snap('small-season.png');
   await tabClick('quiz');await ev("document.getElementById('lesson-essay').scrollIntoView({block:'nearest'})");check(await ev("document.getElementById('lesson-body').scrollHeight>document.getElementById('lesson-body').clientHeight"),'小屏练习与迁移作答可滚动到达');await snap('small-quiz.png');
-  await click('#lesson-close');await viewport(1366,768);await send('Network.enable');await send('Network.emulateNetworkConditions',{offline:true,latency:0,downloadThroughput:0,uploadThroughput:0});const local=pathToFileURL(resolve('三圈环流3D交互式教学平台.html'));local.searchParams.set('state','explore');await send('Page.navigate',{url:local.href});check(await ready(),'课堂模块断网file入口');await sleep(1800);await click('#lesson-open');await tabClick('monsoon');await select('#lesson-surface','real');await snap('offline-monsoon.png');check((await state()).open&&(await state()).surface==='real','离线课堂内容正常操作');
+  await click('#lesson-close');await viewport(1366,768);await send('Network.enable');await send('Network.emulateNetworkConditions',{offline:true,latency:0,downloadThroughput:0,uploadThroughput:0});const local=pathToFileURL(resolve('气压带与风带3D交互式教学平台.html'));local.searchParams.set('state','explore');await send('Page.navigate',{url:local.href});check(await ready(),'课堂模块断网file入口');await sleep(1800);await click('#lesson-open');await tabClick('monsoon');await select('#lesson-surface','real');await snap('offline-monsoon.png');check((await state()).open&&(await state()).surface==='real','离线课堂内容正常操作');
   }
   check(report.errors.length===0,'课堂全过程无未捕获异常',report.errors);
 }catch(error){report.errors.push(String(error));check(false,'验收执行',String(error));}

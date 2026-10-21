@@ -1,3 +1,4 @@
+import { tmpProfile } from './lib/tmp-profile.mjs';
 // 诊断脚本：分别在 http:// 与 file:// 下打开作品页，收集控制台错误与关键状态，
 // 判断"双击打开（file://）是否可用"。用法：node tools/diagnose-open.mjs <httpURL> <fileURL>
 import { spawn } from 'node:child_process';
@@ -14,7 +15,7 @@ await rm(join(outDir, 'profile'), { recursive: true, force: true });
 
 const chrome = spawn(CHROME, [
   '--headless=new', '--disable-gpu', '--no-first-run', '--no-default-browser-check',
-  `--remote-debugging-port=${PORT}`, `--user-data-dir=${join(outDir, 'profile')}`,
+  `--remote-debugging-port=${PORT}`, `--user-data-dir=${tmpProfile()}`,
   '--window-size=1280,800', 'about:blank'
 ], { stdio: 'ignore' });
 const bail = async (c) => { try { chrome.kill('SIGKILL'); } catch {} await sleep(300); process.exit(c); };

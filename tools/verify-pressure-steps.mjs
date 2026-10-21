@@ -1,3 +1,4 @@
+import { tmpProfile } from './lib/tmp-profile.mjs';
 // 实际点击复核教师分步操作、阶段边界、小屏及离线入口。
 import {spawn} from 'node:child_process';
 import {mkdir,writeFile} from 'node:fs/promises';
@@ -9,7 +10,7 @@ const out=resolve(process.argv[3]||'.verify-pressure-steps');await mkdir(out,{re
 const report={checks:[],errors:[],screenshots:[]};
 const check=(ok,name,evidence)=>{report.checks.push({ok,name,evidence});console.log(`${ok?'PASS':'FAIL'} ${name}`);};
 const port=13000+process.pid%1000;
-const chrome=spawn('C:/Program Files/Google/Chrome/Application/chrome.exe',['--headless=new','--no-first-run','--no-default-browser-check',`--remote-debugging-port=${port}`,`--user-data-dir=${join(out,'profile')}`,'about:blank'],{stdio:'ignore',windowsHide:true});let ws;
+const chrome=spawn('C:/Program Files/Google/Chrome/Application/chrome.exe',['--headless=new','--no-first-run','--no-default-browser-check',`--remote-debugging-port=${port}`,`--user-data-dir=${tmpProfile()}`,'about:blank'],{stdio:'ignore',windowsHide:true});let ws;
 try{
  let tab;for(let i=0;i<60;i++){try{const r=await fetch(`http://127.0.0.1:${port}/json/new?about:blank`,{method:'PUT'});if(r.ok){tab=await r.json();break;}}catch{}await sleep(200);}if(!tab)throw Error('浏览器未启动');
  ws=new WebSocket(tab.webSocketDebuggerUrl);let id=0;const pending=new Map();
@@ -48,7 +49,7 @@ try{
   await viewport(w,h);await click('#lesson-open');await click('#lesson-step-next');await waitStopped();await click('#lesson-step-next');await waitStopped();await click('#lesson-step-prev');await click('#lesson-step-replay');await waitStopped();await click('#lesson-replay');await waitStopped();
   check((await state()).pressureStep===0&&(await state()).elapsed===2.4,`${w}×${h}播放、下一步、回退、本步与从头重播实际可点击`);await shot(`${w}x${h}.png`);await click('#lesson-close');
  }
- await viewport(1366,768);await send('Network.enable');await send('Network.emulateNetworkConditions',{offline:true,latency:0,downloadThroughput:0,uploadThroughput:0});const local=pathToFileURL(resolve('三圈环流3D交互式教学平台.html'));local.searchParams.set('state','explore');await nav(local.href);await speed();await click('#lesson-open');await click('#lesson-step-next');await waitStopped();await click('#lesson-step-next');await waitStopped();check((await state()).pressureStep===1&&(await state()).elapsed===5.2,'断网双击入口直接点击下一步可分步播放');
+ await viewport(1366,768);await send('Network.enable');await send('Network.emulateNetworkConditions',{offline:true,latency:0,downloadThroughput:0,uploadThroughput:0});const local=pathToFileURL(resolve('气压带与风带3D交互式教学平台.html'));local.searchParams.set('state','explore');await nav(local.href);await speed();await click('#lesson-open');await click('#lesson-step-next');await waitStopped();await click('#lesson-step-next');await waitStopped();check((await state()).pressureStep===1&&(await state()).elapsed===5.2,'断网双击入口直接点击下一步可分步播放');
  check(report.errors.length===0,'全部操作无未捕获异常',report.errors);
 }catch(e){report.errors.push(String(e));check(false,'检查执行',String(e));}finally{report.passed=report.errors.length===0&&report.checks.every(x=>x.ok);await writeFile(join(out,'check.json'),JSON.stringify(report,null,2));ws?.close();chrome.kill();}
 console.log(`教师分步操作：${report.passed?'通过':'未通过'}；${report.checks.filter(x=>x.ok).length}/${report.checks.length}`);process.exitCode=report.passed?0:1;

@@ -141,9 +141,13 @@ node tools/serve.mjs 8123
 
 ## 构建与交付
 
-维护源码后先运行 `node tools/build.mjs`，再运行 `node tools/package.mjs`。后者在 `release/` 创建独立交付目录，只复制成品和说明材料，不包含浏览器缓存、开发工具及文档加工中间文件。交付目录可直接复制给教师。
+维护源码后先运行 `node tools/build.mjs`，再运行 `node tools/package.mjs`。后者在 `release/` 创建独立交付目录，只复制成品和说明材料，不包含浏览器缓存、开发工具及文档加工中间文件。交付目录可直接复制给教师。交付目录按“气压带与风带-日期-提交号”命名，脚本自动保留最新 3 份，避免历史构建无限累积。
 
-浏览器验收脚本使用 Node.js 和本机 Chrome。新检出项目后，运行 `npm ci --prefix artifacts/sequence-runtime` 安装验收依赖，再运行相应的 `tools/verify-*.mjs`。当前脚本默认使用 Windows 的 `C:/Program Files/Google/Chrome/Application/chrome.exe`，其他系统需调整浏览器路径；教学成品本身无需安装这些依赖。最新镜头、特写与复位检查见 `artifacts/smooth-camera-20261013/`。
+浏览器验收脚本使用 Node.js 和本机 Chrome。新检出项目后，运行 `npm ci --prefix artifacts/sequence-runtime` 安装验收依赖，再运行相应的 `tools/verify-*.mjs`。当前脚本默认使用 Windows 的 `C:/Program Files/Google/Chrome/Application/chrome.exe`，其他系统需调整浏览器路径；教学成品本身无需安装这些依赖。验收脚本的 Chrome 配置目录统一放在系统临时目录并在退出时清理，不再写入项目。
+
+验收截图默认每个功能目录保留 6 张关键图，文档直接引用的图片始终保留。可先运行 `node tools/prune-artifacts.mjs` 预览，再运行 `node tools/prune-artifacts.mjs --apply --keep=6` 清理；该工具同时删除误留的浏览器缓存、未完成下载和过量截图。最新镜头、特写与复位检查见 `artifacts/smooth-camera-20261013/`。
+
+`artifacts/` 作为本地验收区默认不进入 Git；需要长期入库的精选报告可用 `git add -f` 加入。
 
 ## 目录结构
 

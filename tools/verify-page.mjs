@@ -1,3 +1,4 @@
+import { tmpProfile } from './lib/tmp-profile.mjs';
 // 本地自动化验收脚本：用 Chrome DevTools Protocol 打开作品页，收集控制台输出与页面异常，
 // 校验 Three.js 是否从本地 libs/ 成功加载、卫星贴图是否生效、核心模块是否初始化完成，并截取多张视图。
 // 用法：node tools/verify-page.mjs <页面URL> <输出目录>
@@ -21,7 +22,7 @@ const chrome = spawn(CHROME, [
   '--no-first-run',
   '--no-default-browser-check',
   `--remote-debugging-port=${PORT}`,
-  `--user-data-dir=${profile}`,
+  `--user-data-dir=${tmpProfile()}`,
   '--window-size=1440,900',
   'about:blank'
 ], { stdio: 'ignore', detached: false });

@@ -1,3 +1,4 @@
+import { tmpProfile } from './lib/tmp-profile.mjs';
 // 快速检查：北极自转方向指示是否可见、位置是否落在视口内
 // 用法：node tools/check-rotation.mjs <页面URL>
 import { spawn } from 'node:child_process';
@@ -12,7 +13,7 @@ await rm(join(dir, 'profile'), { recursive: true, force: true });
 const PORT = 9424;
 const chrome = spawn('C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe', [
   '--headless=new', '--disable-gpu', '--no-first-run',
-  `--remote-debugging-port=${PORT}`, `--user-data-dir=${join(dir, 'profile')}`,
+  `--remote-debugging-port=${PORT}`, `--user-data-dir=${tmpProfile()}`,
   '--window-size=1600,1000', 'about:blank'
 ], { stdio: 'ignore' });
 const bail = async (c) => { try { chrome.kill('SIGKILL'); } catch {} await sleep(300); process.exit(c); };

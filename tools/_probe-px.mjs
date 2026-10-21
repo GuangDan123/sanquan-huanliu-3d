@@ -1,3 +1,4 @@
+import { tmpProfile } from './lib/tmp-profile.mjs';
 // 临时：在指定视角下，对若干屏幕像素打印"从前到后"的命中清单，查清遮挡物。
 import { spawn } from 'node:child_process';
 import { mkdir } from 'node:fs/promises';
@@ -5,13 +6,13 @@ import { join, resolve } from 'node:path';
 import { setTimeout as sleep } from 'node:timers/promises';
 
 const outDir = resolve('.probe-px');
-const url = 'http://127.0.0.1:8123/' + encodeURIComponent('三圈环流3D交互式教学平台.html') + '?state=none';
+const url = 'http://127.0.0.1:8123/' + encodeURIComponent('气压带与风带3D交互式教学平台.html') + '?state=none';
 const PORT = 9900 + (process.pid % 40);
 const CHROME = 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe';
 await mkdir(outDir, { recursive: true });
 const chrome = spawn(CHROME, ['--headless=new', '--disable-gpu', '--no-sandbox', '--no-first-run', '--no-default-browser-check',
   '--hide-scrollbars', '--force-device-scale-factor=1', `--remote-debugging-port=${PORT}`,
-  `--user-data-dir=${join(outDir, 'profile')}`, '--window-size=1600,1000', 'about:blank'], { stdio: 'ignore' });
+  `--user-data-dir=${tmpProfile()}`, '--window-size=1600,1000', 'about:blank'], { stdio: 'ignore' });
 let target = null;
 for (let i = 0; i < 40 && !target; i++) {
   try { const r = await fetch(`http://127.0.0.1:${PORT}/json/new?${encodeURIComponent(url)}`, { method: 'PUT' }); if (r.ok) target = await r.json(); } catch {}
