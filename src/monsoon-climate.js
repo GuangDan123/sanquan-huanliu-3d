@@ -29,10 +29,11 @@ function createMonsoonClimateVisual(){
   document.body.append(monsoonStage);
   monsoonStage.querySelector('.mc-chart-heading span').remove();
   monsoonStage.querySelector('.mc-chart-heading').insertAdjacentHTML('beforeend','<label>图表资料<select id="mc-data-mode"><option value="observed">真实月常值</option><option value="schematic">教学示意</option></select></label>');
-  document.getElementById('monsoon-climate-chart').insertAdjacentHTML('afterend','<p class="mc-data-source" id="mc-data-source"></p><details class="mc-reading"><summary>先读资料，再写解释</summary><p>从图中找出降水较多的月份，判断当地季节。用气流来源、水汽及抬升条件解释，并说明图表不能单独证明什么。</p><textarea id="mc-reading-answer" rows="3" aria-label="独立解释气候资料"></textarea></details>');
+  document.getElementById('monsoon-climate-chart').insertAdjacentHTML('afterend','<p id="mc-process-statistics" class="mc-process-statistics"></p><p class="mc-data-source" id="mc-data-source"></p><details class="mc-reading"><summary>先读资料，再写解释</summary><p>从图中找出降水较多的月份，判断当地季节。用气流来源、水汽及抬升条件解释，并说明图表不能单独证明什么。</p><textarea id="mc-reading-answer" rows="3" aria-label="独立解释气候资料"></textarea></details>');
   document.getElementById('mc-data-mode').onchange=e=>{MONSOON_CLIMATE.dataMode=e.target.value;drawMonsoonClimateChart();updateMonsoonClimateCopy();};
   document.getElementById('mc-reading-answer').oninput=e=>{learningRecord().answers['climateReading-'+MONSOON_CLIMATE.site]=e.target.value;saveLearningEvidence();};
   createClimateFormation();
+  const bridge=document.createElement('div');bridge.className='mc-evidence-bridge';bridge.innerHTML='<span>动画：水汽与抬升</span><b>→</b><span>冬夏条件对照</span><b>→</b><span>资料：多年各月统计</span>';monsoonStage.querySelector('.mc-climate-card').prepend(bridge);
   monsoonStage.querySelectorAll('[data-mc-site]').forEach(b=>b.onclick=()=>setMonsoonClimateOption('site',b.dataset.mcSite));
   monsoonMapBase=document.createElement('canvas');monsoonMapBase.width=1440;monsoonMapBase.height=620;
   monsoonMapImage=new Image();monsoonMapImage.onload=()=>{monsoonMapReady=true;monsoonMapSignature='';if(STATE.step===4)drawMonsoonClimateMap();};
@@ -177,6 +178,8 @@ function drawMonsoonClimateChart(){
   for(let i=0;i<12;i++){const x=left+dx*(i+.5),height=s.rain[i]/rainMax*(bottom-top);ctx.fillStyle=i===MONSOON_CLIMATE.month-1?'#9ce0ff':'#4e9fc8';ctx.fillRect(x-11,bottom-height,22,height);ctx.fillStyle='#c0d4df';ctx.textAlign='center';ctx.fillText(String(i+1),x,228);}
   ctx.strokeStyle='#ffab78';ctx.lineWidth=2.5;ctx.beginPath();s.temperature.forEach((v,i)=>{const p=[left+dx*(i+.5),bottom-(v-tempMin)/(tempMax-tempMin)*(bottom-top)];i?ctx.lineTo(...p):ctx.moveTo(...p);});ctx.stroke();
   const i=MONSOON_CLIMATE.month-1,x=left+dx*(i+.5),y=bottom-(s.temperature[i]-tempMin)/(tempMax-tempMin)*(bottom-top);ctx.fillStyle='#ffdabd';ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);ctx.fill();
+  ctx.strokeStyle='#b7e6ff';ctx.lineWidth=2;ctx.strokeRect(x-14,bottom-s.rain[i]/rainMax*(bottom-top)-3,28,s.rain[i]/rainMax*(bottom-top)+3);
+  document.getElementById('mc-process-statistics').textContent=`当前${MONSOON_CLIMATE.month}月：蓝柱降水 ${s.rain[i]} mm。动画解释水汽与抬升条件；全年柱线来自月统计资料。橙色气温线还需结合纬度、太阳辐射等因素理解。`;
 }
 function updateMonsoonClimateCopy(){
   if(!monsoonStage)return;const s=monsoonSite(),winter=MONSOON_CLIMATE.month===1,north=s.lat>0,localSummer=north?!winter:winter;

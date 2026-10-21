@@ -50,3 +50,47 @@ body.projection .prediction-record{font-size:15px;}
 body.projection #classroom-route .btn,body.projection #mechanism-navigation .btn{font-size:13px;}
 @media(max-width:1100px){#landsea-formation{max-height:280px;}body.landsea-active #landsea-formation #landsea-legend{display:block;}#landsea-formation #landsea-legend .landsea-scale{height:120px;}}
 @media(max-width:600px){#landsea-formation{max-height:23vh;}.mc-map-wrap{min-width:880px;}.evidence-rubric{display:block;}.evidence-rubric select{display:block;margin:6px 0;}.prediction-record textarea{min-height:48px;}#classroom-route .classroom-route-actions .btn{font-size:10px;}.view-bridge{overflow:auto;}.view-bridge canvas{min-width:640px;}.mc-climate-card{grid-template-columns:minmax(0,1fr);}}
+
+/* Step four keeps the globe clear; auxiliary diagrams open on request. */
+#landsea-formation{top:106px;bottom:auto;right:24px;left:auto;width:300px;height:auto;max-height:calc(100vh - var(--controls-height,90px) - 132px);overflow:auto;}
+#landsea-formation:has(#landsea-aux[open]){width:390px;}
+body.projection #landsea-formation{width:320px;}
+body.projection #landsea-formation:has(#landsea-aux[open]){width:420px;}
+#landsea-aux>summary{display:flex;justify-content:space-between;align-items:center;font-size:14px;padding:12px;}
+#landsea-aux>summary span{font-size:11px;color:#a9c6d9;}
+#landsea-formation canvas{width:100%;max-height:none;min-width:0;}
+#landsea-formation #landsea-thermal>summary,#landsea-formation #landsea-plan>summary{font-size:12px;padding:9px 12px;background:#142b3c;}
+#landsea-formation .formation-footnote{font-size:10px;}
+body.landsea-active #landsea-legend{margin:8px;padding:9px;background:#112737;}
+body.landsea-active #landsea-legend h3{font-size:12px;margin:0 0 8px;}
+body.landsea-active #landsea-legend .landsea-scale{height:66px;}
+body.landsea-active #landsea-legend .landsea-scale{display:flex;flex-direction:column;height:40px;gap:5px;}
+body.landsea-active #landsea-legend .landsea-scale-bar{width:100%;height:8px;flex-shrink:0;background:linear-gradient(to right,#e34531,#ed8540,#f5cc56,#d3dabb,#58afce,#527fb7,#64519e);}
+body.landsea-active #landsea-legend .landsea-scale>div:last-child{flex-direction:row;gap:1px;font-size:9px;line-height:12px;}
+body.landsea-active #landsea-legend p{margin:7px 0;font-size:10px;}
+.landsea-season-note{margin:7px 0;font-size:12px;padding:7px 9px;}
+.landsea-season-note small{display:block;font-size:10px;color:#b4cdd7;margin-top:3px;}
+.landsea-more{font-size:12px;margin:10px 0;color:#aecbdc;}
+.landsea-more>summary{cursor:pointer;padding:7px 0;}
+.landsea-more .btn{margin:4px 0;}
+body.landsea-active #step-node-dock [hidden]{display:none!important;}
+body.landsea-active #step-demo-controls{flex-shrink:0;max-height:none!important;}
+body.landsea-active .formation-controls[hidden]{display:none!important;}
+body.landsea-active #step-node-dock #landsea-switch-view{grid-column:1 / -1;}
+body.landsea-active #step-node-dock #landsea-formation-restart{grid-column:1 / -1;grid-row:auto;}
+body.landsea-active #step-panel:has(#landsea-compare-month) #landsea-switch-view{grid-column:1;}
+@media(max-width:1100px){
+ #sp-body #landsea-formation,body.projection #sp-body #landsea-formation{position:static;display:block;width:auto;max-height:none;margin:8px 0;overflow:visible;}
+ #sp-body #landsea-formation[hidden]{display:none;}
+ #landsea-formation details{overflow:visible;}
+ #landsea-formation .formation-footnote:after{content:none;}
+ body.landsea-active #landsea-formation #landsea-legend .landsea-scale{height:40px;}
+ #landsea-formation summary{position:static;}
+}
+@media(max-width:600px){
+ body.landsea-active #step-panel{max-height:48vh;}
+ body.landsea-active #step-panel .sp-body{min-height:50px;}
+ .landsea-season-note{font-size:11px;padding:5px 7px;}
+ body.landsea-active #landsea-formation #landsea-legend{display:block;}
+ #landsea-column-inset canvas{height:auto;}
+}

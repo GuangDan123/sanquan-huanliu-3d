@@ -11,14 +11,14 @@ const CIRCULATION_SEQUENCE = {
   cellLatitudes:{equatorEdge:2.5,hadleyEdge:28,ferrelEdge:32,ferrelFront:58,polarFront:62,frontSlope:12},
   cells:{hadley:['equator-rise','upper','parallel','sink','trade'],ferrel:['ferrel-sink','west','subpolar-rise','ferrel-upper'],polar:['polar-rise','polar-upper','polar-sink','polar-east']},
   phases:[
-    {start:0,title:'地球开始自转，原有气流偏转并在高空断开',text:'地球开始自转的同时，原有赤道上升至低纬高空的气流开始偏转，并在高空转折处逐渐断开。原来继续通向极地、极地下沉和近地面返回的路径逐渐淡出；保留的气流向东偏转，继续连接高空积聚、下沉和回流。'},
+    {start:0,title:'加入自转条件，对照原经线与偏转方向',text:'以无自转的单圈为比较起点，加入自转条件。灰色虚线保留原经线，橙色箭头表示前进方向，青色箭头表示水平偏向。路线的形变用于比较两种理想模型；三圈的形成还需依次观察输送改变、下沉分流、辐合抬升和平均回流，不能只用一条弯曲路线解释。'},
     {start:4,title:'地转偏向力：北半球向右偏',text:'地球自转使北半球运动空气受到地转偏向力。以气流前进方向为准，北半球向右偏，南半球向左偏；风向改变后，偏向力的方向也随之改变。这里向北运动的高空气流逐渐转向东。青色箭头表示水平偏向方向，不表示下沉力。'},
     {start:10,title:'30°附近，高空风近似平行纬线',text:'在教材理想模型中，高空气流到达北纬30°附近时已明显向东偏转，逐渐成为偏西风，运动方向近似与纬线平行。它不再像无自转的单圈模型那样一直向北极输送。30°是近似位置，气流仍不断从低纬流入。'},
     {start:12,title:'高空气流在30°附近积聚',text:'低纬高空气流持续流入30°附近，而向更高纬度的输送减弱。教材用“高空气流积聚”概括这一环节。发光粒子变密表示空气汇入增多，并非地转偏向力把空气直接向下压。'},
     {start:15,title:'两支气流同步下沉，形成副热带高气压带',text:'低纬与中纬环流在30°附近的两条下沉支同步形成，共同对应副热带的下沉区。下沉向近地面补充空气质量，形成副热带高气压带。两条支路在纬度方向小幅错开，便于独立观察。中纬环流的其余路线随后展开；真实环流同时受辐射冷却与整体质量、动量收支影响，地转偏向力本身只改变水平运动方向。'},
     {start:19,title:'近地面分流，连接低纬环流',text:'副热带高压区的近地面气流向两侧流出。向赤道的气流在北半球右偏，形成东北信风；向较高纬度的气流右偏，形成盛行西风。赤道上升、高空输送、30°下沉和近地面回流连接成哈德莱环流。'},
     {start:23,title:'60°附近，冷暖气流交汇',text:'来自副热带的较暖西风与来自极地的较冷东风，在60°附近辐合。近地面空气汇聚，为后续抬升提供条件。这里的纬度是大尺度平均位置，不是一条固定的天气锋线。'},
-    {start:27,title:'暖气流沿极锋爬升，中纬与高纬环流并行形成',text:'来自中纬度的较暖气流在60°附近遇到来自高纬度的冷气团。冷空气密度较大，位于下方；暖色气流沿倾斜的极锋持续向高纬侧、向高空爬升。中纬与高纬各自的上升支同步形成，到达高空后，两圈回流同时展开，分别连接30°附近与极地。三圈相邻支路在纬度方向小幅错开，各自闭合，便于独立观察；它们仍共同对应60°附近的辐合上升区。大尺度辐合上升形成动力性的副极地低气压带，蓝色纬向带随爬升逐渐显现。此处上升主要不是当地强烈受热造成的；极锋坡度和高空接点纬度为教学示意。'},
+    {start:27,title:'先看局部锋面：暖空气沿冷空气上方抬升',text:'来自中纬度的较暖气流在60°附近遇到来自高纬度的冷气团。冷空气密度较大，位于下方；暖气流沿倾斜锋面抬升。这里先用局部侧视解释冷暖空气的位置，31秒后再归纳平均三圈结构。归纳图中两条错开的上升支共同表示平均辐合上升区，不表示锋面两侧的冷暖气团一起沿坡爬升。蓝色副极地低压带随上升显现。此处上升主要不是当地强烈受热造成的；纬度和锋面坡度均为示意。'},
     {start:31,title:'极地冷却下沉，形成极地高气压带',text:'极地气温很低，空气冷却、密度增大并下沉。下沉向近地面补充空气质量，形成热力性的极地高气压带。紫色极冠随下沉逐渐显现；近地面空气向60°附近的低压区流出，偏转为极地东风。'},
     {start:33,title:'三圈已闭合，对照中纬与高纬环流',text:'中纬与高纬高空回流各自连接本圈的上升支与下沉支，两圈同步闭合。低纬、中纬、高纬是三条独立闭合的路线，各自的气流持续保留，连接处首尾相接。最后的镜头依次观察两圈的路线，演示结束后南北半球完整三圈环流同时显示，可自由拖动观察。费雷尔环流为间接环流。光带为平均环流示意，并非一团空气实际走遍三圈。'}
   ]
@@ -56,7 +56,7 @@ function sequencePressureColor(lat){const p=CIRCULATION_SEQUENCE.pressureColors,
 function createSequenceAnnotations(){
   const seq=CIRCULATION_SEQUENCE,layer=document.createElement('div');layer.id='sequence-annotations';document.body.append(layer);seq.annotationLayer=layer;
   const definitions=[
-    ['equator-rise',.45,'↗','单圈起点：赤道上升支开始偏转','单圈开始偏转','第一步已经形成赤道上升支。加入地转偏向力后，单圈从这个起点开始扭曲；低纬环流沿同一位置接续展开，不重新播放受热上升过程。'],
+    ['equator-rise',.45,'↗','沿用赤道上升支，比较有无自转','沿用赤道上升支','第一步已形成赤道上升支。第二步保留同一起点，比较加入自转后的水平运动；随后分别展示输送改变、下沉分流与辐合抬升，最后归纳三圈。'],
     ['upper',.52,'↗','地转偏向力','高空气流偏转','赤道上升气流在高空向较高纬度运动，受到地转偏向力影响，逐渐获得向东分量。到30°附近时，风向近似与纬线平行。左右以气流前进方向为准，不能按屏幕的左右判断。地转偏向力改变水平运动方向，不是使空气下沉的力。'],
     ['parallel',.5,'→','30°高空，气流堆积','高空气流堆积','来自低纬的高空气流逐渐转为偏西风，在30°附近近似平行纬线。教材用高空气流积聚概括这一环节，随后发生大尺度下沉。积聚与下沉属于动力过程，地转偏向力本身不直接向下压空气。'],
     ['sink',.5,'↓','30°空气下沉，形成高压','30°气流下沉','高空气流在30°附近积聚，并与大尺度下沉相联系。下沉向近地面补充空气质量，使近地面空气柱的重量增加，形成动力性的副热带高气压带。绿色色带随下沉形成，近地面随后向赤道和60°附近分流。'],
@@ -618,7 +618,7 @@ function createCirculationSequence(){
     const line=new THREE.Line(new THREE.BufferGeometry().setFromPoints(curve.getPoints(360)),material);if(lat!==0)line.computeLineDistances();root.add(line);seq.guides.push({line,lat});
   }
   const refs=[];for(let i=0;i<=90;i++)refs.push(sequencePoint(i,0,seq.highAltitude));
-  const reference=new THREE.Line(new THREE.BufferGeometry().setFromPoints(refs),new THREE.LineDashedMaterial({color:0xaabbc9,transparent:true,opacity:.18,dashSize:.16,gapSize:.14}));reference.computeLineDistances();root.add(reference);seq.reference=reference;
+  const reference=new THREE.Line(new THREE.BufferGeometry().setFromPoints(refs),new THREE.LineDashedMaterial({color:0xc5d5e1,transparent:true,opacity:.7,dashSize:.16,gapSize:.14}));reference.computeLineDistances();root.add(reference);seq.reference=reference;
   seq.parcel=new THREE.Mesh(new THREE.SphereGeometry(.10,12,8),new THREE.MeshBasicMaterial({color:0xffe0ae}));root.add(seq.parcel);
   seq.velocity=new THREE.ArrowHelper(new THREE.Vector3(0,1,0),new THREE.Vector3(),.55,0xffce9f,.2,.12);
   seq.force=new THREE.ArrowHelper(new THREE.Vector3(0,0,-1),new THREE.Vector3(),.55,0x65e5eb,.2,.12);root.add(seq.velocity,seq.force);
@@ -760,6 +760,8 @@ function renderSequenceFlows(){
     if(inherited){f.ribbon.material.uniforms.uStreamline.value=1-appearance;f.ribbon.material.blending=appearance===1?THREE.NormalBlending:THREE.AdditiveBlending;}
     f.ribbon.visible=STATE.showPaths&&!STATE.lowPerf;
     f.group.visible=f.group.visible&&lowBranchStarted;
+    // 先解释局部暖空气抬升，31秒后再归纳平均环流的高纬上升支。
+    if(['polar-rise','polar-upper'].includes(f.kind)&&e<31)f.group.visible=false;
     f.ribbon.geometry.setDrawRange(0,Math.floor(p*100)*8*6);f.ribbon.material.uniforms.uTime.value=motionTime;f.ribbon.material.uniforms.uOpacity.value=(inherited&&appearance<1?lerp(.32,.85,appearance):.85)*focus;f.ribbon.material.uniforms.uWidth.value=inherited?lerp(2,seq.cameraActive?1.1:1.25,appearance):seq.cameraActive?1.1:1.25;
     const baseColor=f.sourceColor;f.ribbon.material.uniforms.uColor.value.copy(baseColor);
     f.tubes.forEach((mesh,i)=>{mesh.visible=STATE.showPaths&&(!STATE.lowPerf||i===0);mesh.geometry.setDrawRange(0,Math.floor(p*100)*5*6);});
@@ -778,14 +780,14 @@ function renderSequenceFlows(){
   updateSequencePressureCues(e);
   updateSequencePressureWaves(e,motionTime);
   updateSequenceAccumulations(e,motionTime);
-  seq.fronts.forEach(({mesh})=>{const opacity=.28*smoothstep(clamp((e-26)/1,0,1))*(1-smoothstep(clamp((e-30)/1,0,1)));mesh.visible=STATE.showPaths&&opacity>0;mesh.material.opacity=opacity;});
+  seq.fronts.forEach(({mesh})=>{const opacity=.38*smoothstep(clamp((e-26)/1,0,1))*(1-smoothstep(clamp((e-30)/1,0,1)));mesh.visible=STATE.showPaths&&opacity>0;mesh.material.opacity=opacity;});
   seq.guides.forEach(({line,lat})=>line.visible=lat===0?STATE.showPaths:STATE.showGrid);
   seq.bands.forEach(({mesh,start,end})=>{const progress=smoothstep(clamp((e-start)/(end-start),0,1));mesh.visible=STATE.showPressure&&progress>0;mesh.material.uniforms.uOpacity.value=.92*progress;});
   const p=clamp((e-4)/8,0,1),displayedUpper=sequenceDisplayedCurve('upper',1,e),pos=displayedUpper.getPoint(p),radial=pos.clone().normalize(),velocity=displayedUpper.getTangent(p).normalize();velocity.addScaledVector(radial,-velocity.dot(radial)).normalize();
   const ride=sequenceRideSample(e);seq.parcel.position.copy(seq.cameraActive?ride.point:pos);seq.parcel.visible=STATE.showParticles&&(seq.cameraActive?!ride.transferring:e>=4&&e<15);
-  seq.velocity.position.copy(pos);seq.velocity.setDirection(velocity);seq.velocity.visible=!seq.cameraActive&&STATE.showPaths&&explaining&&e>=4&&e<15;
-  seq.force.position.copy(pos);seq.force.setDirection(velocity.clone().cross(radial).normalize());seq.force.visible=!seq.cameraActive&&STATE.showPaths&&explaining&&e>4&&e<15;
-  seq.reference.visible=false;
+  seq.velocity.position.copy(pos);seq.velocity.setDirection(velocity);seq.velocity.visible=STATE.showPaths&&e>=4&&e<12;
+  seq.force.position.copy(pos);seq.force.setDirection(velocity.clone().cross(radial).normalize());seq.force.visible=STATE.showPaths&&e>4&&e<12;
+  seq.reference.visible=STATE.showPaths&&e<12;
   updateSequenceLabels(e);
   if(STATE.step===2){
     seq.labels.forEach(({obj})=>obj.visible=false);
@@ -856,9 +858,9 @@ function updateCirculationSequence(dt){
 
 function sequenceRideSample(time){
   const seq=CIRCULATION_SEQUENCE,e=clamp(time,0,40);
-  const legs=[['equator-rise',0,4],['upper',4,12],['parallel',12,15],['sink',15,19],['trade',19,23],['west',23,27],['polar-rise',27,30],['polar-upper',30,31],['polar-sink',31,33],['polar-east',33,35],['subpolar-rise',35,38],['ferrel-upper',38,40]];
+  const legs=[['equator-rise',0,4],['upper',4,12],['parallel',12,15],['sink',15,19],['trade',19,23],['west',23,27],['subpolar-rise',27,30],['polar-upper',30,31],['polar-sink',31,33],['polar-east',33,35],['subpolar-rise',35,38],['ferrel-upper',38,40]];
   const sample=time=>{const [kind,start,end]=legs.find(l=>time<l[2])||legs.at(-1),curve=sequenceDisplayedCurve(kind,1,time),t=clamp((time-start)/(end-start),0,1);return {point:curve.getPoint(t),tangent:curve.getTangent(t).normalize(),kind,t};};
-  const current=sample(e),boundary=[23,27,35].find(b=>Math.abs(e-b)<.35);
+  const current=sample(e),boundary=[23,27,30,35].find(b=>Math.abs(e-b)<.35);
   // Transfer the camera between independent cells without drawing a connecting airflow.
   if(boundary!==undefined){const a=sample(boundary-.35),b=sample(boundary+.35),mix=smoothstep((e-boundary+.35)/.7);current.point.copy(a.point).lerp(b.point,mix);current.tangent.copy(a.tangent).lerp(b.tangent,mix).normalize();current.transferring=true;}
   return current;
@@ -903,7 +905,7 @@ function sequenceRideFrame(e){
     }
     const tangentFov=Math.tan(degToRad(65/2))*Math.min(framing.availableW,framing.availableH)/framing.h;
     const distance=Math.max(8.5,(radius+.65)/Math.sin(Math.atan(tangentFov)));
-    const closeups=[[0,4,'equator-rise'],[15,19,'sink'],[27,30,'polar-rise']].map(([start,end,kind])=>{
+    const closeups=[[0,4,'equator-rise'],[15,19,'sink'],[27,30,'subpolar-rise']].map(([start,end,kind])=>{
       const points=seq.flows.find(f=>f.h===1&&f.kind===kind).curve.getPoints(32),center=new THREE.Box3().setFromPoints(points).getCenter(new THREE.Vector3()),r=Math.max(...points.map(p=>p.distanceTo(center)));
       return {start,end,kind,center,distance:Math.max(4.2,(r+.75)/Math.sin(Math.atan(tangentFov)))};
     });
@@ -933,7 +935,7 @@ function sequenceRideFrame(e){
       const frontView=smoothstep(clamp((time-25)/2,0,1));
       const eye=target.clone().addScaledVector(outward,distance*.85).addScaledVector(north,distance*(-.65+.30*frontView)).addScaledVector(tangent,-distance*.10).addScaledVector(east,distance*(.12+.55*frontView));
       const close=closeups.find(c=>time>=c.start&&time<=c.end);
-      if(close){const fade=Math.min(1.35,(close.end-close.start)*.46),progress=(time-close.start)/fade,mix=smoothstep(clamp(close.kind==='polar-rise'?progress:Math.min(progress,(close.end-time)/fade),0,1));eye.lerp(closeupEye(close),mix);target.lerp(close.center,mix);}
+      if(close){const fade=Math.min(1.35,(close.end-close.start)*.46),progress=(time-close.start)/fade,mix=smoothstep(clamp(close.kind==='subpolar-rise'?progress:Math.min(progress,(close.end-time)/fade),0,1));eye.lerp(closeupEye(close),mix);target.lerp(close.center,mix);}
       // Hold the 60-degree polar-front close-up, move once to the whole polar cell, then reveal the overview.
       if(time>=29)moveShot(eye,target,subpolarEye,subpolarShot.center,polarEye,polarShot.center,smoothstep(clamp((time-29)/4,0,1)));
       if(time>=34)moveShot(eye,target,polarEye,polarShot.center,overviewEye,new THREE.Vector3(),smoothstep(clamp((time-34)/6,0,1)));

@@ -276,6 +276,9 @@ body.projection .mc-heading h2{font-size:28px;}body.projection .mc-explanation p
 @media(max-width:768px){#monsoon-climate-stage{left:260px;right:12px;top:105px;}.mc-heading{align-items:flex-start;flex-direction:column;gap:8px;}.mc-heading h2{font-size:18px;}#mc-month-badge{font-size:10px;padding:7px;}.mc-map-wrap{min-width:960px;}.mc-chart-pane{padding:10px;}.mc-chart-heading{flex-wrap:wrap;}}
 @media(max-width:600px){#monsoon-climate-stage{left:8px;right:8px;top:108px;bottom:calc(var(--controls-height,120px) + 43vh + 16px);gap:10px;}.mc-heading{flex-direction:row;align-items:center;}.mc-heading h2{font-size:16px;}.mc-heading span{font-size:10px;letter-spacing:1px;}#mc-month-badge{max-width:136px;line-height:1.4;}.mc-map-wrap{min-width:880px;}.mc-map-footer{font-size:10px;}.mc-climate-card{grid-template-columns:1fr;}.mc-explanation h3{font-size:16px;}body.monsoon-climate-active #step-panel{max-height:43vh;}.mc-controls{padding:7px 10px;grid-template-columns:1fr 1fr;gap:7px;}.mc-month-buttons,.mc-controls>label{grid-column:1 / -1;}.mc-controls>label{grid-template-columns:70px 1fr;align-items:center;gap:5px;}.mc-controls>#mc-play{grid-column:1 / -1;min-height:33px;}.mc-month-buttons .btn{min-height:33px;padding:4px;}.mc-explanation p{font-size:12px;}}
 
+.mc-process-statistics{padding:8px 10px;border-left:3px solid #70c4f0;background:#162c3d;color:#bdddec;font-size:13px;line-height:1.7;}
+.mc-evidence-bridge{grid-column:1 / -1;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px;padding:8px;color:#b8dced;font-size:12px;}
+.mc-evidence-bridge span{border:1px solid #41647d;border-radius:4px;padding:6px;}
 .formation-controls{display:grid;gap:9px;margin:10px 0;padding:10px;border:1px solid #405766;border-radius:8px;background:#122531;}
 .formation-controls label{display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:12px;}
 .formation-controls select{min-width:0;max-width:158px;padding:6px;border:1px solid #48616a;border-radius:5px;background:#182b34;color:#e7edf0;}
@@ -711,6 +714,50 @@ body.projection #classroom-route .btn,body.projection #mechanism-navigation .btn
 @media(max-width:1100px){#landsea-formation{max-height:280px;}body.landsea-active #landsea-formation #landsea-legend{display:block;}#landsea-formation #landsea-legend .landsea-scale{height:120px;}}
 @media(max-width:600px){#landsea-formation{max-height:23vh;}.mc-map-wrap{min-width:880px;}.evidence-rubric{display:block;}.evidence-rubric select{display:block;margin:6px 0;}.prediction-record textarea{min-height:48px;}#classroom-route .classroom-route-actions .btn{font-size:10px;}.view-bridge{overflow:auto;}.view-bridge canvas{min-width:640px;}.mc-climate-card{grid-template-columns:minmax(0,1fr);}}
 
+/* Step four keeps the globe clear; auxiliary diagrams open on request. */
+#landsea-formation{top:106px;bottom:auto;right:24px;left:auto;width:300px;height:auto;max-height:calc(100vh - var(--controls-height,90px) - 132px);overflow:auto;}
+#landsea-formation:has(#landsea-aux[open]){width:390px;}
+body.projection #landsea-formation{width:320px;}
+body.projection #landsea-formation:has(#landsea-aux[open]){width:420px;}
+#landsea-aux>summary{display:flex;justify-content:space-between;align-items:center;font-size:14px;padding:12px;}
+#landsea-aux>summary span{font-size:11px;color:#a9c6d9;}
+#landsea-formation canvas{width:100%;max-height:none;min-width:0;}
+#landsea-formation #landsea-thermal>summary,#landsea-formation #landsea-plan>summary{font-size:12px;padding:9px 12px;background:#142b3c;}
+#landsea-formation .formation-footnote{font-size:10px;}
+body.landsea-active #landsea-legend{margin:8px;padding:9px;background:#112737;}
+body.landsea-active #landsea-legend h3{font-size:12px;margin:0 0 8px;}
+body.landsea-active #landsea-legend .landsea-scale{height:66px;}
+body.landsea-active #landsea-legend .landsea-scale{display:flex;flex-direction:column;height:40px;gap:5px;}
+body.landsea-active #landsea-legend .landsea-scale-bar{width:100%;height:8px;flex-shrink:0;background:linear-gradient(to right,#e34531,#ed8540,#f5cc56,#d3dabb,#58afce,#527fb7,#64519e);}
+body.landsea-active #landsea-legend .landsea-scale>div:last-child{flex-direction:row;gap:1px;font-size:9px;line-height:12px;}
+body.landsea-active #landsea-legend p{margin:7px 0;font-size:10px;}
+.landsea-season-note{margin:7px 0;font-size:12px;padding:7px 9px;}
+.landsea-season-note small{display:block;font-size:10px;color:#b4cdd7;margin-top:3px;}
+.landsea-more{font-size:12px;margin:10px 0;color:#aecbdc;}
+.landsea-more>summary{cursor:pointer;padding:7px 0;}
+.landsea-more .btn{margin:4px 0;}
+body.landsea-active #step-node-dock [hidden]{display:none!important;}
+body.landsea-active #step-demo-controls{flex-shrink:0;max-height:none!important;}
+body.landsea-active .formation-controls[hidden]{display:none!important;}
+body.landsea-active #step-node-dock #landsea-switch-view{grid-column:1 / -1;}
+body.landsea-active #step-node-dock #landsea-formation-restart{grid-column:1 / -1;grid-row:auto;}
+body.landsea-active #step-panel:has(#landsea-compare-month) #landsea-switch-view{grid-column:1;}
+@media(max-width:1100px){
+ #sp-body #landsea-formation,body.projection #sp-body #landsea-formation{position:static;display:block;width:auto;max-height:none;margin:8px 0;overflow:visible;}
+ #sp-body #landsea-formation[hidden]{display:none;}
+ #landsea-formation details{overflow:visible;}
+ #landsea-formation .formation-footnote:after{content:none;}
+ body.landsea-active #landsea-formation #landsea-legend .landsea-scale{height:40px;}
+ #landsea-formation summary{position:static;}
+}
+@media(max-width:600px){
+ body.landsea-active #step-panel{max-height:48vh;}
+ body.landsea-active #step-panel .sp-body{min-height:50px;}
+ .landsea-season-note{font-size:11px;padding:5px 7px;}
+ body.landsea-active #landsea-formation #landsea-legend{display:block;}
+ #landsea-column-inset canvas{height:auto;}
+}
+
 .sequence-timeline{display:block;width:100%;margin:8px 0;accent-color:#ffb07e;cursor:pointer;}
 .sequence-cell-key{display:flex;gap:14px;margin:0 0 6px;font-size:11px;color:#e7edf3;}
 .sequence-cell-key span{display:flex;align-items:center;gap:6px;}
@@ -797,6 +844,47 @@ body.single-circulation-active #sp-body{min-height:76px;}
 @media(max-width:600px){body.single-circulation-active #step-panel{max-height:42vh;}body.single-circulation-active #step-core-question{display:none;}body.single-circulation-active .sequence-stages{margin:4px 0;}body.single-circulation-active .sequence-stages button{min-height:26px;font-size:10px;padding:3px 2px;}body.single-circulation-active #single-node-status{min-height:0;margin:3px 0;}body.single-circulation-active .sequence-timeline{margin:4px 0;}body.single-circulation-active #single-node-replay{display:none;}body.single-circulation-active #step-node-dock #single-demo-replay{grid-column:1 / -1;}body.single-circulation-active #diagram-toggle{bottom:calc(var(--controls-height,160px) + 42vh + 16px);}}
 .third-step-callout{border-radius:4px;}
 @media(max-width:600px){.third-step-callout{font-size:11px!important;padding:3px 5px;}}
+
+/* The globe is the teaching surface; only short object labels accompany motion. */
+body.landsea-active #landsea-formation{display:none!important;}
+body.landsea-active #step-panel .landsea-globe-guide{display:none;}
+body.landsea-active #step-panel.sp-flash .sp-body{animation:none;}
+.ls-globe-note{padding:4px 7px;color:#f0f7ed;text-align:center;white-space:nowrap;pointer-events:none;background:#0c1c2bd9;border-radius:5px;border-bottom:2px solid #95d9e6;text-shadow:0 1px 3px #000;}
+.ls-globe-note>b{display:block;font-size:15px;line-height:1.6;}.ls-globe-note>span{display:block;font-size:12px;line-height:1.5;color:#c5e6f0;}
+.ls-globe-note[data-tone="cold"],.ls-globe-note[data-tone="low"]{border-color:#62c8ff;}.ls-globe-note[data-tone="warm"],.ls-globe-note[data-tone="high"]{border-color:#ffcf71;}
+.ls-note-upperland,.ls-note-uppersea{border-color:#99eaff;}.ls-note-mass{border-color:#dbf4e4;}.ls-note-wind{border-color:#ffbd76;}.ls-note-wind>b{color:#ffd195;}
+.landsea-stage-controls{display:grid;gap:9px;margin:8px 0;}.landsea-stage-controls label{display:grid;gap:5px;font-size:12px;color:#c8dfe8;}.landsea-stage-controls select{width:100%;padding:7px;border:1px solid #4d687a;border-radius:6px;background:#192f40;color:#edf6ec;}
+.landsea-stage-controls .landsea-month{display:flex;gap:5px;}.landsea-stage-controls .landsea-month .btn{flex:1;font-size:12px;}
+body.landsea-story-mode #landsea-formation-reveal,body.landsea-story-mode #landsea-formation-answer,body.landsea-story-mode .landsea-season-note{display:none!important;}
+body.landsea-active #landsea-legend{position:fixed;right:24px;top:110px;bottom:auto;width:200px;margin:0;}
+#landsea-flow-key{position:fixed;right:24px;bottom:142px;z-index:12;display:grid;gap:9px;padding:13px 16px;border:1px solid #55708266;border-radius:10px;background:#0c1c2bed;color:#d6e4ec;font-size:12px;pointer-events:none;}
+#landsea-flow-key[hidden]{display:none;}#landsea-flow-key>b{color:#f6e2b6;font-size:13px;}#landsea-flow-key>span{display:flex;align-items:center;gap:9px;}#landsea-flow-key small{color:#9bb8ca;}
+#landsea-flow-key i{display:inline-block;width:30px;position:relative;}#landsea-flow-key i::after{content:'';position:absolute;right:-1px;top:-5px;border-left:7px solid;border-top:4px solid transparent;border-bottom:4px solid transparent;}
+.ls-force-key{border-top:1px dashed #dbe5ed;color:#dbe5ed;}.ls-wind-key{border-top:3px solid #ffb660;color:#ffb660;}
+body.projection .ls-globe-note>b{font-size:18px;}body.projection .ls-globe-note>span{font-size:14px;}
+@media(max-width:600px){
+ .ls-globe-note{padding:2px 4px;white-space:normal;max-width:100px;}.ls-globe-note>b{font-size:10px;}.ls-globe-note>span{font-size:9px;}
+ .ls-note-uppersea,.ls-note-mass{display:none;}.ls-note-wind{max-width:130px;}
+ body.landsea-active #step-core-question{display:none;}body.landsea-active #step-panel .sp-head{display:flex;gap:8px;align-items:center;padding:7px 10px;}body.landsea-active #step-panel .sp-head h3{font-size:12px;}
+ body.landsea-active #step-demo-controls .formation-controls{margin:0;padding:5px 8px;}body.landsea-active #step-demo-controls .formation-status{margin-top:0;}
+ .landsea-stage-controls{gap:5px;margin:4px 0;}.landsea-stage-controls label{font-size:10px;}.landsea-stage-controls select{padding:5px;}
+ body.landsea-active #step-node-dock #landsea-play{grid-column:1;grid-row:1;}body.landsea-active #step-node-dock #landsea-formation-restart{grid-column:2;grid-row:1;}
+ body.landsea-active #landsea-legend{display:none!important;}
+ #landsea-flow-key{right:10px;bottom:164px;padding:8px 10px;gap:6px;font-size:10px;max-width:230px;}#landsea-flow-key>b{font-size:11px;}
+}
+
+#causal-visual{position:fixed;right:20px;top:108px;width:310px;box-sizing:border-box;background:#101e2df5;border:1px solid #657e91;border-radius:7px;color:#dce8f0;z-index:350;overflow:hidden;}
+#causal-visual[hidden]{display:none;}
+#causal-visual summary{cursor:pointer;padding:8px 10px;font-size:12px;background:#1b2d3e;}
+#causal-visual canvas{display:block;width:100%;height:auto;}
+#causal-visual p{margin:0;padding:8px 10px;border-top:1px solid #354b60;font-size:12px;line-height:1.6;color:#cbdde9;}
+@media(max-width:1100px) and (min-width:761px){#causal-visual{width:260px;right:12px;}}
+body.projection #causal-visual{width:350px;}
+@media(max-width:760px){
+ #causal-visual,body.projection #causal-visual{right:8px;top:106px;width:min(340px,calc(100vw - 16px));max-height:calc(100vh - 190px);overflow:auto;z-index:550;}
+ #causal-visual:not([open]){width:auto;}
+ #causal-visual summary{position:sticky;top:0;z-index:1;padding:10px;font-size:13px;}
+}
 
 </style>
 </head>
@@ -54215,6 +54303,8 @@ function initScene() {
   controls.addEventListener('start',()=>{CLASSROOM.focusAnimation++;viewAnimation++;});
   renderer.domElement.addEventListener('pointerdown',beginSequenceFreeView,{capture:true});
   renderer.domElement.addEventListener('wheel',beginSequenceFreeView,{capture:true,passive:true});
+  renderer.domElement.addEventListener('pointerdown',()=>{if(STATE.step===3)releaseLandSeaColumnCamera(true);},{capture:true});
+  renderer.domElement.addEventListener('wheel',()=>{if(STATE.step===3)releaseLandSeaColumnCamera(true);},{capture:true,passive:true});
 
   // 灯光
   const ambientLight = new THREE.AmbientLight(0x404060, 1.2);
@@ -56202,6 +56292,8 @@ function updateStepPanel(step) {
   tag.style.color = data.color;
   tag.style.borderColor = data.color;
   document.getElementById('sp-title').textContent = data.title;
+  // The optional diagrams live inside the teaching panel on small screens.
+  const landSeaAux=document.getElementById('landsea-formation');if(landSeaAux&&landSeaAux.parentElement!==document.body)document.body.append(landSeaAux);
   document.getElementById('sp-body').innerHTML = data.points.map(p =>
     `<div class="sp-item"><span class="sp-item-k" style="color:${data.color}">${p[0]}</span><span class="sp-item-v">${p[1]}</span></div>`
   ).join('');
@@ -57175,15 +57267,15 @@ function getSceneFraming() {
   if (compactPanel) bottom = Math.min(bottom, panel.top - 12);
   if (!uiHidden && STATE.showDiagram && w <= 768) bottom = Math.min(bottom, diagram.top - 12);
   const formationPanel=document.getElementById('landsea-formation');
-  if(!uiHidden&&STATE.step===3&&formationPanel&&!formationPanel.hidden){const r=formationPanel.getBoundingClientRect();if(w>1100){if(formationPanel.querySelector('details').open)right=Math.max(right,r.width+44);}else bottom=Math.min(bottom,r.top-12);}
+  if(!uiHidden&&STATE.step===3&&formationPanel&&!formationPanel.hidden&&w>1100){const r=formationPanel.getBoundingClientRect();if(r.width>0)right=Math.max(right,r.width+44);}
   const sceneLeft = compactPanel ? 16 : left;
   const availableW = Math.max(160, w - sceneLeft - right), availableH = Math.max(140, bottom - top);
   const earthCentered = STATE.step === 1 || STATE.step === 2;
   // 隐去太阳后，地球使用整个可用区；保留大气层外的环流与标签边距。
   const singleNarrow=STATE.step===0&&!compactPanel&&availableW<600;
-  const tangent = Math.tan(degToRad(camera.fov / 2)) * Math.min(availableW, availableH) / h * (earthCentered ? .96 : STATE.step===0&&!singleNarrow ? .85 : .78);
+  const tangent = Math.tan(degToRad(camera.fov / 2)) * Math.min(availableW, availableH) / h * (earthCentered ? .96 : STATE.step===3 ? 1.04 : STATE.step===0&&!singleNarrow ? .85 : .78);
   // 第三步高空流带沿大气层内缘展开，取景时保留高纬圈与标题栏之间的边距。
-  const distance = (singleNarrow?CONFIG.earth.atmosphereRadius+1.1:STATE.step===2?7.05:STATE.step<=1?6.5:STATE.step===3?5.7:CONFIG.earth.atmosphereRadius + 1.1) / Math.sin(Math.atan(tangent));
+  const distance = (singleNarrow?CONFIG.earth.atmosphereRadius+1.1:STATE.step===2?7.05:STATE.step<=1?6.5:STATE.step===3?7.35:CONFIG.earth.atmosphereRadius + 1.1) / Math.sin(Math.atan(tangent));
   return { w, h, left:sceneLeft, availableW, availableH, top, centerX: sceneLeft + availableW * (0.5 + (earthCentered || STATE.step===3 ? 0 : EARTH_SCREEN_BIAS)), centerY: top + availableH / 2, distance };
 }
 function frameScene(fitDistance = false) {
@@ -57197,11 +57289,12 @@ function frameScene(fitDistance = false) {
     camera.position.copy(controls.target).addScaledVector(direction, framing.distance);
   }
   camera.lookAt(controls.target);
-  controls.update();
+  if(!LS_COLUMN_CAMERA.active)controls.update();
 }
 let viewAnimation = 0;
 function setView(view) {
   if (STATE.viewLocked) return;
+  if(STATE.step===3)releaseLandSeaColumnCamera();
   if(STATE.step===2&&view==='reset'){
     resetSeasonalShift();
     earthGroup.rotation.y=0;
@@ -58107,6 +58200,7 @@ function animate() {
   }
   if (document.hidden) return;
   if (STATE.step === 4) {
+    updateCausalVisuals();
     updateMonsoonClimateAnimation(dt);
     return;
   }
@@ -58160,7 +58254,7 @@ function animate() {
     }
   }
 
-  if(!CIRCULATION_SEQUENCE.cameraActive&&!SINGLE_CIRCULATION.cameraActive)controls.update();
+  if(!CIRCULATION_SEQUENCE.cameraActive&&!SINGLE_CIRCULATION.cameraActive&&!LS_COLUMN_CAMERA.active)controls.update();
   updateSequenceCamera();
   if(STATE.step===0 || STATE.step===1){
     // Keep the single-cell model synchronized on the exact handoff frame;
@@ -58179,6 +58273,7 @@ function animate() {
   layoutThirdStepBeltLabels();
   updateSequenceAnnotations();
   updateSingleCirculationAnnotations();
+  updateCausalVisuals();
 
   // 图示回归面板：高亮闪烁时持续重绘 Canvas
   if (STATE.showDiagram && (diagramHighlightId || diagramHighlightTimer)) {
@@ -58942,6 +59037,16 @@ function mountClassroomControls(step,body,controlsPanel){
  }
  // Keep the teaching panel focused on the core interaction.
  const guide=document.getElementById('landsea-globe-play');if(guide)guide.textContent='连续复习形成过程';
+ if(step===3){
+  placeLandSeaAux();
+  const result=LANDSEA.formation.view==='result';
+  const formationControls=document.querySelector('#step-demo-controls .formation-controls');if(formationControls)formationControls.hidden=result;
+  for(const a of ['prev','next','replay','restart'])document.getElementById('landsea-formation-'+a).hidden=result||a!=='restart';
+  const switchView=document.createElement('button');switchView.className='btn';switchView.id='landsea-switch-view';switchView.textContent=result?'返回形成过程':'查看结果对照';
+  switchView.onclick=()=>{LANDSEA.formation.view=result?'mechanism':'result';if(result&&LANDSEA.surface!=='real'){LANDSEA.surface='real';LANDSEA.region='asia';rebuildLandSea();}STATE.playing=false;refreshFormation('landsea');};
+  dock.append(switchView);
+  if(result){const compare=document.createElement('button');compare.className='btn';compare.id='landsea-compare-month';compare.textContent=LANDSEA.month===1?'对照7月夏季':'对照1月冬季';compare.onclick=()=>setLandSeaOption('month',LANDSEA.month===1?7:1);dock.append(compare);}
+ }
 }
 function focusTeachingNode(force=false){
  if(!camera||!controls||STATE.viewLocked||STATE.step>2||(!CLASSROOM.autoFocus&&!force))return;
@@ -59266,17 +59371,19 @@ function baseTeachingWorksheetHTML(){return `<!doctype html><html lang="zh-CN"><
 
 /* 季节、海陆与气候的分步机制。时间与数值均为教学示意。 */
 function newFormationState(){return {view:'mechanism',node:0,progress:0,continuous:false,reveal:false,clock:0,cross:true};}
+const LS_STAGE_SECONDS={bridge:4,heat:6,column:7,pressure:5,band:7,wind:7,overview:7};
 function formationState(kind){return (kind==='landsea'?LANDSEA:MONSOON_CLIMATE).formation;}
 function formationStages(kind){
   if(kind==='landsea'){
     const winter=LANDSEA.month===1;
     return [
-      {key:'bridge',title:'引入季节与海陆',question:'保留自转，先改变季节：理想气压带向哪一侧移动？',answer:'气压带随直射点季节移动：1月偏南、7月偏北。接着在相同季节加入海陆差异，区分两个条件的作用。',duration:3},
-      {key:'heat',title:'海陆温度响应',question:'进入同一季节，大陆与海洋哪一侧升温或降温更快？',answer:winter?'冬季陆地降温比海洋快，大陆相对更冷；海洋温度变化较缓慢。':'夏季陆地升温比海洋快，大陆相对更暖；海洋温度变化较缓慢。',duration:4},
-      {key:'column',title:'气柱响应与空气调整',question:'温度差如何引起垂直运动和高空空气调整？',answer:winter?'大陆气柱冷却收缩；同一高空高度，大陆气压相对较低，空气向冷端补充。近地面高压与气柱质量增加相联系，不能只凭体积收缩判断地面气压。':'大陆气柱受热膨胀；同一高空高度，大陆气压相对较高，空气向外输送。近地面低压与气柱质量减少相联系，不能只凭体积膨胀判断地面气压。',duration:4},
-      {key:'pressure',title:'大陆气压中心',question:'在同一近地面高度比较，哪一侧气压较高？',answer:winter?'大陆冷高压形成，邻近海洋气压相对较低。气压取决于上方空气柱重量，不能仅用冷热直接替代空气质量调整。':'大陆热低压形成，邻近海洋气压相对较高。海洋副热带高压还有动力作用，并非都由海水较冷形成。',duration:4},
-      {key:'band',title:'连续气压带被改变',question:'大陆气压中心怎样改变理想的连续气压带？',answer:winter?'亚洲冷高压使北半球副极地低压带呈间断分布；海洋低压中心包含大尺度动力作用。':'亚洲热低压使北半球副热带高压带呈间断分布；南半球海洋占优势，气压带相对连续。',duration:4},
-      {key:'wind',title:'推动、偏转与季风',question:'高压到低压的推动方向与实际近地面风向有什么区别？',answer:winter?'气压梯度推动气流由大陆高压流向海洋；北半球右偏及摩擦共同影响近地面风，东亚常见偏北冬季风。':'气压梯度推动气流由海洋流向大陆低压；北半球右偏及摩擦共同影响近地面风，东亚常见偏南夏季风。',duration:5}
+      {key:'bridge',title:'承接季节，加入海陆',question:LANDSEA.entrySeason==='equinox'?`承接第三步的春秋分附近，先移至${LANDSEA.month}月，再加入海陆差异。`:`保持第三步的${winter?'偏南冬季':'偏北夏季'}背景：加入海陆后，气压带还会连续吗？`,answer:`第三步用6月、12月表示带的季节移动；本步用7月、1月代表海陆差异明显的夏季、冬季。${LANDSEA.entrySeason==='equinox'?'先从春秋分附近移至选定季节，再加入海陆差异。':'保留同一季节的偏移，再加入海陆差异。'}`,duration:LS_STAGE_SECONDS.bridge},
+      {key:'heat',title:'海陆温度响应',question:'进入同一季节，大陆与海洋哪一侧升温或降温更快？',answer:winter?'冬季陆地降温比海洋快，大陆相对更冷；海洋温度变化较缓慢。':'夏季陆地升温比海洋快，大陆相对更暖；海洋温度变化较缓慢。',duration:LS_STAGE_SECONDS.heat},
+      {key:'column',title:'气柱响应与空气调整',question:'温度差如何引起垂直运动和高空空气调整？',answer:winter?'大陆气柱冷却收缩；同一高空高度，大陆气压相对较低，空气向冷端补充。近地面高压与气柱质量增加相联系，不能只凭体积收缩判断地面气压。':'大陆气柱受热膨胀；同一高空高度，大陆气压相对较高，空气向外输送。近地面低压与气柱质量减少相联系，不能只凭体积膨胀判断地面气压。',duration:LS_STAGE_SECONDS.column},
+      {key:'pressure',title:'大陆气压中心',question:'在同一近地面高度比较，哪一侧气压较高？',answer:winter?'大陆冷高压形成，邻近海洋气压相对较低。气压取决于上方空气柱重量，不能仅用冷热直接替代空气质量调整。':'大陆热低压形成，邻近海洋气压相对较高。海洋副热带高压还有动力作用，并非都由海水较冷形成。',duration:LS_STAGE_SECONDS.pressure},
+      {key:'band',title:'连续气压带被改变',question:'大陆气压中心怎样改变理想的连续气压带？',answer:winter?'亚洲冷高压使北半球副极地低压带呈间断分布；海洋低压中心包含大尺度动力作用。':'亚洲热低压使北半球副热带高压带呈间断分布；南半球海洋占优势，气压带相对连续。',duration:LS_STAGE_SECONDS.band},
+      {key:'wind',title:'推动、偏转与季风',question:'高压到低压的推动方向与实际近地面风向有什么区别？',answer:winter?'气压梯度推动气流由大陆高压流向海洋；北半球右偏及摩擦共同影响近地面风，东亚常见偏北冬季风。':'气压梯度推动气流由海洋流向大陆低压；北半球右偏及摩擦共同影响近地面风，东亚常见偏南夏季风。',duration:LS_STAGE_SECONDS.wind},
+      {key:'overview',title:'归纳完整气压与季风分布',question:'把局部海陆对照放回大尺度分布：亚洲、海洋和澳大利亚怎样联系？',answer:'局部图解释海陆差异如何组织季风；随后扩大观察范围，显现大尺度气压中心、等压线和各区域季风。位置过渡表示从局部示意到分布图的归纳，不表示气压中心在这几秒内真实迁移。',duration:LS_STAGE_SECONDS.overview}
     ];
   }
   const s=monsoonSite(),wet=formationLocalSummer(),south=s.id==='mumbai'&&MONSOON_CLIMATE.month===7;
@@ -59303,7 +59410,7 @@ function formationAction(kind,action){
   if(action==='next'){if(f.progress===1){if(f.node===last)return;f.node++;f.progress=0;}STATE.playing=true;}
   if(action==='replay'){f.progress=0;f.clock=0;STATE.playing=true;}
   if(action==='restart'){resetFormation(kind);STATE.playing=true;}
-  if(action==='play'){if(f.view==='result')STATE.playing=!STATE.playing;else if(STATE.playing)STATE.playing=false;else if(f.progress===1)formationAction(kind,'next');else STATE.playing=true;}
+  if(action==='play'){if(f.view==='result')STATE.playing=!STATE.playing;else if(STATE.playing)STATE.playing=false;else if(kind==='landsea'&&formationFinished(kind))formationAction(kind,'restart');else if(f.progress===1)formationAction(kind,'next');else STATE.playing=true;}
   if(kind==='landsea'&&['prev','replay','restart'].includes(action)){resetLandSeaMechanism();viewAnimation++;}
   f.reveal=false;refreshFormation(kind);
 }
@@ -59320,7 +59427,9 @@ function formationControls(kind){
 }
 function bindFormationControls(kind){
   const f=formationState(kind),view=document.getElementById(kind+'-formation-view'),mode=document.getElementById(kind+'-formation-mode');view.value=f.view;mode.value=f.continuous?'continuous':'step';
-  view.onchange=()=>{f.view=view.value;if(kind==='landsea'&&f.view==='mechanism'){LANDSEA.surface='real';LANDSEA.region='asia';rebuildLandSea();focusLandSeaRegion('asia');}STATE.playing=false;f.reveal=false;refreshFormation(kind);frameScene(true);};
+  if(kind==='landsea')mode.innerHTML='<option value="continuous">连续播放</option><option value="step">逐段讲解 · 阶段末停顿</option>';
+  mode.value=f.continuous?'continuous':'step';
+  view.onchange=()=>{f.view=view.value;if(kind==='landsea'&&f.view==='mechanism'&&LANDSEA.surface!=='real'){LANDSEA.surface='real';LANDSEA.region='asia';rebuildLandSea();}STATE.playing=false;f.reveal=false;refreshFormation(kind);if(kind!=='landsea')frameScene(true);};
   mode.onchange=()=>{f.continuous=mode.value==='continuous';resetFormation(kind);refreshFormation(kind);};
   for(const a of ['prev','next','replay','restart'])document.getElementById(kind+'-formation-'+a).onclick=()=>formationAction(kind,a);
   document.getElementById(kind+'-formation-reveal').onclick=()=>{f.reveal=!f.reveal;updateFormationUI(kind);if(kind==='climate'){updateMonsoonClimateCopy();drawMonsoonClimateChart();}};
@@ -59328,8 +59437,10 @@ function bindFormationControls(kind){
 }
 function updateFormationUI(kind){
   const f=formationState(kind),stages=formationStages(kind),s=stages[f.node],status=document.getElementById(kind+'-formation-status');if(!status)return;
-  status.textContent=`${f.node+1} / ${stages.length} · ${s.title} · ${STATE.playing?'演示中':f.progress===1?'本节点完成':'等待开始 / 已暂停'}`;
-  document.getElementById(kind+'-formation-progress').value=f.progress;
+  status.textContent=kind==='landsea'?`${f.node+1} / ${stages.length} · ${s.title} · ${STATE.playing?(f.continuous?'连续播放中':'本阶段播放中'):formationFinished(kind)?'播放完成':f.progress===1?'本阶段完成':'等待播放 / 已暂停'}`:`${f.node+1} / ${stages.length} · ${s.title} · ${STATE.playing?'演示中':f.progress===1?'本节点完成':'等待开始 / 已暂停'}`;
+  const progress=document.getElementById(kind+'-formation-progress');
+  progress.value=kind==='landsea'?(stages.slice(0,f.node).reduce((sum,s)=>sum+s.duration,0)+f.progress*s.duration)/stages.reduce((sum,s)=>sum+s.duration,0):f.progress;
+  if(kind==='landsea')progress.setAttribute('aria-label','形成过程总进度');
   document.getElementById(kind+'-formation-prev').disabled=f.node===0;
   document.getElementById(kind+'-formation-next').disabled=f.node===stages.length-1&&f.progress===1;
   const question=document.getElementById(kind+'-formation-question');if(question)question.textContent=f.view==='result'?'结果对照：比较冬夏气压、风向和气候，解释变化的原因。':s.question;
@@ -59337,6 +59448,9 @@ function updateFormationUI(kind){
   document.getElementById(kind+'-formation-reveal').textContent=f.reveal?'收起当前解释':'显示当前解释';
   const play=document.getElementById(kind==='landsea'?'landsea-play':'mc-play');if(play)play.textContent=STATE.playing?'暂停过程':f.view==='result'?'播放气流':formationFinished(kind)?'机制已完成':f.progress===1?'继续下一节点':'播放本节点';
   if(play)play.disabled=f.view==='mechanism'&&formationFinished(kind);
+  if(kind==='landsea'&&play){play.disabled=false;play.textContent=STATE.playing?'暂停查看':f.view==='result'?'播放气流':formationFinished(kind)?'重新播放':f.progress===1?'继续下一阶段':f.node>0||f.progress>0?'继续播放':f.continuous?'连续播放':'播放本阶段';}
+  // Node buttons are moved into the fixed dock by the classroom layout.
+  if(kind==='landsea')for(const a of ['prev','next','replay','restart'])document.getElementById(kind+'-formation-'+a).hidden=f.view==='result'||a!=='restart';
 }
 function refreshFormation(kind){
   if(kind==='landsea'){syncLandSeaVisual();if(STATE.step===3)updateStepPanel(3);drawLandSeaFormation();}
@@ -59351,57 +59465,23 @@ function formationParticles(ctx,points,clock,count,color='#75daff',radius=4,p=1)
 }
 function createLandSeaFormation(){
   const panel=document.createElement('section');panel.id='landsea-formation';panel.hidden=true;panel.innerHTML='<details><summary>辅助海陆热力剖面 · 点击展开</summary><canvas id="landsea-formation-canvas" width="760" height="500" role="img" aria-label="海陆温差、气柱调整、气压与季风的分步剖面"></canvas></details><div class="formation-footnote">季节尺度示意 · 同一高度比较气压<br>局部热力作用与全球动力环流共同影响季风</div><div id="landsea-season-compare" hidden><canvas id="landsea-comparison-canvas" width="760" height="250" role="img" aria-label="东亚冬夏并排对照：冬季大陆冷高压偏北风，夏季大陆热低压偏南风"></canvas></div>';document.body.append(panel);
-  panel.querySelector('details').ontoggle=()=>frameScene(true);
+  panel.querySelector('details').id='landsea-thermal';
   panel.insertAdjacentHTML('beforeend','<details id="landsea-plan"><summary>水平俯视：推动、偏转与风向</summary><canvas id="landsea-plan-canvas" width="760" height="330" role="img" aria-label="北半球水平面内的气压梯度力、风向、偏向力和摩擦力"></canvas><p class="landsea-plan-note">上下表示南北，左右表示东西；与上方剖面的高度轴分开。北半球向前进方向右偏，摩擦力与风向相反。力箭头长度仅为示意。</p></details>');
   panel.querySelector('details').insertAdjacentHTML('beforeend','<p id="landsea-mass-explanation" hidden></p>');
-  const legend=document.getElementById('landsea-legend');if(legend)panel.append(legend);
+  const content=document.createElement('div');content.className='landsea-aux-content';content.append(...panel.childNodes);
+  const aux=document.createElement('details');aux.id='landsea-aux';aux.innerHTML='<summary>辅助图解 <span>剖面 · 气柱 · 风向</span></summary>';aux.append(content);panel.append(aux);
+  panel.addEventListener('toggle',()=>requestAnimationFrame(()=>frameScene(true)),true);
+  // Retain optional reference diagrams off-screen; the teaching process is on the globe.
+  const legend=document.getElementById('landsea-legend');if(legend)document.body.append(legend);
+  matchMedia('(max-width:1100px)').addEventListener('change',()=>{placeLandSeaAux();frameScene(true);});
+}
+function placeLandSeaAux(){
+  const panel=document.getElementById('landsea-formation');if(!panel)return;
+  const host=STATE.step===3&&innerWidth<=1100?document.getElementById('sp-body'):document.body;
+  if(panel.parentElement!==host){if(host===document.body)host.append(panel);else host.prepend(panel);}
 }
 function drawLandSeaFormation(){
-  const panel=document.getElementById('landsea-formation');if(!panel)return;panel.hidden=STATE.step!==3;if(panel.hidden)return;
-  const f=LANDSEA.formation,winter=LANDSEA.month===1,ctx=document.getElementById('landsea-formation-canvas').getContext('2d');ctx.clearRect(0,0,760,500);ctx.fillStyle='#101e2d';ctx.fillRect(0,0,760,500);
-  drawLandSeaPlan();
-  const mass=document.getElementById('landsea-mass-explanation');mass.hidden=formationLevel('landsea','column')===0;
-  mass.textContent=winter?'在同一高空高度比较，大陆冷端气压相对较低，空气向大陆补充。气柱质量增加，近地面气压升高。体积收缩本身不等于质量增加。':'在同一高空高度比较，大陆暖端气压相对较高，空气向外输送。气柱质量减少，近地面气压降低。体积膨胀本身不等于质量减少。';
-  panel.querySelector('summary').textContent=LANDSEA.surface==='ideal'?'均匀地表对照 · 点击展开':'辅助海陆热力剖面 · 点击展开';
-  document.getElementById('landsea-season-compare').hidden=!formationFinished('landsea')||LANDSEA.surface==='ideal';
-  if(formationFinished('landsea')&&LANDSEA.surface==='real')drawLandSeaComparison();
-  if(LANDSEA.surface==='ideal'){formationText(ctx,'理想条件：均匀地表',380,120,'#e9efc8',30,'center');formationText(ctx,'近地面气压按纬度连续分布',380,210,'#c4dfed',25,'center');formationText(ctx,'先切换相同月份，再加入真实海陆比较',380,310,'#c4dfed',23,'center');return;}
-  const heat=formationLevel('landsea','heat'),column=formationLevel('landsea','column'),pressure=formationLevel('landsea','pressure'),wind=formationLevel('landsea','wind');
-  if(f.view==='mechanism'&&f.node===0){
-    formationText(ctx,'先改变季节，再加入海陆差异',380,40,'#e9efc8',24,'center');
-    const p=formationLevel('landsea','bridge'),shift=(winter?-1:1)*40*p;
-    for(const [y,label,c]of[[170,'副热带高压带','#efd895'],[260,'赤道低压带','#eea398'],[350,'副热带高压带','#efd895']]){
-      ctx.fillStyle=c+'33';ctx.fillRect(80,y-12,600,24);ctx.fillStyle=c+'88';ctx.fillRect(80,y-shift-12,600,24);formationText(ctx,label,380,y-shift,c,22,'center');
-    }
-    formationPath(ctx,[[705,270],[705,270-shift]],p,'#7dd9ee');formationText(ctx,'北 ↑',700,100,'#aacad9');formationText(ctx,'南 ↓',700,400,'#aacad9');
-    formationText(ctx,winter?'1月：理想带偏南（位移为示意）':'7月：理想带偏北（位移为示意）',380,440,'#b9d4de',22,'center');
-    formationText(ctx,'保留自转 · 接着比较同季节的均匀地表与真实海陆',380,475,'#b9d4de',18,'center');return;
-  }
-  formationText(ctx,`${LANDSEA.month}月 · 北半球${winter?'冬':'夏'}季`,380,27,'#e9efc8',24,'center');
-  ctx.fillStyle='#614e38';ctx.fillRect(80,315,275,35);ctx.fillStyle='#174b64';ctx.fillRect(405,315,275,35);formationText(ctx,'大陆',217,334,'#ffdeab',22,'center');formationText(ctx,'邻近海洋',542,334,'#b9eaff',22,'center');
-  ctx.save();ctx.strokeStyle='#61748b';ctx.setLineDash([8,7]);for(const y of [120,280]){ctx.beginPath();ctx.moveTo(70,y);ctx.lineTo(690,y);ctx.stroke();}ctx.restore();formationText(ctx,'高空同一高度',80,95,'#9ebccd',18);formationText(ctx,'近地面同一高度',80,303,'#9ebccd',18);
-  if(heat>0){
-    const color=winter?'#83c8fa':'#ff9f73',height=110+(winter?-45:45)*column;ctx.globalAlpha=heat;ctx.fillStyle=color+'55';ctx.fillRect(170,310-height,95,height);ctx.fillStyle='#89bcd733';ctx.fillRect(495,195,95,115);ctx.globalAlpha=1;
-    formationText(ctx,winter?'降温快 · 相对冷':'升温快 · 相对暖',217,372,color,21,'center');formationText(ctx,'温度变化较缓慢',542,372,'#a7d8eb',21,'center');
-    ctx.fillStyle=color;ctx.fillRect(170,386,95*heat,5);ctx.fillStyle='#9dcde0';ctx.fillRect(495,386,35*heat,5);
-  }
-  if(column>0){
-    const pts=winter?[[220,150],[220,260]]:[[220,260],[220,150]],upper=winter?[[550,140],[390,140],[250,140]]:[[250,140],[390,140],[550,140]];
-    formationPath(ctx,pts,column,winter?'#8bc8ff':'#ffaa7c');formationParticles(ctx,pts,f.clock,4,winter?'#8bc8ff':'#ffaa7c',5,column);
-    formationPath(ctx,upper,column,'#ffd69b');formationParticles(ctx,upper,f.clock,6,'#ffd69b',4,column);
-    formationText(ctx,winter?'收缩 / 下沉':'膨胀 / 上升',285,215,winter?'#8bc8ff':'#ffaa7c',20);
-    formationText(ctx,winter?'高空空气补充':'高空空气外流',470,170,'#ffd69b',18,'center');
-  }
-  if(pressure>0){ctx.globalAlpha=pressure;formationText(ctx,winter?'H 冷高压':'L 热低压',217,280,winter?'#ffe3a2':'#a0dcff',27,'center');formationText(ctx,winter?'相对较低压':'相对较高压',542,280,'#dae8dc',22,'center');formationText(ctx,winter?'气柱质量增加':'气柱质量减少',217,400,'#dae8dc',18,'center');ctx.globalAlpha=1;}
-  if(column>0){
-    formationText(ctx,winter?'相对低压':'相对高压',217,116,'#d9e7ed',18,'center');
-    formationText(ctx,winter?'相对高压':'相对低压',542,116,'#d9e7ed',18,'center');
-    const change=Math.round(pressure*3),land=8+(winter?change:-change),sea=16-land;
-    for(const [x,count,c]of[[110,land,'#ffca8b'],[435,sea,'#9cd8f4']])for(let i=0;i<count;i++){ctx.fillStyle=c;ctx.fillRect(x+i*18,433,13,15);}
-    formationText(ctx,`大陆气柱：${land}格`,217,418,'#ffca8b',18,'center');formationText(ctx,`海洋气柱：${sea}格`,542,418,'#9cd8f4',18,'center');
-    formationText(ctx,'格数仅表示质量收支关系，非实测值或守恒数值模拟',380,470,'#b9d4de',18,'center');
-    formationText(ctx,'温差 → 高空调整 → 气柱质量改变 → 近地面气压变化',380,492,'#b9d4de',17,'center');
-  }
+  const panel=document.getElementById('landsea-formation');if(panel)panel.hidden=true;
 }
 function drawLandSeaComparison(){
   const ctx=document.getElementById('landsea-comparison-canvas').getContext('2d');ctx.clearRect(0,0,760,250);
@@ -59425,31 +59505,43 @@ function drawClimateFormation(){
     if(trade>0)formationText(ctx,'东南信风',665,205,'#ffd09b',22);if(cross>0)formationText(ctx,'西南气流',670,85,'#ffa477',22);return;
   }
   const source=formationLevel('climate','source'),moisture=formationLevel('climate','moisture'),lift=formationLevel('climate','lift'),rain=formationLevel('climate','rain');
-  const mountain=wet&&s.id==='mumbai',front=wet&&['beijing','shanghai'].includes(s.id),path=wet?[[100,240],[260,240],[420,220],[520,130],[620,90]]:[[100,240],[280,240],[490,240],[720,240]];
+  const mountain=wet&&s.id==='mumbai',front=wet&&['beijing','shanghai'].includes(s.id),path=wet?[[100,240],[260,240],[420,220],[500,145],[570,95]]:[[100,240],[280,240],[490,240],[720,240]];
   ctx.fillStyle=wet?'#174862':'#5c4d39';ctx.fillRect(55,250,355,35);ctx.fillStyle='#594b39';ctx.fillRect(410,250,495,35);
   formationText(ctx,wet?'海洋源区':'大陆源区',220,269,wet?'#a9e4ff':'#e6d2ac',23,'center');formationText(ctx,`${s.name} · ${MONSOON_CLIMATE.month}月 · 当地${wet?'夏':'冬'}季`,670,270,'#e6d2ac',23,'center');
   if(source>0){formationPath(ctx,path.slice(0,3),source,'#ffba79',4);formationText(ctx,wet?'来自海洋的气流':'来自大陆的气流',110,203,'#ffce9a',22);}
   if(moisture>0){formationParticles(ctx,path.slice(0,3),f.clock,wet?16:3,'#71d9ff',5,moisture);formationText(ctx,wet?'水汽随气流输送':'水汽条件相对较弱',110,60,'#86dcff',24);}
   if(lift>0&&wet){
-    if(mountain){ctx.fillStyle='#9a8466';ctx.beginPath();ctx.moveTo(430,250);ctx.lineTo(565,120);ctx.lineTo(680,250);ctx.closePath();ctx.fill();formationText(ctx,'西高止山迎风坡',640,213,'#e2cfb3',21);}
+    if(mountain){ctx.fillStyle='#9a8466';ctx.beginPath();ctx.moveTo(430,250);ctx.lineTo(610,120);ctx.lineTo(770,250);ctx.closePath();ctx.fill();formationText(ctx,'迎风坡',504,236,'#ffe1aa',19,'center');formationText(ctx,'背风坡',705,236,'#d5c8b6',19,'center');formationText(ctx,'西高止山',683,192,'#e2cfb3',18,'center');formationPath(ctx,[[320,176],[410,176]],1,'#ffba79',3);formationText(ctx,'风向',363,155,'#ffce9a',17,'center');}
     if(front){ctx.fillStyle='#669abe33';ctx.beginPath();ctx.moveTo(450,250);ctx.lineTo(680,130);ctx.lineTo(860,250);ctx.closePath();ctx.fill();formationText(ctx,'锋面等抬升条件',730,210,'#b4d8ee',21);}
     if(s.id==='darwin')formationText(ctx,'湿润气流辐合 / 上升',720,212,'#b4d8ee',21);
     formationPath(ctx,path.slice(2),lift,'#ffba79',4);formationParticles(ctx,path.slice(2),f.clock,8,'#71d9ff',4,lift);
-    if(lift>.45)formationText(ctx,'上升 → 冷却',480,44,'#f5d398',23);
-    if(lift>.75){ctx.fillStyle='#d7eaf2';for(const[x,y,r]of[[590,85,22],[620,68,28],[655,82,25]]){ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();}formationText(ctx,'达到凝结条件 → 云',710,75,'#d7eaf2',21);}
+    // 同一气团随阶段进度抬升，颜色与温度柱同步变化；不使用虚构温度数值。
+    const parcel=climateParcelVisual(lift),color=`rgb(${Math.round(255-133*parcel.cooling)},${Math.round(178+34*parcel.cooling)},${Math.round(110+145*parcel.cooling)})`;
+    if(STATE.showParticles){ctx.fillStyle=color;ctx.strokeStyle='#fff5d9';ctx.lineWidth=2;ctx.beginPath();ctx.arc(parcel.x,parcel.y,10,0,Math.PI*2);ctx.fill();ctx.stroke();}
+    formationText(ctx,'同一气团：上升 → 温度降低',450,33,'#f5d398',20);
+    ctx.strokeStyle='#65859d';ctx.lineWidth=2;ctx.strokeRect(855,80,22,96);ctx.fillStyle=color;ctx.fillRect(858,173-(82-50*parcel.cooling),16,82-50*parcel.cooling);
+    formationText(ctx,'温度',866,59,'#dce8f0',18,'center');formationText(ctx,'高',894,85,'#ffba79',16);formationText(ctx,'低',894,170,'#89d8ff',16);formationText(ctx,'示意',866,195,'#a7c3d4',15,'center');
+    formationText(ctx,parcel.condensed?'达到凝结条件':'尚未凝结',685,63,parcel.condensed?'#b9e6ff':'#f5d398',18,'center');
+    if(parcel.condensed){ctx.fillStyle='#d7eaf2';for(const[x,y,r]of[[510,85,22],[540,68,28],[575,82,25]]){ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();}formationText(ctx,'凝结 → 云',680,96,'#d7eaf2',20,'center');}
   }else if(lift>0){formationText(ctx,'水汽较少，降水通常较少',480,112,'#c9dce7',24);formationText(ctx,'仍可能有锋面降雨，冬季并非完全无雨',480,151,'#a7c3d4',19);}
-  if(rain>0&&wet){ctx.strokeStyle='#75caff';ctx.lineWidth=3;for(let j=0;j<10;j++){const x=570+j*11,y=115+((f.clock*45+j*17)%115);ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-4,y+13*rain);ctx.stroke();}formationText(ctx,'水汽 + 抬升条件 → 降雨',710,155,'#86dcff',22);}
+  if(rain>0&&wet){ctx.strokeStyle='#75caff';ctx.lineWidth=3;for(let j=0;j<10;j++){const x=climateRainX(j),floor=mountain?250-(x-430)*130/180:240,y=108+((f.clock*45+j*17)%Math.max(8,floor-128));ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-4,Math.min(floor-4,y+13*rain));ctx.stroke();}formationText(ctx,mountain?'迎风坡降水较多':'水汽 + 抬升 → 降雨',700,137,'#86dcff',19,'center');}
   if(rain>0&&!wet)formationText(ctx,'少雨对照 ≠ 无雨',710,85,'#c4dde9',25);
 }
+function climateParcelVisual(lift){
+  const t=clamp(lift,0,1),points=[[420,220],[500,145],[570,95]],q=t*2,i=Math.min(1,Math.floor(q)),u=q-i;
+  return {x:lerp(points[i][0],points[i+1][0],u),y:lerp(points[i][1],points[i+1][1],u),cooling:t,condensed:t>=.75};
+}
+function climateRainX(index){return 490+index*10;}
 function formationDiagnosis(){
   return '<details class="formation-diagnosis"><summary>独立解释与迁移任务</summary><ol><li>补画冬夏海陆近地面高低压与风向，解释空气柱质量的变化。</li><li>在陌生气压图上区分推动方向与两半球近地面风向。</li><li>为什么有海洋水汽还要判断抬升条件？用孟买解释雨季。</li><li>达尔文1月与7月分别是什么季节？怎样解释湿季？</li></ol><p>开放解释与作图由教师评议；可进入气候练习或标准剖面作图。</p></details>';
 }
 
 /* 第四步：经纬度固定的海陆气压与季风教学示意；不使用天气实测数据。 */
-const LANDSEA = {month:1,surface:'real',reference:false,region:'asia',phase:0,formation:newFormationState()};
-let landSeaGroup,landSeaPressure,landSeaContours,landSeaWinds,landSeaReference,landSeaIdeal;
+const LANDSEA = {month:1,surface:'real',reference:false,region:'asia',phase:0,entryShift:0,entrySeason:'',formation:{...newFormationState(),continuous:true}};
+let landSeaGroup,landSeaPressure,landSeaContours,landSeaWinds,landSeaReference,landSeaIdeal,landSeaBandGuide,landSeaGeography;
 let landSeaLabels=[],landSeaTravelers=[],landSeaReturnRotation=null,landSeaReturnView=null;
 const LANDSEA_COLORS = [[988,'#64519e'],[996,'#527fb7'],[1004,'#58afce'],[1012,'#d3dabb'],[1020,'#f5cc56'],[1028,'#ed8540'],[1036,'#e34531']];
+function landSeaSeasonShift(progress=1){return lerp(LANDSEA.entryShift,LANDSEA.month===7?8:-8,progress);}
 
 function landSeaPoint(lat,lon,r=CONFIG.earth.radius+.10){
   const a=degToRad(lat),b=degToRad(lon);
@@ -59471,7 +59563,7 @@ function landSeaCenters(month=LANDSEA.month){
   ];
 }
 function landSeaPressureAt(lat,lon,month=LANDSEA.month,surface=LANDSEA.surface){
-  const shifted=lat-(month===7?5:-5),a=Math.abs(shifted);
+  const shifted=lat-(month===7?8:-8),a=Math.abs(shifted);
   const g=(x,s)=>Math.exp(-.5*(x/s)**2);
   let p=1012-8*g(shifted,11)+9*g(a-30,12)-9*g(a-60,12)+12*g(a-90,13);
   if(surface==='real')for(const c of landSeaCenters(month)){
@@ -59504,6 +59596,16 @@ function createLandSeaVisual(){
   const idealCanvas=document.createElement('canvas');idealCanvas.width=360;idealCanvas.height=180;
   const idealTexture=new THREE.CanvasTexture(idealCanvas);idealTexture.colorSpace=THREE.SRGBColorSpace;
   landSeaIdeal=new THREE.Mesh(new THREE.SphereGeometry(5.065,64,48),new THREE.MeshBasicMaterial({map:idealTexture,transparent:true,opacity:.38,depthWrite:false}));landSeaGroup.add(landSeaIdeal);
+  landSeaBandGuide=new THREE.Group();landSeaBandGuide.name='landsea-band-reference';landSeaGroup.add(landSeaBandGuide);
+  const geographyMaterial=earthGroup.userData.surfaceMesh.material.clone();geographyMaterial.transparent=true;geographyMaterial.depthWrite=false;
+  geographyMaterial.color.set(0xffffff);geographyMaterial.emissive.set(0);geographyMaterial.specular.set(0x222244);geographyMaterial.shininess=15;
+  landSeaGeography=new THREE.Mesh(new THREE.SphereGeometry(5.015,96,64),geographyMaterial);landSeaGroup.add(landSeaGeography);
+  landSeaGeography.name='landsea-geography-bridge';landSeaGeography.scale.copy(earthGroup.userData.surfaceMesh.scale);
+  for(const lat of [-60,-30,0,30,60]){
+    const geometry=new THREE.BufferGeometry();geometry.setAttribute('position',new THREE.Float32BufferAttribute(new Float32Array(180*6*3),3));
+    const mesh=new THREE.Mesh(geometry,new THREE.MeshBasicMaterial({color:Math.abs(lat)===30?0xffce67:0x78c4ef,side:THREE.DoubleSide,transparent:true,opacity:.35,depthWrite:false}));
+    mesh.userData.latitude=lat;landSeaBandGuide.add(mesh);
+  }
   for(const lat of [-60,-30,0,30,60]){
     const points=Array.from({length:181},(_,i)=>landSeaPoint(lat,-180+i*2,5.16));
     const line=new THREE.Line(new THREE.BufferGeometry().setFromPoints(points),new THREE.LineDashedMaterial({color:Math.abs(lat)===30?0xffd166:0x8fd4f2,dashSize:.16,gapSize:.12,transparent:true,opacity:.7,depthWrite:false}));
@@ -59514,11 +59616,12 @@ function createLandSeaVisual(){
   document.body.append(legend);
   createLandSeaFormation();
   rebuildLandSea();
-  // 形成机制模式使用独立的温度—气压—风场粒子层；结果模式继续保留原有等压线与风线。
+  // 形成机制使用温度—气压—风场，结果对照归纳为季风路径，两者共用贴球面箭头。
   createLandSeaMechanismVisual();
+  createLandSeaStory();
   window.__landSeaDebug={state:LANDSEA,pressureAt:landSeaPressureAt,centers:landSeaCenters,setMonth:month=>setLandSeaOption('month',month),focus:focusLandSeaRegion,
     get group(){return landSeaGroup;},get labels(){return landSeaLabels;},get travelers(){return landSeaTravelers;},
-    get formation(){return LANDSEA.formation;},stages:()=>formationStages('landsea'),level:key=>formationLevel('landsea',key),action:a=>formationAction('landsea',a),mechanism:landSeaMechanismDiagnostics};
+    get formation(){return LANDSEA.formation;},get columnCamera(){return {active:LS_COLUMN_CAMERA.active,manual:LS_COLUMN_CAMERA.manual,saved:!!LS_COLUMN_CAMERA.saved};},stages:()=>formationStages('landsea'),level:key=>formationLevel('landsea',key),action:a=>formationAction('landsea',a),mechanism:landSeaMechanismDiagnostics};
 }
 function rebuildLandSea(){
   if(!landSeaGroup)return;
@@ -59533,6 +59636,7 @@ function rebuildLandSea(){
   const idealCanvas=landSeaIdeal.material.map.image,ic=idealCanvas.getContext('2d');
   for(let y=0;y<idealCanvas.height;y++){const c=landSeaColor(landSeaPressureAt(90-y,0,LANDSEA.month,'ideal')).convertLinearToSRGB();ic.fillStyle='#'+c.getHexString(THREE.LinearSRGBColorSpace);ic.fillRect(0,y,idealCanvas.width,1);}
   landSeaIdeal.material.map.needsUpdate=true;
+  landSeaIdeal.userData.shift=undefined;landSeaBandGuide.userData.key=null;
   clearLandSeaObjects(landSeaContours);clearLandSeaObjects(landSeaWinds);
   landSeaLabels.forEach(o=>{o.element.remove();landSeaGroup.remove(o);});landSeaLabels=[];landSeaTravelers=[];
   // Marching squares：在同一气压场上提取每隔4hPa的等压线，再贴到地球球面。
@@ -59579,6 +59683,23 @@ function landSeaWindRoutes(month=LANDSEA.month){
     [[27,145],[31,134],[33,124]], [[-26,127],[-18,119],[-8,108]],[[36,171],[42,170],[48,163]]
   ];
 }
+// The same thin solid arrow follows a curved surface route or a local field vector.
+function landSeaSurfaceArrow(curve,start=0,end=1,geometry=new THREE.BufferGeometry(),radius=5.20){
+  const positions=[],indices=[],r=radius,point=t=>curve.getPoint(lerp(start,end,t));
+  let length=0,previous=point(0);for(let i=1;i<=24;i++){const p=point(i/24);length+=p.distanceTo(previous);previous=p;}
+  const neck=clamp(1-.23/Math.max(.01,length),.45,.94);
+  for(const [a,b,n,width]of[[0,neck,32,()=>.033],[neck,1,8,u=>.115*(1-u)]]){
+    const offset=positions.length/3;
+    for(let i=0;i<=n;i++){
+      const u=i/n,t=lerp(a,b,u),p=point(t),tangent=point(Math.min(1,t+.002)).sub(point(Math.max(0,t-.002))).normalize(),side=p.clone().normalize().cross(tangent).normalize();
+      for(const sign of [-1,1])positions.push(...p.clone().addScaledVector(side,sign*width(u)).setLength(r).toArray());
+      if(i<n){const k=offset+i*2;indices.push(k,k+1,k+2,k+1,k+3,k+2);}
+    }
+  }
+  if(!geometry.attributes.position){geometry.setAttribute('position',new THREE.Float32BufferAttribute(positions,3));geometry.setIndex(indices);}
+  else{geometry.attributes.position.array.set(positions);geometry.attributes.position.needsUpdate=true;}
+  geometry.computeBoundingSphere();return geometry;
+}
 function createLandSeaWinds(){
   const winter=LANDSEA.month===1;
   const routes=landSeaWindRoutes();
@@ -59586,13 +59707,9 @@ function createLandSeaWinds(){
     const source=new THREE.CatmullRomCurve3(route.map(([lat,lon])=>landSeaPoint(lat,lon,5.19)));
     // 普通空间样条会穿过球体；逐点投影到球面，使整条路径保持贴地可见。
     const curve=new THREE.Curve();curve.getPoint=(t,target=new THREE.Vector3())=>target.copy(source.getPoint(t)).normalize().multiplyScalar(5.19);
-    const tube=new THREE.Mesh(new THREE.TubeGeometry(curve,48,.018,5,false),new THREE.MeshBasicMaterial({color:0xffdf9f,transparent:true,opacity:.8,depthWrite:false}));landSeaWinds.add(tube);
-    const makeHead=(t,color,radius,height)=>{
-      const head=new THREE.Mesh(new THREE.ConeGeometry(radius,height,8),new THREE.MeshBasicMaterial({color}));
-      head.position.copy(curve.getPoint(t));head.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),curve.getTangent(t).normalize());landSeaWinds.add(head);return head;
-    };
-    makeHead(.94,0xff785c,.07,.23).userData.fixedWindHead=true;tube.userData.windTube=true;
-    const head=makeHead(.35,0xffbd6e,.055,.17);landSeaTravelers.push({head,curve,offset:landSeaTravelers.length*.13});
+    const line=new THREE.Line(new THREE.BufferGeometry().setFromPoints(curve.getPoints(60)),new THREE.LineBasicMaterial({color:0xffcc8a,transparent:true,opacity:.36,depthWrite:false}));landSeaWinds.add(line);
+    const arrow=new THREE.Mesh(landSeaSurfaceArrow(curve,0,1),new THREE.MeshBasicMaterial({color:0xffcc8a,side:THREE.DoubleSide,transparent:true,opacity:.95,depthWrite:false}));arrow.name='landsea-result-wind-arrow';landSeaWinds.add(arrow);
+    const head=new THREE.Mesh(new THREE.SphereGeometry(.026,8,6),new THREE.MeshBasicMaterial({color:0xffe2b3,transparent:true,opacity:.85,depthWrite:false}));landSeaWinds.add(head);landSeaTravelers.push({head,curve,offset:landSeaTravelers.length*.13});
   }
   if(winter){
     addLandSeaLabel(32,127,'西北季风','landsea-wind-label');addLandSeaLabel(15,75,'东北季风','landsea-wind-label');
@@ -59603,9 +59720,17 @@ function createLandSeaWinds(){
 }
 function prepareLandSeaStep(newStep){
   if(newStep===3&&STATE.step!==3){
+    if(STATE.step===2){
+      LANDSEA.entryShift=STATE.seasonalShift||0;
+      LANDSEA.entrySeason=Math.abs(LANDSEA.entryShift)<=1?'equinox':LANDSEA.entryShift>0?'summer':'winter';
+      if(LANDSEA.entrySeason!=='equinox')LANDSEA.month=LANDSEA.entryShift>0?7:1;
+      LANDSEA.surface='real';LANDSEA.region='asia';LANDSEA.formation.view='mechanism';
+      resetFormation('landsea');rebuildLandSea();
+    }
     landSeaReturnRotation=earthGroup.rotation.y;earthGroup.rotation.y=0;
     landSeaReturnView={position:camera.position.clone(),target:controls.target.clone()};
   }else if(newStep!==3&&STATE.step===3){
+    releaseLandSeaColumnCamera();
     if(landSeaReturnRotation!==null)earthGroup.rotation.y=landSeaReturnRotation;
     if(landSeaReturnView){viewAnimation++;camera.position.copy(landSeaReturnView.position);controls.target.copy(landSeaReturnView.target);camera.lookAt(controls.target);controls.update();}
     landSeaReturnRotation=null;landSeaReturnView=null;
@@ -59616,7 +59741,7 @@ function syncLandSeaVisual(){
   const active=STATE.step===3;
   const regional=STATE.step>=3;
   landSeaGroup.visible=active;document.body.classList.toggle('landsea-active',active);
-  document.getElementById('landsea-legend').hidden=!active||!STATE.showLegend||(LANDSEA.formation.view==='mechanism'&&!formationFinished('landsea'));
+  syncLandSeaLegend();
   updateSunStyle();
   document.getElementById('legend').style.display=regional?'none':STATE.showLegend?'block':'none';
   // 只在第四步调整球体外的大范围辉光，退出即恢复原透明度。
@@ -59634,59 +59759,125 @@ function syncLandSeaVisual(){
     pressureBeltMeshes.forEach(m=>m.visible=false);windArrowMeshes.forEach(m=>m.visible=false);
     applyLandSeaFormationVisual();
   }
-  landSeaLabels.forEach(o=>o.visible=active&&STATE.showLabels);
+  landSeaLabels.forEach(o=>o.visible=active&&STATE.showLabels&&landSeaOverviewBlend()>0);
   drawLandSeaFormation();
   syncLandSeaMechanism();
+  syncLandSeaStory();
+}
+function syncLandSeaLegend(){
+  const overview=landSeaOverviewBlend(),legend=document.getElementById('landsea-legend');
+  legend.hidden=STATE.step!==3||!STATE.showLegend||(LANDSEA.surface==='real'&&overview===0);
+  legend.style.opacity=String(LANDSEA.surface==='real'?overview:1);
+}
+function updateLandSeaBandGuide(shift,band,mechanism){
+  landSeaBandGuide.visible=STATE.showPressure&&(mechanism||LANDSEA.reference||LANDSEA.surface==='ideal');
+  const target=LANDSEA.month===1?60:30,key=[shift,band,LANDSEA.month,mechanism].join(':');
+  const fade=mechanism?1-landSeaOverviewBlend():1;
+  landSeaBandGuide.visible&&=fade>0;
+  for(const mesh of landSeaBandGuide.children)mesh.material.opacity=(mesh.userData.latitude===target?.58:mechanism?.08*(1-band):.20)*fade;
+  if(landSeaBandGuide.userData.key===key)return;landSeaBandGuide.userData.key=key;
+  if(landSeaIdeal.userData.shift!==shift){
+    const canvas=landSeaIdeal.material.map.image,ctx=canvas.getContext('2d'),season=LANDSEA.month===7?8:-8;
+    for(let y=0;y<canvas.height;y++){const c=landSeaColor(landSeaPressureAt(90-y+season-shift,0,LANDSEA.month,'ideal')).convertLinearToSRGB();ctx.fillStyle='#'+c.getHexString(THREE.LinearSRGBColorSpace);ctx.fillRect(0,y,canvas.width,1);}
+    landSeaIdeal.material.map.needsUpdate=true;landSeaIdeal.userData.shift=shift;
+  }
+  for(const mesh of landSeaBandGuide.children){
+    const lat=mesh.userData.latitude,selected=lat===target,pos=mesh.geometry.attributes.position;
+    let i=0;
+    for(let lon=-180;lon<180;lon+=2){
+      // The continental interruption grows only at the band stage; ocean sectors remain traceable.
+      const interrupted=selected&&lon>35&&lon<145,half=1.6*(interrupted?1-band:1);
+      const at=(latitude,longitude)=>landSeaPoint(latitude+shift*clamp((90-Math.abs(latitude))/30,0,1),longitude,5.145);
+      const a=at(lat-half,lon),b=at(lat+half,lon),c=at(lat-half,lon+2),d=at(lat+half,lon+2);
+      for(const p of [a,b,c,b,d,c])pos.setXYZ(i++,p.x,p.y,p.z);
+    }
+    pos.needsUpdate=true;mesh.geometry.computeBoundingSphere();
+  }
 }
 function applyLandSeaFormationVisual(){
-  const f=LANDSEA.formation,mechanism=f.view==='mechanism'&&LANDSEA.surface==='real',band=formationLevel('landsea','band'),pressure=formationLevel('landsea','pressure'),wind=formationLevel('landsea','wind');
-  const blend=mechanism?pressure*(.35+.65*band):1;
+  const f=LANDSEA.formation,mechanism=f.view==='mechanism'&&LANDSEA.surface==='real',band=formationLevel('landsea','band'),pressure=formationLevel('landsea','pressure'),bridge=formationLevel('landsea','bridge');
+  const overview=mechanism?landSeaOverviewBlend():1;
   // 机制模式由动态压力场接管，避免静态终态色块覆盖形成过程。
-  landSeaPressure.visible=STATE.showPressure&&!mechanism;landSeaPressure.material.opacity=.38;
-  landSeaIdeal.visible=STATE.showPressure&&mechanism&&blend<1;landSeaIdeal.material.opacity=.28*(1-blend);
-  landSeaContours.visible=STATE.showPressure&&!mechanism;landSeaContours.children.forEach(m=>m.material.opacity=(m.material.userData.baseOpacity??=m.material.opacity));
-  landSeaWinds.visible=STATE.showPaths&&!mechanism;
-  for(const mesh of landSeaWinds.children){if(mesh.userData.windTube)mesh.geometry.setDrawRange(0,Math.floor(mesh.geometry.index.count*(mechanism?wind:1)/3)*3);if(mesh.userData.fixedWindHead)mesh.visible=!mechanism||wind>.94;}
-  landSeaReference.visible=LANDSEA.reference||(mechanism&&band<1);
-  document.getElementById('landsea-legend').hidden=STATE.step!==3||!STATE.showLegend||mechanism&&!formationFinished('landsea');
-  const shift=(LANDSEA.month===7?5:-5)*(mechanism?formationLevel('landsea','bridge'):1);
+  landSeaPressure.visible=STATE.showPressure&&overview>0;landSeaPressure.material.opacity=.38*overview;
+  landSeaIdeal.visible=false;
+  const surfaceStyle=LANDSEA.surface==='ideal'||(mechanism&&formationLevel('landsea','bridge')<1)?'smooth':'textured';
+  if(STATE.step===3&&earthGroup.userData.surfaceStyle!==surfaceStyle)setEarthSurfaceStyle(surfaceStyle);
+  if(STATE.step===3&&surfaceStyle==='textured')earthGroup.userData.surfaceMesh.material.color.set(0xa2afbc).lerp(new THREE.Color(0xffffff),overview);
+  landSeaGeography.visible=mechanism&&bridge>0&&bridge<1;
+  landSeaGeography.material.opacity=smoothstep(bridge);
+  const surfaceMap=earthGroup.userData.originalSurfaceMap;
+  if(surfaceMap&&landSeaGeography.material.map!==surfaceMap){landSeaGeography.material.map=surfaceMap;landSeaGeography.material.needsUpdate=true;}
+  landSeaContours.visible=STATE.showPressure&&overview>0;landSeaContours.children.forEach(m=>m.material.opacity=(m.material.userData.baseOpacity??=m.material.opacity)*overview);
+  landSeaWinds.visible=STATE.showPaths&&overview>0;
+  landSeaWinds.children.forEach(m=>{m.material.opacity=(m.material.userData.baseOpacity??=m.material.opacity)*overview;});
+  landSeaReference.visible=LANDSEA.reference||(mechanism&&band>0&&overview<1);
+  for(const line of landSeaReference.children){line.visible=LANDSEA.reference||!mechanism||line.userData.latitude===(LANDSEA.month===1?60:30);line.material.opacity=.7*(LANDSEA.reference?1:1-overview);}
+  syncLandSeaLegend();
+  const shift=landSeaSeasonShift(mechanism?smoothstep(bridge):1);
+  updateLandSeaBandGuide(shift,mechanism?band:LANDSEA.surface==='ideal'?0:1,mechanism);
   if(landSeaReference.userData.shift!==shift){for(const line of landSeaReference.children){const lat=clamp(line.userData.latitude+shift,-89,89),pos=line.geometry.attributes.position;for(let i=0;i<pos.count;i++){const p=landSeaPoint(lat,-180+i*2,5.16);pos.setXYZ(i,p.x,p.y,p.z);}pos.needsUpdate=true;line.computeLineDistances();}landSeaReference.userData.shift=shift;}
 }
 function updateLandSeaAnimation(dt){
   if(STATE.step!==3)return;
   advanceFormation('landsea',dt);
+  updateLandSeaColumnCamera();
   if(STATE.playing&&!LESSON_STATE.open&&!document.hidden)LANDSEA.phase=(LANDSEA.phase+Math.min(dt,.05)*STATE.speed*.12)%1;
   applyLandSeaFormationVisual();
   for(const {head,curve,offset}of landSeaTravelers){
-    const t=(LANDSEA.phase+offset)%1;head.visible=STATE.showParticles&&(LANDSEA.formation.view==='result'||t<=formationLevel('landsea','wind'));head.position.copy(curve.getPoint(t));head.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),curve.getTangent(t).normalize());
+    const t=(LANDSEA.phase+offset)%1;head.visible=STATE.showParticles;head.position.copy(curve.getPoint(t));head.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),curve.getTangent(t).normalize());
   }
   for(const obj of landSeaLabels){
-    const mechanism=LANDSEA.formation.view==='mechanism',windLabel=obj.element.classList.contains('landsea-wind-label'),center=obj.element.classList.contains('landsea-center');
-    const reached=!mechanism||(windLabel?formationLevel('landsea','wind')===1:center?(obj.element.textContent.includes('亚洲')?formationLevel('landsea','pressure')>0:formationLevel('landsea','band')>0):formationLevel('landsea','band')>0);
-    const fieldTime=lsTimeline();
-    if(mechanism&&center){
+    const overview=landSeaOverviewBlend(),windLabel=obj.element.classList.contains('landsea-wind-label'),center=obj.element.classList.contains('landsea-center');
+    if(center){
       const c=landSeaCenters().find(c=>obj.element.textContent.includes(c.name));
-      if(c){const p=lsPressure(c.lat,c.lon,fieldTime);obj.element.querySelector('strong').textContent=p>1012?'H':'L';obj.element.style.opacity=String(Math.min(1,(c.name.includes('亚洲')?formationLevel('landsea','pressure'):formationLevel('landsea','band'))));}
-    }else obj.element.style.opacity='';
-    const enabled=reached&&STATE.showLabels&&(windLabel?STATE.showPaths:STATE.showPressure)&&(!mechanism||center||windLabel);
+      if(c){obj.element.querySelector('strong').textContent=c.symbol;obj.element.classList.toggle('high',c.symbol==='H');obj.element.classList.toggle('low',c.symbol==='L');}
+    }
+    const labelBlend=smoothstep(clamp((overview-.3)/.7,0,1));
+    obj.element.style.opacity=String(labelBlend);
+    const enabled=labelBlend>0&&STATE.showLabels&&(windLabel?STATE.showPaths:STATE.showPressure);
     const p=obj.getWorldPosition(new THREE.Vector3()),normal=p.clone().sub(earthGroup.position).normalize();
+    // The globe animation supplies its own short pressure labels in mechanism view.
     obj.visible=enabled&&normal.dot(camera.position.clone().sub(p))>.15;
   }
+  layoutLandSeaLabels();
   updateFormationUI('landsea');drawLandSeaFormation();
   updateLandSeaMechanism(dt);
+  syncLandSeaStory();
+}
+function layoutLandSeaLabels(){
+  const aux=document.getElementById('landsea-formation'),rect=aux.getBoundingClientRect(),occupied=[];
+  const bounds=obj=>{
+    const p=obj.getWorldPosition(new THREE.Vector3()).project(camera),el=obj.element,display=el.style.display;
+    // CSS2DRenderer hides rejected labels with display:none. Measure their actual
+    // size before collision checks so a hidden label cannot return with zero size.
+    if(display==='none')el.style.display='';
+    const w=el.offsetWidth,h=el.offsetHeight;el.style.display=display;
+    return {left:(p.x+1)*innerWidth/2-w/2,right:(p.x+1)*innerWidth/2+w/2,top:(1-p.y)*innerHeight/2-h/2,bottom:(1-p.y)*innerHeight/2+h/2};
+  };
+  const intersects=(a,b,pad=5)=>a.left<b.right+pad&&a.right>b.left-pad&&a.top<b.bottom+pad&&a.bottom>b.top-pad;
+  for(const obj of [...landSeaLabels].sort((a,b)=>Number(b.element.classList.contains('landsea-center'))-Number(a.element.classList.contains('landsea-center')))){
+    if(!obj.visible)continue;
+    const r=bounds(obj),number=obj.element.classList.contains('landsea-isobar');
+    if((number&&innerWidth<=1100)||r.left<8||r.right>innerWidth-8||occupied.some(a=>intersects(a,r))||(!aux.hidden&&innerWidth>1100&&intersects(rect,r))){obj.visible=false;continue;}
+    occupied.push(r);
+  }
 }
 function focusLandSeaRegion(region){
   if(STATE.viewLocked)return;
+  releaseLandSeaColumnCamera();
   LANDSEA.region=region;viewAnimation++;
-  const [lat,lon]=region==='pacific'?[20,170]:region==='america'?[20,-100]:[18,110];
+  const [lat,lon]=region==='pacific'?[20,170]:region==='america'?[20,-100]:[26,125];
   controls.target.set(SCENE_OFFSET_X,0,0);
   camera.position.copy(controls.target).addScaledVector(landSeaPoint(lat,lon,1).normalize(),getSceneFraming().distance);
   camera.lookAt(controls.target);controls.update();frameScene();
 }
 function setLandSeaOption(key,value){
   if(key==='month'&&![1,7].includes(value))return;
+  if(key==='month'&&LANDSEA.month===value)return;
+  // Compare the same completed or partial stage in both months, with motion paused.
+  const saved=key==='month'?{...LANDSEA.formation}:null;
   LANDSEA[key]=value;
-  if(key==='month'||key==='surface'){resetFormation('landsea');if(key==='surface'&&value==='ideal')LANDSEA.formation.view='result';LANDSEA.phase=0;rebuildLandSea();}
+  if(key==='month'||key==='surface'){LANDSEA.entryShift=LANDSEA.month===7?8:-8;LANDSEA.entrySeason='';resetFormation('landsea');if(saved)Object.assign(LANDSEA.formation,saved,{reveal:false,clock:0});if(key==='surface'&&value==='ideal')LANDSEA.formation.view='result';LANDSEA.phase=0;rebuildLandSea();}
   else if(key==='region'){resetFormation('landsea');if(value!=='asia')LANDSEA.formation.view='result';focusLandSeaRegion(value);}
   else syncLandSeaVisual();
   if(STATE.step===3)updateStepPanel(3);
@@ -59694,8 +59885,11 @@ function setLandSeaOption(key,value){
 function renderLandSeaPanel(body,controlsPanel,navigation){
   const winter=LANDSEA.month===1,real=LANDSEA.surface==='real';
   controlsPanel.innerHTML=`<div class="landsea-controls"><div class="landsea-month" role="group" aria-label="月份"><button class="btn ${winter?'active':''}" data-landsea-month="1">1月 · 北半球冬季</button><button class="btn ${!winter?'active':''}" data-landsea-month="7">7月 · 北半球夏季</button></div><label>地表模型<select id="landsea-surface"><option value="real">真实海陆 · 气压中心</option><option value="ideal">均匀地表 · 理想气压带</option></select></label><label>观察区域<select id="landsea-region"><option value="asia">亚洲与印度洋</option><option value="pacific">太平洋</option><option value="america">美洲与大西洋</option></select></label><label class="landsea-reference"><input type="checkbox" id="landsea-reference">叠加理想气压带参考</label><div class="mechanism-actions"><button class="btn" id="landsea-play">${STATE.playing?'暂停气流':'播放气流'}</button><button class="btn" id="landsea-focus">回到区域视角</button></div></div>`;
-  body.innerHTML=`<div class="mechanism-question" id="landsea-formation-question"></div><div class="landsea-globe-guide" ${LANDSEA.formation.view==='result'?'hidden':''}><button class="btn" id="landsea-globe-play">播放地球形成过程</button><p id="landsea-field-readout"></p><small id="landsea-field-key"></small><p id="landsea-field-values"></p></div>${formationControls('landsea')}<p class="model-note">温度响应、气柱调整、气压与微粒共享同一进度。近地面微粒随局地压力梯度、自转偏向和摩擦连续运动；海洋中心另含动力背景。季节尺度教学模型，非天气预报；高度和时间经夸张，辅助剖面可展开。其他区域用于结果对照。</p><button class="btn btn-sm" id="landsea-season-lesson">详细探究：季节移动</button><button class="btn btn-sm" id="landsea-related">读图练习：冬夏气压与季风</button>${formationDiagnosis()}`;
-  navigation.innerHTML='<button class="btn" id="landsea-prev">第三步：理想三圈</button><button class="btn" id="landsea-next">第五步：季风与气候</button>';
+  body.innerHTML=`<div class="mechanism-question" id="landsea-formation-question"></div><p class="landsea-season-note">${winter?'1月 · 北半球冬季 · 气压带偏南':'7月 · 北半球夏季 · 气压带偏北'}<small>季节移动 → 加入海陆 → 气压中心 → 季风</small></p><div class="landsea-globe-guide" ${LANDSEA.formation.view==='result'?'hidden':''}><p id="landsea-field-readout"></p><small id="landsea-field-key"></small><p id="landsea-field-values"></p></div>${formationControls('landsea')}<details class="landsea-more"><summary>拓展与模型说明</summary><button class="btn btn-sm" id="landsea-globe-play">连续复习形成过程</button><p class="model-note">季节尺度教学示意。温度、气柱、气压和微粒共享进度；近地面气流受气压梯度、自转偏向及摩擦共同影响。海洋中心还包含动力背景。高度与时间经夸张，其他地区供结果对照。</p><button class="btn btn-sm" id="landsea-season-lesson">详细探究：季节移动</button><button class="btn btn-sm" id="landsea-related">读图练习：冬夏气压与季风</button>${formationDiagnosis()}</details>`;
+  body.insertAdjacentHTML('afterbegin',`<div class="landsea-stage-controls"><div class="landsea-month"><button class="btn ${winter?'active':''}" data-stage-month="1">1月 · 冬季</button><button class="btn ${!winter?'active':''}" data-stage-month="7">7月 · 夏季</button></div>${LANDSEA.formation.view==='mechanism'?`<label>回看动画阶段<select id="landsea-stage">${formationStages('landsea').map((stage,i)=>`<option value="${i}">${i+1}. ${stage.title}</option>`).join('')}</select></label>`:''}</div>`);
+  body.querySelectorAll('[data-stage-month]').forEach(b=>b.onclick=()=>setLandSeaOption('month',Number(b.dataset.stageMonth)));
+  const stage=document.getElementById('landsea-stage');if(stage){stage.value=String(LANDSEA.formation.node);stage.onchange=e=>seekLandSeaStage(Number(e.target.value));}
+  navigation.innerHTML='<button class="btn" id="landsea-prev">返回第三步</button><button class="btn" id="landsea-next">第五步：季风与气候</button>';
   controlsPanel.querySelectorAll('[data-landsea-month]').forEach(b=>b.onclick=()=>setLandSeaOption('month',Number(b.dataset.landseaMonth)));
   for(const key of ['surface','region']){const el=document.getElementById('landsea-'+key);el.value=LANDSEA[key];el.onchange=()=>setLandSeaOption(key,el.value);}
   const reference=document.getElementById('landsea-reference');reference.checked=LANDSEA.reference;reference.onchange=()=>setLandSeaOption('reference',reference.checked);
@@ -59712,7 +59906,7 @@ function renderLandSeaPanel(body,controlsPanel,navigation){
 
 /* Seasonal teaching model: temperature relaxation -> column mass -> pressure
    -> local velocity. u east, v north; NH Coriolis: (f*v,-f*u).
-   Fixed routes and arrowheads are used only by the separate result mode. */
+   Result mode summarizes the seasonal routes with the same surface arrow shape. */
 let landSeaMechanism=null;
 const LS_FIELD={nx:41,ny:29,west:45,east:165,south:-15,north:69,count:220,tail:10,windSeconds:8000,travelSeconds:22000};
 const LS_COASTS=[
@@ -59736,30 +59930,31 @@ function lsTimeline(){const f=LANDSEA.formation,s=formationStages('landsea');
 function lsLevels(t){const q={};let start=0;for(const s of formationStages('landsea')){
  q[s.key]=smoothstep(clamp((t-start)/s.duration,0,1));start+=s.duration;}return q;}
 function lsResponse(t,tau){
- // Analytic relaxation for a seasonal forcing ramp of duration 4 s.
- t=Math.max(0,t);return t<=4?(t-tau*(1-Math.exp(-t/tau)))/4:
-  1-tau/4*(1-Math.exp(-4/tau))*Math.exp(-(t-4)/tau);
+ const ramp=LS_STAGE_SECONDS.heat;
+ t=Math.max(0,t);return t<=ramp?(t-tau*(1-Math.exp(-t/tau)))/ramp:
+  1-tau/ramp*(1-Math.exp(-ramp/tau))*Math.exp(-(t-ramp)/tau);
 }
+function lsHeatingTime(t){return t-LS_STAGE_SECONDS.bridge;}
 function lsTemperature(lat,lon,t){
  const land=landSeaMechanismLand(lat,lon),sign=LANDSEA.month===7?1:-1;
  return sign*Math.max(.15,Math.sin(degToRad(lat)))*
-  (24*land*lsResponse(t-3,1.1)+10*(1-land)*lsResponse(t-3,5.2));
+  (24*land*lsResponse(lsHeatingTime(t),1.1)+10*(1-land)*lsResponse(lsHeatingTime(t),5.2));
 }
 function lsPressure(lat,lon,t){
- const q=lsLevels(t),shift=(LANDSEA.month===7?5:-5)*q.bridge,a=Math.abs(lat-shift),
+ const q=lsLevels(t),shift=landSeaSeasonShift(q.bridge),a=Math.abs(lat-shift),
   g=(x,s)=>Math.exp(-.5*(x/s)**2);
  let p=1012-8*g(lat-shift,11)+9*g(a-30,12)-9*g(a-60,12)+12*g(a-90,13);
  for(const c of landSeaCenters()){
   const continental=/亚洲|北美|澳大利亚/.test(c.name);
   // Continental mass anomaly follows the delayed thermal response. Ocean dynamic forcing is independent.
-  const weight=continental?q.pressure*lsResponse(t-3,1.1):q.band,dl=((lon-c.lon+540)%360)-180;
+  const weight=continental?q.pressure*lsResponse(lsHeatingTime(t),1.1):q.band,dl=((lon-c.lon+540)%360)-180;
   p+=c.amp*weight*g(dl,c.sx)*g(lat-c.lat,c.sy);}
  return p;
 }
 function lsUpperPressure(lat,lon,t){
  const q=lsLevels(t),c=landSeaCenters()[0],dl=((lon-c.lon+540)%360)-180;
  // Thermal thickness: warming raises pressure at the same upper height; cooling lowers it.
- return 550+(LANDSEA.month===7?1:-1)*16*lsResponse(t-3,1.1)*q.column*
+ return 550+(LANDSEA.month===7?1:-1)*16*lsResponse(lsHeatingTime(t),1.1)*q.column*
   Math.exp(-.5*((dl/32)**2+((lat-c.lat)/20)**2));
 }
 function lsAcceleration(u,v,aE,aN,lat,drag,coriolis=1){
@@ -59960,6 +60155,12 @@ function createLandSeaMechanismVisual(){
  contours.frustumCulled=false;group.add(contours);
  landSeaMechanism={group,tempMesh,pressureMesh,points,trails,contours,surface:lsGrid(),upper:lsGrid(),particles:[],
   t:-1,month:LANDSEA.month,renderT:-1,fieldFrames:0,contourVertices:0,activeParticleIndices:[]};
+ landSeaMechanism.arrows=[];
+ for(const lat of [12,26,40])for(const lon of [80,105,130,150]){
+  const mesh=new THREE.Mesh(new THREE.BufferGeometry(),new THREE.MeshBasicMaterial({color:0xffcc8a,side:THREE.DoubleSide,transparent:true,depthWrite:false}));
+  mesh.name='landsea-field-wind-arrow';
+  mesh.frustumCulled=false;mesh.visible=false;group.add(mesh);landSeaMechanism.arrows.push({lat,lon,mesh});
+ }
  applyLandSeaParticleSettings();
  createLandSeaColumnInset();
  syncLandSeaMechanism();
@@ -59972,10 +60173,10 @@ function syncLandSeaMechanism(){
  const t=lsTimeline();lsStepTo(m,t);const q=lsLevels(t);
  if(t!==m.renderT&&(Math.abs(t-m.renderT)>.10||t===0||LANDSEA.formation.progress===1))lsPaint(m,t);
  lsRenderParticles(m);
- m.tempMesh.visible=STATE.showPressure&&q.heat>0&&q.pressure<1;m.tempMesh.material.opacity=.47*(1-q.pressure);
- m.pressureMesh.visible=STATE.showPressure&&q.pressure>0;m.pressureMesh.material.opacity=.30*q.pressure;
- m.contours.visible=STATE.showPressure&&q.pressure>0;m.contours.material.opacity=.33*q.pressure;
- m.points.visible=STATE.showParticles&&q.column>0;m.trails.visible=STATE.showPaths&&q.column>0;
+ // The main lesson uses two marked comparison areas and a few explanatory arrows.
+ // Numerical textures and particle integration remain available to the detailed diagrams.
+ m.tempMesh.visible=m.pressureMesh.visible=m.contours.visible=m.points.visible=m.trails.visible=false;
+ m.arrows.forEach(({mesh})=>mesh.visible=false);
  const colors=m.points.geometry.attributes.color,trailColors=m.trails.geometry.attributes.color,
   alpha=m.points.geometry.attributes.particleAlpha,trailAlpha=m.trails.geometry.attributes.particleAlpha;
  for(const i of m.activeParticleIndices){
@@ -59990,15 +60191,25 @@ function syncLandSeaMechanism(){
  colors.needsUpdate=true;trailColors.needsUpdate=true;alpha.needsUpdate=true;trailAlpha.needsUpdate=true;updateLandSeaFieldCopy(t,q);
  drawLandSeaColumnInset(m,q.column>0);
 }
+function syncLandSeaFieldArrows(m,q){
+ const key=[m.t,STATE.showPaths].join(':');if(m.arrowFrame===key)return;m.arrowFrame=key;
+ for(const {lat,lon,mesh}of m.arrows){
+  const velocity=lsSampleGrid(m.surface,lat,lon),speed=Math.hypot(velocity.u,velocity.v);
+  mesh.visible=STATE.showPaths&&q.wind>0&&speed>.15;if(!mesh.visible)continue;
+  const center=landSeaPoint(lat,lon,5.20),east=landSeaPoint(lat,lon+.1,5.20).sub(center).normalize(),north=landSeaPoint(lat+.1,lon,5.20).sub(center).normalize();
+  const tangent=east.multiplyScalar(velocity.u).addScaledVector(north,velocity.v).normalize(),length=.58+.22*clamp(speed/8,0,1);
+  landSeaSurfaceArrow({getPoint:t=>center.clone().addScaledVector(tangent,(t-.5)*length).setLength(5.20)},0,1,mesh.geometry);mesh.material.opacity=q.wind;
+ }
+}
 function createLandSeaColumnInset(){
  const panel=document.getElementById('landsea-formation');if(!panel)return;
  const inset=document.createElement('div');inset.id='landsea-column-inset';inset.hidden=true;
  inset.innerHTML='<div class="column-inset-title"><b>大陆局部侧视 · 垂直运动放大</b><span id="landsea-column-direction"></span></div><canvas id="landsea-column-canvas" width="720" height="220" role="img" aria-label="与地球白色粒子同步的大陆垂直运动侧视图"></canvas><small>当地竖直 = 垂直于地表；高度与时间为示意</small>';
- panel.prepend(inset);
+ panel.querySelector('.landsea-aux-content').prepend(inset);
 }
 function drawLandSeaColumnInset(m,visible){
  const inset=document.getElementById('landsea-column-inset');if(!inset)return;
- inset.hidden=!visible;inset.parentElement.classList.toggle('column-active',visible);if(!visible)return;
+ inset.hidden=!visible;document.getElementById('landsea-formation').classList.toggle('column-active',visible);if(!visible)return;
  const signature=[m.t,LANDSEA.month,STATE.showParticles,STATE.showPaths,m.activeParticleIndices.length].join(':');
  if(inset.dataset.frame===signature)return;inset.dataset.frame=signature;
  const winter=LANDSEA.month===1,canvas=document.getElementById('landsea-column-canvas'),ctx=canvas.getContext('2d');
@@ -60028,15 +60239,16 @@ function updateLandSeaFieldCopy(t,q){
  const el=document.getElementById('landsea-field-readout');if(!el)return;
  const winter=LANDSEA.month===1,stage=formationStages('landsea')[LANDSEA.formation.node].key;
  el.textContent={
-  bridge:'先随季节移动理想气压带，再加入海陆差异。',
+  bridge:LANDSEA.entrySeason==='equinox'?`从春秋分附近移至${LANDSEA.month}月；本节点完成后加入海陆。`:`保留${LANDSEA.month===7?'偏北的夏季':'偏南的冬季'}气压带，本节点完成后加入海陆。`,
   heat:'地表蓝色表示降温，橙色表示升温。陆地响应快，海洋响应慢。',
-  column:winter?'白色标记沿当地竖直方向下沉；局部放大侧视图同步显示向下运动。蓝色高空气流向大陆补充。':'白色标记沿当地竖直方向上升；局部放大侧视图同步显示向上运动。蓝色高空气流向外输送。',
+  column:winter?'白色标记下沉，蓝色高空气流向大陆补充 → 气柱质量增加。':'白色标记上升，蓝色高空气流向外输送 → 气柱质量减少。',
   pressure:winter?'大陆气柱质量增加，冷高压逐渐形成。':'大陆气柱质量减少，热低压逐渐形成。',
-  band:'周围海洋动力中心加入，等压线随同一个压力场重组。',
-  wind:'橙色近地面微粒受压力梯度推动，在自转和摩擦作用下逐渐转向。'
+  band:winter?'蓝色副极地低压带在大陆处逐渐中断，海洋保留低压中心。':'黄色副热带高压带在大陆处逐渐中断，海洋保留高压中心。',
+  wind:'白色虚线表示气压差推动；橙色实线表示近地面风，在自转和摩擦作用下逐渐转向。',
+  overview:'从局部机制示意归纳到大尺度气压、等压线与季风分布；过渡不表示气压中心在短时间内真实移动。'
  }[stage];
  const key=document.getElementById('landsea-field-key'),data=document.getElementById('landsea-field-values');
- if(key)key.textContent=(q.pressure>0?'地表色块：气压':'地表蓝：冷 · 地表橙：暖')+' · 蓝微粒：高空 · 白微粒：垂直调整';
+ if(key)key.textContent=q.heat===0?'参考带：蓝色为低压带，黄色为高压带':(q.pressure>0?'地表色块按右侧气压色标读取，H / L 表示局地高低压中心':'地表蓝：冷 · 橙：暖，颜色表示温度变化')+(q.column>0?'；蓝微粒：高空 · 白微粒：垂直调整':'');
  if(data)data.textContent=q.heat>0&&q.pressure<1?
   '同纬度温度变化：大陆 '+lsTemperature(35,105,t).toFixed(1)+' K · 海洋 '+lsTemperature(35,145,t).toFixed(1)+' K':
   q.pressure>0?'大陆中心 '+lsPressure(landSeaCenters()[0].lat,landSeaCenters()[0].lon,t).toFixed(1)+' hPa · 季节尺度教学示意':
@@ -60055,6 +60267,239 @@ function landSeaMechanismDiagnostics(){
   temperatures:[lsTemperature(35,105,m.t),lsTemperature(35,145,m.t)],
   pressures:[lsPressure(50,95,m.t),lsPressure(35,140,m.t)],
   surface:lsSampleGrid(m.surface,35,120),upper:lsSampleGrid(m.upper,35,120)};
+}
+
+/* Teaching stages share one globe and one lesson timeline, including the final overview. */
+let landSeaStory=null;
+const LS_COLUMN_CAMERA={active:false,saved:null,manual:false,returnPose:null};
+const LS_STORY_COLORS={cold:0x62c8ff,warm:0xffa05c,high:0xffd36f,low:0x70cbff};
+function landSeaCameraPose(){return {position:camera.position.clone(),target:controls.target.clone(),up:camera.up.clone(),quaternion:camera.quaternion.clone(),framingDistance:getSceneFraming().distance};}
+function releaseLandSeaColumnCamera(keepPose=false){
+  const s=LS_COLUMN_CAMERA;if(!s.saved)return;
+  if(keepPose){s.active=false;s.manual=true;return;}
+  const p=s.saved,scale=getSceneFraming().distance/p.framingDistance;
+  camera.position.copy(p.position).sub(p.target).multiplyScalar(scale).add(p.target);camera.up.copy(p.up);camera.quaternion.copy(p.quaternion);controls.target.copy(p.target);
+  s.active=false;s.saved=null;s.manual=false;s.returnPose=null;
+}
+function updateLandSeaColumnCamera(){
+  const s=LS_COLUMN_CAMERA,f=LANDSEA.formation;
+  const eligible=STATE.step===3&&LANDSEA.surface==='real'&&f.view==='mechanism'&&f.node>=1&&f.node<=3;
+  if(!eligible){releaseLandSeaColumnCamera();return;}
+  if(STATE.viewLocked)return;
+  // The heat and air-transfer stages share a side view. Restore the regional
+  // view as the near-surface pressure stage begins; paused time freezes the lens.
+  const blend=f.node===1?smoothstep(clamp(f.progress/.22,0,1)):f.node===2?1:1-smoothstep(clamp(f.progress/.24,0,1));
+  if(blend===0){releaseLandSeaColumnCamera();return;}
+  if(!s.saved){
+    const damping=controls.enableDamping;controls.enableDamping=false;controls.update();controls.enableDamping=damping;
+    s.saved=landSeaCameraPose();s.manual=false;s.returnPose=null;viewAnimation++;
+  }
+  if(s.manual&&f.node<3)return;
+  const normal=s.saved,target=normal.target,distance=normal.position.distanceTo(target)*getSceneFraming().distance/normal.framingDistance;
+  const direction=landSeaPoint(70,-52,1).normalize(),sidePosition=target.clone().addScaledVector(direction,distance);
+  const sideUp=new THREE.Vector3(0,1,0).addScaledVector(direction,-direction.y).normalize().applyAxisAngle(direction,degToRad(-85));
+  let sideQuaternion=new THREE.Quaternion().setFromRotationMatrix(new THREE.Matrix4().lookAt(sidePosition,target,sideUp));
+  if(s.manual){s.returnPose??=landSeaCameraPose();sideQuaternion=s.returnPose.quaternion;}
+  const orientation=normal.quaternion.clone().slerp(sideQuaternion,blend);
+  controls.target.copy(target);
+  camera.position.set(0,0,1).applyQuaternion(orientation).multiplyScalar(distance).add(target);
+  camera.up.set(0,1,0).applyQuaternion(orientation);camera.quaternion.copy(orientation);
+  s.active=true;frameScene();
+}
+function landSeaStoryState(){
+  const f=LANDSEA.formation,q={};
+  for(const key of ['bridge','heat','column','pressure','band','wind','overview'])q[key]=smoothstep(formationLevel('landsea',key));
+  return {q,winter:LANDSEA.month===1,node:f.node,time:lsTimeline()};
+}
+function landSeaOverviewBlend(){return LANDSEA.formation.view==='result'?1:LANDSEA.surface==='real'?smoothstep(formationLevel('landsea','overview')):0;}
+function landSeaStoryCenters(){
+  // 区域机制图对照亚洲大陆与邻近西太平洋；全球中心位置仍由结果图表示。
+  const lat=LANDSEA.month===1?45:30,centers=landSeaCenters();
+  const blend=landSeaOverviewBlend();
+  return [{...centers[0],lat,lon:103,sx:27,sy:17},{...centers[1],lat,lon:153,sx:25,sy:17}].map((c,i)=>{
+    const target=centers[i],lonDelta=((target.lon-c.lon+540)%360)-180;
+    return {...c,lat:lerp(c.lat,target.lat,blend),lon:c.lon+lonDelta*blend,sx:lerp(c.sx,target.sx,blend),sy:lerp(c.sy,target.sy,blend)};
+  });
+}
+function landSeaStoryMassBudget(columnLevel,winter){
+  const mass=clamp((columnLevel-.4)/.6,0,1),packets=Array.from({length:12},(_,i)=>clamp((mass-i/11*.65)/.35,0,1));
+  const departed=packets.filter(p=>p>0).length,arrived=packets.filter(p=>p===1).length;
+  const donor=24-departed,receiver=24+arrived;
+  return {land:winter?receiver:donor,sea:winter?donor:receiver,inTransit:departed-arrived,packets};
+}
+function seekLandSeaStage(node){
+  if(!Number.isInteger(node)||node<0||node>=formationStages('landsea').length)return;
+  LANDSEA.formation.view='mechanism';LANDSEA.surface='real';LANDSEA.region='asia';
+  Object.assign(LANDSEA.formation,{node,progress:0,clock:0,reveal:false});
+  STATE.playing=false;resetLandSeaMechanism();viewAnimation++;
+  refreshFormation('landsea');focusLandSeaRegion('asia');
+}
+function lsStoryCurve(points){
+  // Interpolate latitude, longitude and height separately to keep elevated flow outside Earth.
+  const c=new THREE.CatmullRomCurve3(points.map(([lat,lon,r=5.2])=>new THREE.Vector3(lat,lon,r)));
+  return {getPoint(t){const p=c.getPoint(clamp(t,0,1));return landSeaPoint(p.x,p.y,p.z);}};
+}
+function lsGlobePatch(lat,lon,rx,ry,land=false){
+  const vertices=[],colors=[],base=new THREE.Color(0xffffff);
+  for(let y=-ry;y<ry;y+=2)for(let x=-rx;x<rx;x+=2){
+    if(land&&landSeaMechanismLand(lat+y,lon+x)<.5)continue;
+    for(const [a,b]of [[y,x],[y+2,x],[y,x+2],[y+2,x],[y+2,x+2],[y,x+2]]){
+      const radius=Math.hypot(a/ry,b/rx),alpha=Math.exp(-1.5*radius*radius)*smoothstep(clamp((1.08-radius)/.28,0,1));
+      vertices.push(...landSeaPoint(lat+a,lon+b,5.105).toArray());colors.push(base.r,base.g,base.b,alpha);
+    }
+  }
+  const mesh=new THREE.Mesh(new THREE.BufferGeometry().setAttribute('position',new THREE.Float32BufferAttribute(vertices,3)).setAttribute('color',new THREE.Float32BufferAttribute(colors,4)),
+    new THREE.MeshBasicMaterial({vertexColors:true,transparent:true,opacity:0,side:THREE.DoubleSide,depthWrite:false}));
+  mesh.name='landsea-thermal-region';return mesh;
+}
+function lsGlobeLabel(group,kind,lat,lon,r=5.3){
+  const el=document.createElement('div');el.className='ls-globe-note ls-note-'+kind;el.innerHTML='<b></b><span></span>';
+  const obj=new CSS2DObject(el);obj.position.copy(landSeaPoint(lat,lon,r));group.add(obj);return {obj,kind};
+}
+function lsMakeFlow(parent,name,color,surface=false,dashed=false){
+  const group=new THREE.Group();group.name=name;parent.add(group);
+  const mat=dashed?new THREE.LineDashedMaterial({color,dashSize:.12,gapSize:.09,transparent:true,opacity:.8,depthWrite:false}):new THREE.LineBasicMaterial({color,transparent:true,opacity:.8,depthWrite:false});
+  const line=new THREE.Line(new THREE.BufferGeometry().setAttribute('position',new THREE.Float32BufferAttribute(new Float32Array(97*3),3)),mat);group.add(line);
+  const heads=[];
+  for(let i=0;i<1;i++){
+    const head=new THREE.Mesh(surface?new THREE.BufferGeometry():new THREE.ConeGeometry(.075,.22,12),new THREE.MeshBasicMaterial({color,side:THREE.DoubleSide,transparent:true,opacity:.95,depthWrite:false}));
+    head.name='landsea-teaching-direction';group.add(head);heads.push(head);
+  }
+  const dots=[];for(let i=0;i<(dashed?0:3);i++){const dot=new THREE.Mesh(new THREE.SphereGeometry(.026,8,6),new THREE.MeshBasicMaterial({color,transparent:true,opacity:.85,depthWrite:false}));group.add(dot);dots.push(dot);}
+  return {group,line,heads,dots,surface,dashed};
+}
+function lsUpdateFlow(flow,curve,progress,time,visible,opacity=1){
+  flow.group.visible=visible&&progress>0;if(!flow.group.visible)return;
+  const pos=flow.line.geometry.attributes.position;
+  for(let i=0;i<97;i++){const p=curve.getPoint(i/96);pos.setXYZ(i,p.x,p.y,p.z);}pos.needsUpdate=true;
+  flow.line.geometry.setDrawRange(0,Math.max(2,Math.floor(97*progress)));flow.line.geometry.computeBoundingSphere();flow.line.computeLineDistances();
+  flow.line.material.opacity=(flow.dashed?.62:flow.surface?.20:.8)*opacity;
+  flow.heads.forEach(head=>{
+    const t=clamp(progress,.001,1);head.visible=STATE.showPaths&&progress>.035;if(!head.visible)return;
+    head.material.opacity=(flow.dashed?.65:.95)*opacity;
+    if(flow.surface)landSeaSurfaceArrow(curve,flow.dashed?Math.max(0,t-.06):0,t,head.geometry,5.20);
+    else{const p=curve.getPoint(t),dir=curve.getPoint(Math.min(1,t+.005)).sub(curve.getPoint(Math.max(0,t-.005))).normalize();head.position.copy(p);head.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),dir);}
+  });
+  flow.dots.forEach((dot,i)=>{const t=(time*.12+i/flow.dots.length)%1;dot.visible=STATE.showParticles&&t<progress;dot.position.copy(curve.getPoint(t));dot.material.opacity=.85*opacity;});
+}
+function lsMakeColumn(group,lat,lon){
+  const root=new THREE.Group();root.position.copy(landSeaPoint(lat,lon,5.16));root.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),root.position.clone().normalize());group.add(root);
+  const body=new THREE.Mesh(new THREE.CylinderGeometry(.31,.31,1,24,1,true),new THREE.MeshBasicMaterial({transparent:true,opacity:.12,side:THREE.DoubleSide,depthWrite:false}));root.add(body);
+  const rings=[];for(let i=0;i<2;i++){const ring=new THREE.Mesh(new THREE.TorusGeometry(.31,.018,6,32),new THREE.MeshBasicMaterial({transparent:true,opacity:.7}));ring.rotation.x=Math.PI/2;root.add(ring);rings.push(ring);}
+  const particles=[];for(let i=0;i<44;i++){const dot=new THREE.Mesh(new THREE.SphereGeometry(.042,6,5),new THREE.MeshBasicMaterial({color:0xe0f6ff,transparent:true,opacity:.9}));root.add(dot);particles.push(dot);}
+  const arrows=[];for(let i=0;i<3;i++){const arrow=new THREE.Mesh(new THREE.ConeGeometry(.09,.22,8),new THREE.MeshBasicMaterial({color:0xffffff}));root.add(arrow);arrows.push(arrow);}
+  root.name='landsea-air-column';return {root,body,rings,particles,arrows,lat,lon};
+}
+function lsUpdateColumn(c,index,state){
+  const {q,winter,time}=state,land=index===0,fade=1-q.band;
+  c.root.visible=q.heat>0&&fade>.02&&(STATE.showParticles||STATE.showPaths);if(!c.root.visible)return;
+  const temp=land?(winter?LS_STORY_COLORS.cold:LS_STORY_COLORS.warm):(winter?LS_STORY_COLORS.warm:LS_STORY_COLORS.cold),
+    height=lerp(1.5,land?(winter?1.05:2.15):1.55,q.heat),budget=landSeaStoryMassBudget(q.column,winter),
+    count=land?budget.land:budget.sea,rise=land?!winter:winter;
+  c.root.userData.particleCount=count;c.root.userData.height=height;
+  c.body.scale.y=height;c.body.position.y=height/2;c.body.material.color.set(temp);c.body.material.opacity=.17*q.heat*fade;
+  c.rings.forEach((ring,i)=>{ring.position.y=i*height;ring.material.color.set(temp);ring.material.opacity=.8*fade;ring.visible=STATE.showPaths;});
+  c.particles.forEach((dot,i)=>{
+    dot.visible=STATE.showParticles&&i<count;
+    const angle=i*2.39996,r=.21*Math.sqrt(((i*17)%43+1)/44),motion=q.column>0?time*.19*(rise?1:-1):0;
+    dot.position.set(Math.cos(angle)*r,(((i*.618+motion)%1+1)%1)*height,Math.sin(angle)*r);
+    dot.material.opacity=.9*fade;
+  });
+  c.arrows.forEach((arrow,i)=>{
+    const phase=((time*.25*(rise?1:-1)+i/3)%1+1)%1;
+    arrow.visible=STATE.showPaths&&q.column>.12;arrow.position.set(.42,phase*height,0);
+    arrow.rotation.z=rise?0:Math.PI;arrow.material.color.set(temp);
+  });
+}
+function lsMakePressure(group){
+  const root=new THREE.Group();root.name='landsea-growing-pressure-center';group.add(root);
+  const fill=new THREE.Mesh(new THREE.PlaneGeometry(2,2,32,24),new THREE.MeshBasicMaterial({map:particleTexture,transparent:true,opacity:0,side:THREE.DoubleSide,depthWrite:false}));
+  const unit=fill.geometry.attributes.position.array.slice();root.add(fill);
+  const rings=[];for(let i=0;i<3;i++){const line=new THREE.Line(new THREE.BufferGeometry().setAttribute('position',new THREE.Float32BufferAttribute(new Float32Array(97*3),3)),new THREE.LineBasicMaterial({transparent:true,opacity:.8,depthWrite:false}));root.add(line);rings.push(line);}
+  return {root,fill,rings,unit};
+}
+function lsPressureGeometry(p,center){
+  p.center=center;const pos=p.fill.geometry.attributes.position;
+  for(let i=0;i<pos.count;i++){const point=landSeaPoint(center.lat+p.unit[i*3+1]*center.sy*.8,center.lon+p.unit[i*3]*center.sx*.85,5.12);pos.setXYZ(i,point.x,point.y,point.z);}
+  pos.needsUpdate=true;p.fill.geometry.computeBoundingSphere();
+}
+function lsUpdatePressure(p,level,color,opacity=1){
+  p.root.visible=STATE.showPressure&&level>0;if(!p.root.visible)return;
+  p.fill.material.color.set(color);p.fill.material.opacity=.52*level*opacity;
+  p.rings.forEach((line,i)=>{const a=line.geometry.attributes.position,size=(.2+.8*level)*(.4+i*.26);
+    for(let j=0;j<97;j++){const theta=j/96*Math.PI*2,c=p.center,point=landSeaPoint(clamp(c.lat+Math.sin(theta)*c.sy*.65*size,-85,85),c.lon+Math.cos(theta)*c.sx*.7*size,5.17);a.setXYZ(j,point.x,point.y,point.z);}a.needsUpdate=true;line.geometry.computeBoundingSphere();line.material.color.set(color);line.material.opacity=.55*level*opacity;
+  });
+}
+function createLandSeaStory(){
+  const group=new THREE.Group();group.name='landsea-teaching-focus';landSeaGroup.add(group);group.add(new THREE.AmbientLight(0xffffff,.65));
+  const patches=[lsGlobePatch(40,100,31,25,true),lsGlobePatch(36,155,20,20)];patches.forEach(p=>group.add(p));
+  const columns=[lsMakeColumn(group,35,103),lsMakeColumn(group,35,153)],labels=[];
+  for(const [kind,lat,lon,r]of [['land',20,99,5.3],['sea',20,158,5.3],['upperland',40,95,7.65],['uppersea',40,162,7.65],['mass',2,98,5.4],['oceanpressure',50,175,5.35],['band',64,144,5.3],['wind',12,128,5.3]])labels.push(lsGlobeLabel(group,kind,lat,lon,r));
+  const upper=lsMakeFlow(group,'landsea-upper-adjustment',0x96e3ff),force=lsMakeFlow(group,'landsea-pressure-drive',0xffffff,true,true),wind=lsMakeFlow(group,'landsea-main-wind',0xffb660,true);
+  const transfer=lsMakeFlow(group,'landsea-mass-transfer',0xe1faff),centers=[lsMakePressure(group),lsMakePressure(group)];
+  const key=document.createElement('aside');key.id='landsea-flow-key';key.hidden=true;
+  key.innerHTML='<b></b><span><i class="ls-force-key"></i>气压差推动：高压 → 低压</span><span><i class="ls-wind-key"></i>实际近地面风：北半球向右偏</span><small>位置过渡用于归纳，不表示真实迁移</small>';document.body.append(key);
+  landSeaStory={group,patches,columns,labels,upper,force,wind,transfer,centers,month:null};syncLandSeaStory();
+}
+function syncLandSeaStory(){
+  const s=landSeaStory;if(!s)return;
+  const overview=landSeaOverviewBlend(),fade=1-overview;
+  const active=STATE.step===3&&LANDSEA.surface==='real'&&LANDSEA.formation.view==='mechanism'&&overview<1;s.group.visible=active;
+  const key=document.getElementById('landsea-flow-key');key.hidden=!active||!STATE.showLegend||formationLevel('landsea','wind')===0;
+  key.querySelector('b').textContent=overview>0?'局部机制 → 完整分布':'先看推动方向，再看风向右偏';
+  key.querySelector('small').hidden=overview===0;
+  document.body.classList.toggle('landsea-story-mode',active);
+  if(gridGroup)gridGroup.children.forEach(o=>{if(o.material){o.material.userData.storyOpacity??=o.material.opacity;o.material.opacity=active?o.material.userData.storyOpacity*.22:o.material.userData.storyOpacity;}});
+  if(!active){s.labels.forEach(({obj})=>obj.visible=false);return;}
+  const state=landSeaStoryState(),{q,winter,node,time}=state;
+  const c=landSeaStoryCenters();s.centers.forEach((p,i)=>lsPressureGeometry(p,c[i]));
+  s.patches.forEach((patch,i)=>{const response=i===0?q.heat:Math.pow(q.heat,1.7)*.65;patch.visible=STATE.showPressure&&response>0&&q.band<1;patch.material.color.set(i===0?(winter?LS_STORY_COLORS.cold:LS_STORY_COLORS.warm):(winter?LS_STORY_COLORS.warm:LS_STORY_COLORS.cold));patch.material.opacity=.55*response*(1-q.band);});
+  s.columns.forEach((column,i)=>lsUpdateColumn(column,i,state));
+  const transport=clamp((q.column-.15)/.85,0,1),upperPoints=winter?[[35,153,7.4],[35,130,7.4],[35,103,7.4]]:[[35,103,7.4],[35,130,7.4],[35,153,7.4]],upperCurve=lsStoryCurve(upperPoints);
+  lsUpdateFlow(s.upper,upperCurve,transport,time,STATE.showPaths&&q.band<1);
+  // The descending/ascending continuation shares the upper route's endpoint and changes mass visibly.
+  const vertical=winter?[[35,103,7.4],[35,103,6.3],[35,103,5.2]]:[[35,103,5.2],[35,103,6.3],[35,103,7.4]];
+  lsUpdateFlow(s.transfer,lsStoryCurve(vertical),clamp((q.column-.35)/.65,0,1),time,STATE.showPaths&&q.band<1);
+  lsUpdatePressure(s.centers[0],q.pressure,winter?LS_STORY_COLORS.high:LS_STORY_COLORS.low,fade);
+  lsUpdatePressure(s.centers[1],q.band,winter?LS_STORY_COLORS.low:LS_STORY_COLORS.high,fade);
+  const centers=landSeaStoryCenters(),source=centers[winter?0:1],target=centers[winter?1:0],origin=[source.lat,source.lon],midLon=(source.lon+target.lon)/2,
+    straight=[origin,[source.lat,midLon],[target.lat,target.lon]],bend=clamp((q.wind-.3)/.7,0,1),side=winter?-1:1,
+    curved=[origin,[source.lat+side*3*bend,midLon],[target.lat+side*14*bend,lerp(target.lon,winter?143:116,bend)]];
+  lsUpdateFlow(s.force,lsStoryCurve(straight),clamp(q.wind/.35,0,1),time,STATE.showPaths&&q.wind>0,fade*fade);
+  const local=lsStoryCurve(curved),result=landSeaTravelers[winter?1:0]?.curve;
+  const windCurve=result&&overview>0?{getPoint(t){return local.getPoint(t).lerp(result.getPoint(t),overview).setLength(5.20);}}:local;
+  lsUpdateFlow(s.wind,windCurve,clamp((q.wind-.2)/.45,0,1),time,STATE.showPaths&&q.wind>.2,fade);
+  s.wind.group.userData.deflection=bend;s.wind.group.userData.origin=origin;
+  for(const {obj,kind}of s.labels){
+    let title='',sub='',visible=false;
+    if(kind==='land'){const center=centers[0];obj.position.copy(landSeaPoint(q.pressure>0?center.lat:20,q.pressure>0?center.lon:99,5.32));title=q.pressure>0?(winter?'H 大陆冷高压':'L 大陆热低压'):'亚洲大陆';sub=q.pressure>0?'':q.column>0?(winter?'下沉':'上升'):q.heat>0?(winter?'降温较快':'升温较快'):'';visible=q.bridge===1;}
+    if(kind==='sea'){title='同纬度海洋';sub=q.pressure>0?(winter?'近地面相对低压':'近地面相对高压'):q.heat>0?(winter?'降温较慢':'升温较慢'):'';visible=q.bridge===1&&node<4;}
+    if(kind==='upperland'){title=winter?'高空 L':'高空 H';sub=transport>.4?(winter?'高空补充':'高空外流'):'同一高度';visible=q.column>0&&node<4;}
+    if(kind==='uppersea'){title=winter?'高空 H':'高空 L';sub='同一高度比较';visible=q.column>0&&node===2;}
+    if(kind==='mass'){title=winter?'气柱质量增加':'气柱质量减少';sub='';visible=q.column>.65&&node<4;}
+    if(kind==='oceanpressure'){title=winter?'L 海洋低压':'H 海洋高压';sub='';const c=centers[1];obj.position.copy(landSeaPoint(c.lat-9,c.lon,5.4));visible=q.band>.45;}
+    if(kind==='band'){title=winter?'副极地低压带':'副热带高压带';sub=q.band>.6?'大陆中断 · 海洋保留':'原连续带 → 区域气压中心';obj.position.copy(landSeaPoint((winter?60:30)+landSeaSeasonShift(q.bridge)+6,143,5.28));visible=q.band>0&&node===4;}
+    if(kind==='wind'){title=bend>.8?(winter?'东亚冬季风':'东亚夏季风'):bend>0?'北半球 · 向右偏':'气压差推动';sub=bend>.8?(winter?'偏北风':'偏南风'):bend>0?'相对气流前进方向':'高压 → 低压';visible=q.wind>0;}
+    const columnNote=LS_COLUMN_CAMERA.saved&&node<=2&&(kind==='land'||kind==='sea');
+    obj.center.set(.5,.5);
+    if(columnNote){
+      const column=s.columns[kind==='land'?0:1];obj.position.copy(landSeaPoint(column.lat,column.lon,5.16+column.root.userData.height+.3));
+      const tip=s.group.localToWorld(obj.position.clone()).project(camera),base=column.root.getWorldPosition(new THREE.Vector3()).project(camera);
+      // Anchor the box outside the column tip, rather than centering it over
+      // the particles. Follow its screen direction when the globe is rotated.
+      obj.center.x=tip.x<base.x?1.2:-.2;
+    }
+    else if(kind==='sea')obj.position.copy(landSeaPoint(20,158,5.3));
+    const el=obj.element;el.querySelector('b').textContent=title;el.querySelector('span').textContent=sub;
+    el.dataset.tone=(kind==='land'&&q.pressure>0)?(winter?'high':'low'):kind==='land'?(winter?'cold':'warm'):'';
+    const p=obj.getWorldPosition(new THREE.Vector3()),facing=p.clone().sub(earthGroup.position).normalize().dot(camera.position.clone().sub(p));
+    const sight=camera.position.clone().sub(p),near=clamp(earthGroup.position.clone().sub(p).dot(sight)/sight.lengthSq(),0,1);
+    const columnVisible=p.clone().addScaledVector(sight,near).distanceTo(earthGroup.position)>5.02;
+    const labelFade=1-smoothstep(clamp(overview/.5,0,1));
+    el.style.opacity=String(labelFade);obj.visible=visible&&labelFade>0&&STATE.showLabels&&(columnNote?columnVisible:facing>.25);
+  }
+  // Keep the left stage selector in sync without rebuilding the controls each frame.
+  const select=document.getElementById('landsea-stage');if(select)select.value=String(node);
 }
 
 /* 第五步：地图气压、风线为教学示意；图表可切换独立气候常值与示意资料。 */
@@ -60088,10 +60533,11 @@ function createMonsoonClimateVisual(){
   document.body.append(monsoonStage);
   monsoonStage.querySelector('.mc-chart-heading span').remove();
   monsoonStage.querySelector('.mc-chart-heading').insertAdjacentHTML('beforeend','<label>图表资料<select id="mc-data-mode"><option value="observed">真实月常值</option><option value="schematic">教学示意</option></select></label>');
-  document.getElementById('monsoon-climate-chart').insertAdjacentHTML('afterend','<p class="mc-data-source" id="mc-data-source"></p><details class="mc-reading"><summary>先读资料，再写解释</summary><p>从图中找出降水较多的月份，判断当地季节。用气流来源、水汽及抬升条件解释，并说明图表不能单独证明什么。</p><textarea id="mc-reading-answer" rows="3" aria-label="独立解释气候资料"></textarea></details>');
+  document.getElementById('monsoon-climate-chart').insertAdjacentHTML('afterend','<p id="mc-process-statistics" class="mc-process-statistics"></p><p class="mc-data-source" id="mc-data-source"></p><details class="mc-reading"><summary>先读资料，再写解释</summary><p>从图中找出降水较多的月份，判断当地季节。用气流来源、水汽及抬升条件解释，并说明图表不能单独证明什么。</p><textarea id="mc-reading-answer" rows="3" aria-label="独立解释气候资料"></textarea></details>');
   document.getElementById('mc-data-mode').onchange=e=>{MONSOON_CLIMATE.dataMode=e.target.value;drawMonsoonClimateChart();updateMonsoonClimateCopy();};
   document.getElementById('mc-reading-answer').oninput=e=>{learningRecord().answers['climateReading-'+MONSOON_CLIMATE.site]=e.target.value;saveLearningEvidence();};
   createClimateFormation();
+  const bridge=document.createElement('div');bridge.className='mc-evidence-bridge';bridge.innerHTML='<span>动画：水汽与抬升</span><b>→</b><span>冬夏条件对照</span><b>→</b><span>资料：多年各月统计</span>';monsoonStage.querySelector('.mc-climate-card').prepend(bridge);
   monsoonStage.querySelectorAll('[data-mc-site]').forEach(b=>b.onclick=()=>setMonsoonClimateOption('site',b.dataset.mcSite));
   monsoonMapBase=document.createElement('canvas');monsoonMapBase.width=1440;monsoonMapBase.height=620;
   monsoonMapImage=new Image();monsoonMapImage.onload=()=>{monsoonMapReady=true;monsoonMapSignature='';if(STATE.step===4)drawMonsoonClimateMap();};
@@ -60236,6 +60682,8 @@ function drawMonsoonClimateChart(){
   for(let i=0;i<12;i++){const x=left+dx*(i+.5),height=s.rain[i]/rainMax*(bottom-top);ctx.fillStyle=i===MONSOON_CLIMATE.month-1?'#9ce0ff':'#4e9fc8';ctx.fillRect(x-11,bottom-height,22,height);ctx.fillStyle='#c0d4df';ctx.textAlign='center';ctx.fillText(String(i+1),x,228);}
   ctx.strokeStyle='#ffab78';ctx.lineWidth=2.5;ctx.beginPath();s.temperature.forEach((v,i)=>{const p=[left+dx*(i+.5),bottom-(v-tempMin)/(tempMax-tempMin)*(bottom-top)];i?ctx.lineTo(...p):ctx.moveTo(...p);});ctx.stroke();
   const i=MONSOON_CLIMATE.month-1,x=left+dx*(i+.5),y=bottom-(s.temperature[i]-tempMin)/(tempMax-tempMin)*(bottom-top);ctx.fillStyle='#ffdabd';ctx.beginPath();ctx.arc(x,y,4,0,Math.PI*2);ctx.fill();
+  ctx.strokeStyle='#b7e6ff';ctx.lineWidth=2;ctx.strokeRect(x-14,bottom-s.rain[i]/rainMax*(bottom-top)-3,28,s.rain[i]/rainMax*(bottom-top)+3);
+  document.getElementById('mc-process-statistics').textContent=`当前${MONSOON_CLIMATE.month}月：蓝柱降水 ${s.rain[i]} mm。动画解释水汽与抬升条件；全年柱线来自月统计资料。橙色气温线还需结合纬度、太阳辐射等因素理解。`;
 }
 function updateMonsoonClimateCopy(){
   if(!monsoonStage)return;const s=monsoonSite(),winter=MONSOON_CLIMATE.month===1,north=s.lat>0,localSummer=north?!winter:winter;
@@ -60424,14 +60872,14 @@ const CIRCULATION_SEQUENCE = {
   cellLatitudes:{equatorEdge:2.5,hadleyEdge:28,ferrelEdge:32,ferrelFront:58,polarFront:62,frontSlope:12},
   cells:{hadley:['equator-rise','upper','parallel','sink','trade'],ferrel:['ferrel-sink','west','subpolar-rise','ferrel-upper'],polar:['polar-rise','polar-upper','polar-sink','polar-east']},
   phases:[
-    {start:0,title:'地球开始自转，原有气流偏转并在高空断开',text:'地球开始自转的同时，原有赤道上升至低纬高空的气流开始偏转，并在高空转折处逐渐断开。原来继续通向极地、极地下沉和近地面返回的路径逐渐淡出；保留的气流向东偏转，继续连接高空积聚、下沉和回流。'},
+    {start:0,title:'加入自转条件，对照原经线与偏转方向',text:'以无自转的单圈为比较起点，加入自转条件。灰色虚线保留原经线，橙色箭头表示前进方向，青色箭头表示水平偏向。路线的形变用于比较两种理想模型；三圈的形成还需依次观察输送改变、下沉分流、辐合抬升和平均回流，不能只用一条弯曲路线解释。'},
     {start:4,title:'地转偏向力：北半球向右偏',text:'地球自转使北半球运动空气受到地转偏向力。以气流前进方向为准，北半球向右偏，南半球向左偏；风向改变后，偏向力的方向也随之改变。这里向北运动的高空气流逐渐转向东。青色箭头表示水平偏向方向，不表示下沉力。'},
     {start:10,title:'30°附近，高空风近似平行纬线',text:'在教材理想模型中，高空气流到达北纬30°附近时已明显向东偏转，逐渐成为偏西风，运动方向近似与纬线平行。它不再像无自转的单圈模型那样一直向北极输送。30°是近似位置，气流仍不断从低纬流入。'},
     {start:12,title:'高空气流在30°附近积聚',text:'低纬高空气流持续流入30°附近，而向更高纬度的输送减弱。教材用“高空气流积聚”概括这一环节。发光粒子变密表示空气汇入增多，并非地转偏向力把空气直接向下压。'},
     {start:15,title:'两支气流同步下沉，形成副热带高气压带',text:'低纬与中纬环流在30°附近的两条下沉支同步形成，共同对应副热带的下沉区。下沉向近地面补充空气质量，形成副热带高气压带。两条支路在纬度方向小幅错开，便于独立观察。中纬环流的其余路线随后展开；真实环流同时受辐射冷却与整体质量、动量收支影响，地转偏向力本身只改变水平运动方向。'},
     {start:19,title:'近地面分流，连接低纬环流',text:'副热带高压区的近地面气流向两侧流出。向赤道的气流在北半球右偏，形成东北信风；向较高纬度的气流右偏，形成盛行西风。赤道上升、高空输送、30°下沉和近地面回流连接成哈德莱环流。'},
     {start:23,title:'60°附近，冷暖气流交汇',text:'来自副热带的较暖西风与来自极地的较冷东风，在60°附近辐合。近地面空气汇聚，为后续抬升提供条件。这里的纬度是大尺度平均位置，不是一条固定的天气锋线。'},
-    {start:27,title:'暖气流沿极锋爬升，中纬与高纬环流并行形成',text:'来自中纬度的较暖气流在60°附近遇到来自高纬度的冷气团。冷空气密度较大，位于下方；暖色气流沿倾斜的极锋持续向高纬侧、向高空爬升。中纬与高纬各自的上升支同步形成，到达高空后，两圈回流同时展开，分别连接30°附近与极地。三圈相邻支路在纬度方向小幅错开，各自闭合，便于独立观察；它们仍共同对应60°附近的辐合上升区。大尺度辐合上升形成动力性的副极地低气压带，蓝色纬向带随爬升逐渐显现。此处上升主要不是当地强烈受热造成的；极锋坡度和高空接点纬度为教学示意。'},
+    {start:27,title:'先看局部锋面：暖空气沿冷空气上方抬升',text:'来自中纬度的较暖气流在60°附近遇到来自高纬度的冷气团。冷空气密度较大，位于下方；暖气流沿倾斜锋面抬升。这里先用局部侧视解释冷暖空气的位置，31秒后再归纳平均三圈结构。归纳图中两条错开的上升支共同表示平均辐合上升区，不表示锋面两侧的冷暖气团一起沿坡爬升。蓝色副极地低压带随上升显现。此处上升主要不是当地强烈受热造成的；纬度和锋面坡度均为示意。'},
     {start:31,title:'极地冷却下沉，形成极地高气压带',text:'极地气温很低，空气冷却、密度增大并下沉。下沉向近地面补充空气质量，形成热力性的极地高气压带。紫色极冠随下沉逐渐显现；近地面空气向60°附近的低压区流出，偏转为极地东风。'},
     {start:33,title:'三圈已闭合，对照中纬与高纬环流',text:'中纬与高纬高空回流各自连接本圈的上升支与下沉支，两圈同步闭合。低纬、中纬、高纬是三条独立闭合的路线，各自的气流持续保留，连接处首尾相接。最后的镜头依次观察两圈的路线，演示结束后南北半球完整三圈环流同时显示，可自由拖动观察。费雷尔环流为间接环流。光带为平均环流示意，并非一团空气实际走遍三圈。'}
   ]
@@ -60469,7 +60917,7 @@ function sequencePressureColor(lat){const p=CIRCULATION_SEQUENCE.pressureColors,
 function createSequenceAnnotations(){
   const seq=CIRCULATION_SEQUENCE,layer=document.createElement('div');layer.id='sequence-annotations';document.body.append(layer);seq.annotationLayer=layer;
   const definitions=[
-    ['equator-rise',.45,'↗','单圈起点：赤道上升支开始偏转','单圈开始偏转','第一步已经形成赤道上升支。加入地转偏向力后，单圈从这个起点开始扭曲；低纬环流沿同一位置接续展开，不重新播放受热上升过程。'],
+    ['equator-rise',.45,'↗','沿用赤道上升支，比较有无自转','沿用赤道上升支','第一步已形成赤道上升支。第二步保留同一起点，比较加入自转后的水平运动；随后分别展示输送改变、下沉分流与辐合抬升，最后归纳三圈。'],
     ['upper',.52,'↗','地转偏向力','高空气流偏转','赤道上升气流在高空向较高纬度运动，受到地转偏向力影响，逐渐获得向东分量。到30°附近时，风向近似与纬线平行。左右以气流前进方向为准，不能按屏幕的左右判断。地转偏向力改变水平运动方向，不是使空气下沉的力。'],
     ['parallel',.5,'→','30°高空，气流堆积','高空气流堆积','来自低纬的高空气流逐渐转为偏西风，在30°附近近似平行纬线。教材用高空气流积聚概括这一环节，随后发生大尺度下沉。积聚与下沉属于动力过程，地转偏向力本身不直接向下压空气。'],
     ['sink',.5,'↓','30°空气下沉，形成高压','30°气流下沉','高空气流在30°附近积聚，并与大尺度下沉相联系。下沉向近地面补充空气质量，使近地面空气柱的重量增加，形成动力性的副热带高气压带。绿色色带随下沉形成，近地面随后向赤道和60°附近分流。'],
@@ -61031,7 +61479,7 @@ function createCirculationSequence(){
     const line=new THREE.Line(new THREE.BufferGeometry().setFromPoints(curve.getPoints(360)),material);if(lat!==0)line.computeLineDistances();root.add(line);seq.guides.push({line,lat});
   }
   const refs=[];for(let i=0;i<=90;i++)refs.push(sequencePoint(i,0,seq.highAltitude));
-  const reference=new THREE.Line(new THREE.BufferGeometry().setFromPoints(refs),new THREE.LineDashedMaterial({color:0xaabbc9,transparent:true,opacity:.18,dashSize:.16,gapSize:.14}));reference.computeLineDistances();root.add(reference);seq.reference=reference;
+  const reference=new THREE.Line(new THREE.BufferGeometry().setFromPoints(refs),new THREE.LineDashedMaterial({color:0xc5d5e1,transparent:true,opacity:.7,dashSize:.16,gapSize:.14}));reference.computeLineDistances();root.add(reference);seq.reference=reference;
   seq.parcel=new THREE.Mesh(new THREE.SphereGeometry(.10,12,8),new THREE.MeshBasicMaterial({color:0xffe0ae}));root.add(seq.parcel);
   seq.velocity=new THREE.ArrowHelper(new THREE.Vector3(0,1,0),new THREE.Vector3(),.55,0xffce9f,.2,.12);
   seq.force=new THREE.ArrowHelper(new THREE.Vector3(0,0,-1),new THREE.Vector3(),.55,0x65e5eb,.2,.12);root.add(seq.velocity,seq.force);
@@ -61173,6 +61621,8 @@ function renderSequenceFlows(){
     if(inherited){f.ribbon.material.uniforms.uStreamline.value=1-appearance;f.ribbon.material.blending=appearance===1?THREE.NormalBlending:THREE.AdditiveBlending;}
     f.ribbon.visible=STATE.showPaths&&!STATE.lowPerf;
     f.group.visible=f.group.visible&&lowBranchStarted;
+    // 先解释局部暖空气抬升，31秒后再归纳平均环流的高纬上升支。
+    if(['polar-rise','polar-upper'].includes(f.kind)&&e<31)f.group.visible=false;
     f.ribbon.geometry.setDrawRange(0,Math.floor(p*100)*8*6);f.ribbon.material.uniforms.uTime.value=motionTime;f.ribbon.material.uniforms.uOpacity.value=(inherited&&appearance<1?lerp(.32,.85,appearance):.85)*focus;f.ribbon.material.uniforms.uWidth.value=inherited?lerp(2,seq.cameraActive?1.1:1.25,appearance):seq.cameraActive?1.1:1.25;
     const baseColor=f.sourceColor;f.ribbon.material.uniforms.uColor.value.copy(baseColor);
     f.tubes.forEach((mesh,i)=>{mesh.visible=STATE.showPaths&&(!STATE.lowPerf||i===0);mesh.geometry.setDrawRange(0,Math.floor(p*100)*5*6);});
@@ -61191,14 +61641,14 @@ function renderSequenceFlows(){
   updateSequencePressureCues(e);
   updateSequencePressureWaves(e,motionTime);
   updateSequenceAccumulations(e,motionTime);
-  seq.fronts.forEach(({mesh})=>{const opacity=.28*smoothstep(clamp((e-26)/1,0,1))*(1-smoothstep(clamp((e-30)/1,0,1)));mesh.visible=STATE.showPaths&&opacity>0;mesh.material.opacity=opacity;});
+  seq.fronts.forEach(({mesh})=>{const opacity=.38*smoothstep(clamp((e-26)/1,0,1))*(1-smoothstep(clamp((e-30)/1,0,1)));mesh.visible=STATE.showPaths&&opacity>0;mesh.material.opacity=opacity;});
   seq.guides.forEach(({line,lat})=>line.visible=lat===0?STATE.showPaths:STATE.showGrid);
   seq.bands.forEach(({mesh,start,end})=>{const progress=smoothstep(clamp((e-start)/(end-start),0,1));mesh.visible=STATE.showPressure&&progress>0;mesh.material.uniforms.uOpacity.value=.92*progress;});
   const p=clamp((e-4)/8,0,1),displayedUpper=sequenceDisplayedCurve('upper',1,e),pos=displayedUpper.getPoint(p),radial=pos.clone().normalize(),velocity=displayedUpper.getTangent(p).normalize();velocity.addScaledVector(radial,-velocity.dot(radial)).normalize();
   const ride=sequenceRideSample(e);seq.parcel.position.copy(seq.cameraActive?ride.point:pos);seq.parcel.visible=STATE.showParticles&&(seq.cameraActive?!ride.transferring:e>=4&&e<15);
-  seq.velocity.position.copy(pos);seq.velocity.setDirection(velocity);seq.velocity.visible=!seq.cameraActive&&STATE.showPaths&&explaining&&e>=4&&e<15;
-  seq.force.position.copy(pos);seq.force.setDirection(velocity.clone().cross(radial).normalize());seq.force.visible=!seq.cameraActive&&STATE.showPaths&&explaining&&e>4&&e<15;
-  seq.reference.visible=false;
+  seq.velocity.position.copy(pos);seq.velocity.setDirection(velocity);seq.velocity.visible=STATE.showPaths&&e>=4&&e<12;
+  seq.force.position.copy(pos);seq.force.setDirection(velocity.clone().cross(radial).normalize());seq.force.visible=STATE.showPaths&&e>4&&e<12;
+  seq.reference.visible=STATE.showPaths&&e<12;
   updateSequenceLabels(e);
   if(STATE.step===2){
     seq.labels.forEach(({obj})=>obj.visible=false);
@@ -61269,9 +61719,9 @@ function updateCirculationSequence(dt){
 
 function sequenceRideSample(time){
   const seq=CIRCULATION_SEQUENCE,e=clamp(time,0,40);
-  const legs=[['equator-rise',0,4],['upper',4,12],['parallel',12,15],['sink',15,19],['trade',19,23],['west',23,27],['polar-rise',27,30],['polar-upper',30,31],['polar-sink',31,33],['polar-east',33,35],['subpolar-rise',35,38],['ferrel-upper',38,40]];
+  const legs=[['equator-rise',0,4],['upper',4,12],['parallel',12,15],['sink',15,19],['trade',19,23],['west',23,27],['subpolar-rise',27,30],['polar-upper',30,31],['polar-sink',31,33],['polar-east',33,35],['subpolar-rise',35,38],['ferrel-upper',38,40]];
   const sample=time=>{const [kind,start,end]=legs.find(l=>time<l[2])||legs.at(-1),curve=sequenceDisplayedCurve(kind,1,time),t=clamp((time-start)/(end-start),0,1);return {point:curve.getPoint(t),tangent:curve.getTangent(t).normalize(),kind,t};};
-  const current=sample(e),boundary=[23,27,35].find(b=>Math.abs(e-b)<.35);
+  const current=sample(e),boundary=[23,27,30,35].find(b=>Math.abs(e-b)<.35);
   // Transfer the camera between independent cells without drawing a connecting airflow.
   if(boundary!==undefined){const a=sample(boundary-.35),b=sample(boundary+.35),mix=smoothstep((e-boundary+.35)/.7);current.point.copy(a.point).lerp(b.point,mix);current.tangent.copy(a.tangent).lerp(b.tangent,mix).normalize();current.transferring=true;}
   return current;
@@ -61316,7 +61766,7 @@ function sequenceRideFrame(e){
     }
     const tangentFov=Math.tan(degToRad(65/2))*Math.min(framing.availableW,framing.availableH)/framing.h;
     const distance=Math.max(8.5,(radius+.65)/Math.sin(Math.atan(tangentFov)));
-    const closeups=[[0,4,'equator-rise'],[15,19,'sink'],[27,30,'polar-rise']].map(([start,end,kind])=>{
+    const closeups=[[0,4,'equator-rise'],[15,19,'sink'],[27,30,'subpolar-rise']].map(([start,end,kind])=>{
       const points=seq.flows.find(f=>f.h===1&&f.kind===kind).curve.getPoints(32),center=new THREE.Box3().setFromPoints(points).getCenter(new THREE.Vector3()),r=Math.max(...points.map(p=>p.distanceTo(center)));
       return {start,end,kind,center,distance:Math.max(4.2,(r+.75)/Math.sin(Math.atan(tangentFov)))};
     });
@@ -61346,7 +61796,7 @@ function sequenceRideFrame(e){
       const frontView=smoothstep(clamp((time-25)/2,0,1));
       const eye=target.clone().addScaledVector(outward,distance*.85).addScaledVector(north,distance*(-.65+.30*frontView)).addScaledVector(tangent,-distance*.10).addScaledVector(east,distance*(.12+.55*frontView));
       const close=closeups.find(c=>time>=c.start&&time<=c.end);
-      if(close){const fade=Math.min(1.35,(close.end-close.start)*.46),progress=(time-close.start)/fade,mix=smoothstep(clamp(close.kind==='polar-rise'?progress:Math.min(progress,(close.end-time)/fade),0,1));eye.lerp(closeupEye(close),mix);target.lerp(close.center,mix);}
+      if(close){const fade=Math.min(1.35,(close.end-close.start)*.46),progress=(time-close.start)/fade,mix=smoothstep(clamp(close.kind==='subpolar-rise'?progress:Math.min(progress,(close.end-time)/fade),0,1));eye.lerp(closeupEye(close),mix);target.lerp(close.center,mix);}
       // Hold the 60-degree polar-front close-up, move once to the whole polar cell, then reveal the overview.
       if(time>=29)moveShot(eye,target,subpolarEye,subpolarShot.center,polarEye,polarShot.center,smoothstep(clamp((time-29)/4,0,1)));
       if(time>=34)moveShot(eye,target,polarEye,polarShot.center,overviewEye,new THREE.Vector3(),smoothstep(clamp((time-34)/6,0,1)));
@@ -61755,6 +62205,169 @@ function updateSingleCirculationAnnotations(){
   model.bands.forEach(band=>band.word.hidden=true);
   const dialog=document.getElementById('single-explanation');if(innerWidth<=600){const panel=document.getElementById('step-panel').getBoundingClientRect(),control=document.getElementById('control-panel').getBoundingClientRect();dialog.style.setProperty('--explanation-top',panel.top+'px');dialog.style.setProperty('--explanation-height',Math.max(120,control.top-panel.top-12)+'px');}
 }
+
+/* 与主时间轴同步的局部图解；暂停、拖动进度时不另开时钟。 */
+const CAUSAL_VISUALS={panel:null,canvas:null,signature:null,seasonRoot:null};
+function causalText(ctx,text,x,y,color='#dce8f0',size=17,align='left'){
+  formationText(ctx,text,x,y,color,size,align);
+}
+function causalDot(ctx,x,y,color='#ffe2aa',r=6){ctx.fillStyle=color;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();}
+function causalLine(ctx,points,color='#8195a5',dash=false){ctx.save();ctx.strokeStyle=color;ctx.lineWidth=2;ctx.setLineDash(dash?[6,5]:[]);ctx.beginPath();points.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y));ctx.stroke();ctx.restore();}
+function causalDeflectionFrame(ctx,e){
+  const p=smoothstep(clamp((e-4)/8,0,1));
+  for(const [h,offset]of [[1,0],[-1,216]]){
+    causalText(ctx,h===1?'北半球 · 向右偏':'南半球 · 向左偏',offset+108,25,'#f3d092',18,'center');
+    for(const [direction,cy]of [[1,115],[-1,224]]){
+      const x=offset+101,start=cy+direction*29,dy=-direction*52,dx=h*direction*42*p;
+      causalLine(ctx,[[x,start],[x,start+dy]],'#92a3b1',true);
+      const points=Array.from({length:31},(_,i)=>{const t=i/30;return [x+dx*t*t,start+dy*t];});
+      formationPath(ctx,points,1,'#ffbd7d',3);
+      const [px,py]=points[20],vx=dx*2*(20/30),vy=dy,n=Math.hypot(vx,vy),fx=-h*vy/n,fy=h*vx/n;
+      causalDot(ctx,px,py);formationPath(ctx,[[px,py],[px+vx/n*28,py+vy/n*28]],1,'#ffbd7d',3);formationPath(ctx,[[px,py],[px+fx*30,py+fy*30]],1,'#6ce3ec',3);
+      causalText(ctx,direction===1?'向北运动':'向南运动',offset+108,cy-49,'#dce8f0',16,'center');
+    }
+  }
+  causalText(ctx,'北 ↑  东 →　虚线：原经线方向',216,279,'#b3c9da',16,'center');
+  causalText(ctx,'橙：前进　青：水平偏向（垂直于前进）',216,305,'#b3c9da',16,'center');
+  return '水平偏转改变方向，不直接造成下沉';
+}
+function causalSubtropicalFrame(ctx,e){
+  const influx=clamp((e-12)/3,0,1),sink=clamp((e-15)/4,0,1),out=clamp((e-19)/4,0,1);
+  causalText(ctx,'30°附近 · 高空与近地面分开观察',216,27,'#f3d092',18,'center');
+  causalText(ctx,'高空',24,75);formationPath(ctx,[[90,75],[250,75]],1,'#ffbd7d',3);
+  for(let i=0;i<Math.round(4+12*influx);i++)causalDot(ctx,280+(i%4)*14,53+Math.floor(i/4)*13,'#d9eead',4);
+  causalText(ctx,'持续流入、积聚',216,118,'#d9eead',17,'center');
+  formationPath(ctx,[[301,112],[301,219]],sink,'#c6df82',4);
+  causalLine(ctx,[[72,237],[375,237]]);causalText(ctx,'近地面',22,264);
+  if(sink>0){causalText(ctx,'柱内空气增多 → H',257,263,'#c6df82',18,'center');}
+  formationPath(ctx,[[301,222],[130,222]],out,'#ffbd7d',3);
+  formationPath(ctx,[[310,222],[390,222]],out,'#ffbd7d',3);
+  causalText(ctx,out>0?'近地面向赤道与高纬两侧分流':'积聚与大尺度下沉相联系',216,305,'#b3c9da',17,'center');
+  return '水平偏转 → 高空输送改变 → 下沉与分流';
+}
+function causalFrontFrame(ctx,e){
+  const lift=clamp((e-27)/3,0,1),mean=e>=31;
+  causalText(ctx,mean?'三圈图：长期平均的环流结构':'60°附近：局部锋面侧视',216,26,'#f3d092',18,'center');
+  ctx.fillStyle='#24557a';ctx.beginPath();ctx.moveTo(187,241);ctx.lineTo(353,92);ctx.lineTo(410,241);ctx.closePath();ctx.fill();
+  causalLine(ctx,[[25,243],[410,243]]);
+  formationPath(ctx,[[394,229],[270,229]],1,'#72bafa',4);
+  const warm=[[40,226],[161,226],[235,166],[318,92]];
+  formationPath(ctx,warm,clamp((e-23)/4,0,1)*.33+lift*.67,'#ffba79',4);
+  causalText(ctx,'暖空气',64,195,'#ffba79');causalText(ctx,'冷空气在下方',306,267,'#85c8ff',18,'center');
+  causalText(ctx,'暖空气沿冷空气上方抬升',216,62,'#ffce9d',18,'center');
+  causalText(ctx,mean?'两条上升支表示平均辐合上升区':'剖面高度为示意，冷空气不沿坡一起爬升',216,305,'#b3c9da',16,'center');
+  return mean?'平均环流线用于归纳，局部剖面用于解释抬升':'先看冷暖空气相遇，再归纳平均三圈';
+}
+function causalSeasonFrame(ctx){
+  const shift=STATE.seasonalShift||0,declination=shift/8*23.44,y=lat=>219-lat*2.25;
+  causalText(ctx,'直射点 → 热力中心 → 气压带响应',216,24,'#f3d092',18,'center');
+  for(const lat of [60,40,20,0,-20]){causalLine(ctx,[[54,y(lat)],[402,y(lat)]],'#355066',true);causalText(ctx,lat===0?'赤道':Math.abs(lat)+'°'+(lat>0?'N':'S'),48,y(lat),'#a9bfce',14,'right');}
+  causalText(ctx,'太阳直射点',117,54,'#ffce7b',16,'center');
+  causalText(ctx,'热力中心',221,54,'#ffa378',16,'center');
+  causalText(ctx,'带的分布',340,54,'#b8df8c',16,'center');
+  causalLine(ctx,[[117,y(-1)],[117,y(25)]],'#796848');
+  causalDot(ctx,117,y(declination),'#ffd16b',9);
+  causalText(ctx,Math.abs(declination).toFixed(1)+'°'+(declination>=0?'N':'S'),117,y(declination)-22,'#ffce7b',15,'center');
+  ctx.fillStyle='#e9845638';ctx.fillRect(189,y(shift+4),64,8*2.25);causalDot(ctx,221,y(shift),'#ffac7c',6);
+  ctx.fillStyle='#4597cf44';ctx.fillRect(290,y(57.5+shift),112,25*2.25);
+  ctx.fillStyle='#7fc650aa';ctx.fillRect(290,y(32.5+shift),112,5*2.25);
+  causalText(ctx,'西风带',346,y(45+shift),'#8bcaff',16,'center');
+  causalText(ctx,'副热带高压',346,y(30+shift)+23,'#b8df8c',15,'center');
+  ctx.fillStyle='#f3c94f88';ctx.fillRect(290,y(shift+2.5),112,5*2.25);causalText(ctx,'赤道低压',346,y(shift)+19,'#eadb97',15,'center');
+  causalLine(ctx,[[267,y(37)],[419,y(37)]],'#fff0c2',true);causalDot(ctx,278,y(37),'#fff0c2',5);
+  const control=37>=27.5+shift&&37<=32.5+shift?'副热带高压':37>32.5+shift?'西风带':'信风带';
+  causalText(ctx,'固定37°N参照点：'+control,216,294,'#fff0c2',17,'center');
+  causalText(ctx,'直射纬度与带的位移不等比例',216,317,'#a9bfce',15,'center');
+  CAUSAL_VISUALS.season={declination,shift,observerLatitude:37,control};
+  return '站在同一纬度，看夏季高压与冬季西风交替影响';
+}
+function updateCausalSeasonMarkers(active){
+  const s=CAUSAL_VISUALS;
+  if(active&&!s.seasonRoot){
+    const root=new THREE.Group();root.position.x=SCENE_OFFSET_X;scene.add(root);s.seasonRoot=root;
+    const make=(name,color)=>{const marker=new THREE.Mesh(new THREE.SphereGeometry(.09,16,10),new THREE.MeshBasicMaterial({color}));root.add(marker);marker.name=name;return marker;};
+    s.sunMarker=make('season-subsolar-point',0xffd16b);s.observerMarker=make('season-fixed-observer',0xfff0c2);
+    for(const [marker,text]of [[s.sunMarker,'☀ 直射纬度'],[s.observerMarker,'固定37°N']]){
+      const el=document.createElement('span');el.className='sequence-label';el.textContent=text;
+      el.style.marginLeft=marker===s.sunMarker?'-90px':'-95px';
+      if(marker===s.sunMarker)el.style.color='#ffda85';else el.style.marginTop='-24px';
+      const label=new CSS2DObject(el);label.position.set(.2,.17,0);marker.add(label);
+    }
+  }
+  if(!s.seasonRoot)return;s.seasonRoot.visible=active;
+  s.seasonRoot.traverse(o=>{if(o.isCSS2DObject)o.visible=active;});if(!active)return;
+  // 固定纬度参照不随带移动；标记在朝向观察者的经线上投影，便于比较。
+  const lon=-Math.atan2(camera.position.z,camera.position.x-SCENE_OFFSET_X)*180/Math.PI;
+  s.sunMarker.position.copy(sequencePoint((STATE.seasonalShift||0)/8*23.44,lon-22,.16));
+  s.observerMarker.position.copy(sequencePoint(37,lon+22,.16));
+}
+function causalLandSeaFrame(ctx){
+  const {q,winter}=landSeaStoryState(),budget=landSeaStoryMassBudget(q.column,winter),ground=220;
+  causalText(ctx,winter?'冬季：大陆冷却收缩':'夏季：大陆受热膨胀',216,24,'#f3d092',19,'center');
+  causalText(ctx,'虚线处：同一高空高度比较气压',216,49,'#a9d5ed',16,'center');
+  for(const [land,x,count]of [[true,106,budget.land],[false,326,budget.sea]]){
+    const height=lerp(136,land?(winter?112:158):140,q.heat),color=land?(winter?'#76c9ff':'#ffac7c'):(winter?'#ffac7c':'#76c9ff');
+    ctx.fillStyle=color+'24';ctx.fillRect(x-36,ground-height,72,height);ctx.strokeStyle=color;ctx.lineWidth=2;ctx.strokeRect(x-36,ground-height,72,height);
+    // 柱高改变只重新分布原有粒子，输送开始后才改变数量。
+    if(STATE.showParticles)for(let i=0;i<count;i++)causalDot(ctx,x-25+(i%6)*10,ground-9-Math.floor(i/6)*(height-22)/5,'#e5f4ff',3);
+    causalText(ctx,land?'大陆':'海洋',x,241,color,18,'center');
+    causalText(ctx,'空气份额 '+count,x,266,'#dce8f0',16,'center');
+    const delta=count-24,width=48*delta/12;
+    ctx.fillStyle='#344b5f';ctx.fillRect(x-48,287,96,7);ctx.fillStyle=delta>=0?'#ffd36f':'#70cbff';ctx.fillRect(width>=0?x:x+width,287,Math.abs(width),7);
+    causalText(ctx,delta===0?'地面：尚无质量差':delta>0?'地面 H · 空气增多':'地面 L · 空气减少',x,311,delta>=0?'#ffd36f':'#70cbff',15,'center');
+    if(q.column>0)causalText(ctx,(land===winter?'L':'H'),x,112,'#a9e4ff',21,'center');
+    causalText(ctx,land?(winter?'柱高 ↓':'柱高 ↑'):'柱高变化较小',x,73,color,15,'center');
+  }
+  causalLine(ctx,[[42,127],[390,127]],'#a9d5ed',true);
+  if(q.column>0){
+    const path=winter?[[287,127],[146,127]]:[[146,127],[287,127]];
+    formationPath(ctx,path,clamp((q.column-.15)/.25,0,1),'#96e3ff',3);
+    if(STATE.showParticles)for(const p of budget.packets)if(p>0&&p<1)causalDot(ctx,lerp(path[0][0],path[1][0],p),127,'#ffe7a9',5);
+  }
+  causalText(ctx,'输送中 '+budget.inTransit,216,163,'#ffe7a9',16,'center');
+  causalText(ctx,'柱高 ≠ 空气量',216,197,'#dce8f0',16,'center');
+  CAUSAL_VISUALS.budget=budget;
+  return '先改变柱高，再追踪高空输送与地面气压；粒子份额为示意';
+}
+function causalSingleFrame(ctx){
+  const t=STATE.singleDemo.elapsed,upper=clamp((t-5.2)/3.3,0,1),sink=clamp((t-8.5)/3.3,0,1),surface=clamp((t-11.8)/4.2,0,1);
+  causalText(ctx,'两层分别在同一高度比较气压',216,25,'#f3d092',19,'center');
+  causalText(ctx,'赤道 · 暖',111,62,'#ffbd7d',18,'center');causalText(ctx,'极地 · 冷',328,62,'#8fcaff',18,'center');
+  causalLine(ctx,[[35,111],[404,111]],'#637d90',true);causalLine(ctx,[[35,233],[404,233]],'#637d90',true);
+  causalText(ctx,'高空',35,88,'#adc5d5',16);causalText(ctx,'近地面',35,261,'#adc5d5',16);
+  causalText(ctx,'H',111,111,'#ffbd7d',24,'center');causalText(ctx,'L',328,111,'#8fcaff',24,'center');
+  formationPath(ctx,[[137,111],[302,111]],upper,'#ffbd7d',4);
+  formationPath(ctx,[[111,212],[111,135]],1,'#ffbd7d',3);formationPath(ctx,[[328,136],[328,211]],sink,'#8fcaff',3);
+  if(upper>0){
+    causalText(ctx,'L',111,233,'#8fcaff',24,'center');causalText(ctx,'H',328,233,'#ffbd7d',24,'center');
+    if(STATE.showParticles)for(const [x,delta]of [[111,-1],[328,1]])for(let i=0;i<Math.round(12+delta*6*upper);i++)causalDot(ctx,x-22+(i%6)*9,185-Math.floor(i/6)*11,'#dce8f0',3);
+    causalText(ctx,'高空输出 → 质量减少',111,289,'#b8d7e9',15,'center');causalText(ctx,'质量增加',328,289,'#b8d7e9',15,'center');
+  }
+  formationPath(ctx,[[300,233],[139,233]],surface,'#8fcaff',4);
+  causalText(ctx,'每层均由相对高压 H → 相对低压 L',216,316,'#b8d7e9',16,'center');
+  return '高空向两极输送，近地面由两极返回；H/L为同层相对气压';
+}
+function updateCausalVisuals(){
+  const s=CAUSAL_VISUALS;
+  if(!s.panel){
+    s.panel=document.createElement('details');s.panel.id='causal-visual';s.panel.open=true;s.panel.hidden=true;
+    s.panel.innerHTML='<summary>局部图解 · 与主动画同步</summary><canvas width="432" height="324" role="img"></canvas><p></p>';
+    document.body.append(s.panel);s.canvas=s.panel.querySelector('canvas');
+  }
+  const landsea=STATE.step===3&&LANDSEA.surface==='real'&&LANDSEA.formation.view==='mechanism'&&[1,2,3].includes(LANDSEA.formation.node);
+  const single=STATE.step===0&&STATE.singleDemo.elapsed>=5.2;
+  const active=(single||[1,2].includes(STATE.step)||landsea)&&!document.body.classList.contains('ui-hidden')&&!LESSON_STATE.open&&STATE.showLabels;
+  updateCausalSeasonMarkers(active&&STATE.step===2);
+  s.panel.hidden=!active;if(!active)return;
+  const compact=innerWidth<=760;
+  if(s.compact!==compact){s.compact=compact;s.panel.open=!compact;}
+  const e=sequenceElapsed(),time=single?STATE.singleDemo.elapsed:landsea?[LANDSEA.month,LANDSEA.formation.node,LANDSEA.formation.progress]:STATE.step===2?STATE.seasonalShift:e;
+  const signature=[STATE.step,time,STATE.showParticles].join(':');if(s.signature===signature)return;s.signature=signature;
+  const ctx=s.canvas.getContext('2d');ctx.clearRect(0,0,432,324);ctx.fillStyle='#101e2d';ctx.fillRect(0,0,432,324);
+  const caption=single?causalSingleFrame(ctx):landsea?causalLandSeaFrame(ctx):STATE.step===2?causalSeasonFrame(ctx):e<12?causalDeflectionFrame(ctx,e):e<23?causalSubtropicalFrame(ctx,e):causalFrontFrame(ctx,e);
+  s.canvas.setAttribute('aria-label',caption);s.panel.querySelector('p').textContent=caption;
+}
+window.__causalVisualsDebug={state:()=>({step:STATE.step,visible:!CAUSAL_VISUALS.panel?.hidden,season:CAUSAL_VISUALS.season,budget:CAUSAL_VISUALS.budget,markers:CAUSAL_VISUALS.seasonRoot?.children.filter(o=>o.isMesh).map(o=>({name:o.name,lat:Math.asin(o.position.y/o.position.length())*180/Math.PI,visible:CAUSAL_VISUALS.seasonRoot.visible}))}),massBudget:landSeaStoryMassBudget,parcel:climateParcelVisual,rainX:climateRainX};
 
 function showInitializationError(error) {
   console.error('教学模型初始化失败',error);

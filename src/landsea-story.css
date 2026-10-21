@@ -1,0 +1,27 @@
+/* The globe is the teaching surface; only short object labels accompany motion. */
+body.landsea-active #landsea-formation{display:none!important;}
+body.landsea-active #step-panel .landsea-globe-guide{display:none;}
+body.landsea-active #step-panel.sp-flash .sp-body{animation:none;}
+.ls-globe-note{padding:4px 7px;color:#f0f7ed;text-align:center;white-space:nowrap;pointer-events:none;background:#0c1c2bd9;border-radius:5px;border-bottom:2px solid #95d9e6;text-shadow:0 1px 3px #000;}
+.ls-globe-note>b{display:block;font-size:15px;line-height:1.6;}.ls-globe-note>span{display:block;font-size:12px;line-height:1.5;color:#c5e6f0;}
+.ls-globe-note[data-tone="cold"],.ls-globe-note[data-tone="low"]{border-color:#62c8ff;}.ls-globe-note[data-tone="warm"],.ls-globe-note[data-tone="high"]{border-color:#ffcf71;}
+.ls-note-upperland,.ls-note-uppersea{border-color:#99eaff;}.ls-note-mass{border-color:#dbf4e4;}.ls-note-wind{border-color:#ffbd76;}.ls-note-wind>b{color:#ffd195;}
+.landsea-stage-controls{display:grid;gap:9px;margin:8px 0;}.landsea-stage-controls label{display:grid;gap:5px;font-size:12px;color:#c8dfe8;}.landsea-stage-controls select{width:100%;padding:7px;border:1px solid #4d687a;border-radius:6px;background:#192f40;color:#edf6ec;}
+.landsea-stage-controls .landsea-month{display:flex;gap:5px;}.landsea-stage-controls .landsea-month .btn{flex:1;font-size:12px;}
+body.landsea-story-mode #landsea-formation-reveal,body.landsea-story-mode #landsea-formation-answer,body.landsea-story-mode .landsea-season-note{display:none!important;}
+body.landsea-active #landsea-legend{position:fixed;right:24px;top:110px;bottom:auto;width:200px;margin:0;}
+#landsea-flow-key{position:fixed;right:24px;bottom:142px;z-index:12;display:grid;gap:9px;padding:13px 16px;border:1px solid #55708266;border-radius:10px;background:#0c1c2bed;color:#d6e4ec;font-size:12px;pointer-events:none;}
+#landsea-flow-key[hidden]{display:none;}#landsea-flow-key>b{color:#f6e2b6;font-size:13px;}#landsea-flow-key>span{display:flex;align-items:center;gap:9px;}#landsea-flow-key small{color:#9bb8ca;}
+#landsea-flow-key i{display:inline-block;width:30px;position:relative;}#landsea-flow-key i::after{content:'';position:absolute;right:-1px;top:-5px;border-left:7px solid;border-top:4px solid transparent;border-bottom:4px solid transparent;}
+.ls-force-key{border-top:1px dashed #dbe5ed;color:#dbe5ed;}.ls-wind-key{border-top:3px solid #ffb660;color:#ffb660;}
+body.projection .ls-globe-note>b{font-size:18px;}body.projection .ls-globe-note>span{font-size:14px;}
+@media(max-width:600px){
+ .ls-globe-note{padding:2px 4px;white-space:normal;max-width:100px;}.ls-globe-note>b{font-size:10px;}.ls-globe-note>span{font-size:9px;}
+ .ls-note-uppersea,.ls-note-mass{display:none;}.ls-note-wind{max-width:130px;}
+ body.landsea-active #step-core-question{display:none;}body.landsea-active #step-panel .sp-head{display:flex;gap:8px;align-items:center;padding:7px 10px;}body.landsea-active #step-panel .sp-head h3{font-size:12px;}
+ body.landsea-active #step-demo-controls .formation-controls{margin:0;padding:5px 8px;}body.landsea-active #step-demo-controls .formation-status{margin-top:0;}
+ .landsea-stage-controls{gap:5px;margin:4px 0;}.landsea-stage-controls label{font-size:10px;}.landsea-stage-controls select{padding:5px;}
+ body.landsea-active #step-node-dock #landsea-play{grid-column:1;grid-row:1;}body.landsea-active #step-node-dock #landsea-formation-restart{grid-column:2;grid-row:1;}
+ body.landsea-active #landsea-legend{display:none!important;}
+ #landsea-flow-key{right:10px;bottom:164px;padding:8px 10px;gap:6px;font-size:10px;max-width:230px;}#landsea-flow-key>b{font-size:11px;}
+}

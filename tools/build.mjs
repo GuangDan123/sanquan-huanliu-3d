@@ -117,10 +117,12 @@ const main = async () => {
   let out = html;
   for (const [token, payload] of [['{{THREE_RUNTIME}}', runtime], ['{{EARTH_TEXTURE}}', earth],
     ['{{LESSON_CSS}}', (await read(join(ROOT,'src','lesson.css'))) + '\n' + (await read(join(ROOT,'src','teaching.css'))) + '\n' + (await read(join(ROOT,'src','landsea.css'))) + '\n' + (await read(join(ROOT,'src','monsoon-climate.css'))) + '\n' + (await read(join(ROOT,'src','formation.css')))],
-    ['{{CLASSROOM_CSS}}', (await read(join(ROOT,'src','classroom.css'))) + '\n' + (await read(join(ROOT,'src','pedagogy.css'))) + '\n' + (await read(join(ROOT,'src','circulation-sequence.css')))],
-    ['{{LESSON_JS}}', (await read(join(ROOT,'src','climate-normals.js'))) + '\n' + (await read(join(ROOT,'src','lesson.js'))) + '\n' + (await read(join(ROOT,'src','teaching.js'))) + '\n' + (await read(join(ROOT,'src','formation.js'))) + '\n' + (await read(join(ROOT,'src','landsea.js'))) + '\n' + (await read(join(ROOT,'src','landsea-mechanism.js'))) + '\n' + (await read(join(ROOT,'src','monsoon-climate.js'))) + '\n' + (await read(join(ROOT,'src','pedagogy.js'))) + '\n' + (await read(join(ROOT,'src','circulation-sequence.js'))) + '\n' + (await read(join(ROOT,'src','single-circulation.js')))]]) {
+    ['{{CLASSROOM_CSS}}', (await read(join(ROOT,'src','classroom.css'))) + '\n' + (await read(join(ROOT,'src','pedagogy.css'))) + '\n' + (await read(join(ROOT,'src','circulation-sequence.css'))) + '\n' + (await read(join(ROOT,'src','landsea-story.css')))],
+    ['{{LESSON_JS}}', (await read(join(ROOT,'src','climate-normals.js'))) + '\n' + (await read(join(ROOT,'src','lesson.js'))) + '\n' + (await read(join(ROOT,'src','teaching.js'))) + '\n' + (await read(join(ROOT,'src','formation.js'))) + '\n' + (await read(join(ROOT,'src','landsea.js'))) + '\n' + (await read(join(ROOT,'src','landsea-mechanism.js'))) + '\n' + (await read(join(ROOT,'src','landsea-story.js'))) + '\n' + (await read(join(ROOT,'src','monsoon-climate.js'))) + '\n' + (await read(join(ROOT,'src','pedagogy.js'))) + '\n' + (await read(join(ROOT,'src','circulation-sequence.js'))) + '\n' + (await read(join(ROOT,'src','single-circulation.js')))]]) {
     if (!out.includes(token)) throw new Error(`源码中未找到占位符 ${token}`);
-    out = out.replace(token, () => guardScriptTag(payload)); // 函数形式，避免 $& 等替换模式误伤
+    const extra=token==='{{LESSON_JS}}'?'causal-visuals.js':token==='{{CLASSROOM_CSS}}'?'causal-visuals.css':null;
+    const content=extra?payload+'\n'+await read(join(ROOT,'src',extra)):payload;
+    out = out.replace(token, () => guardScriptTag(content)); // 函数形式，避免 $& 等替换模式误伤
   }
 
   // 把业务代码整体包进 IIFE：Three.js 内部存在 smoothstep / lerp / clamp 等顶层函数，

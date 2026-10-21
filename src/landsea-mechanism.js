@@ -1,6 +1,6 @@
 /* Seasonal teaching model: temperature relaxation -> column mass -> pressure
    -> local velocity. u east, v north; NH Coriolis: (f*v,-f*u).
-   Fixed routes and arrowheads are used only by the separate result mode. */
+   Result mode summarizes the seasonal routes with the same surface arrow shape. */
 let landSeaMechanism=null;
 const LS_FIELD={nx:41,ny:29,west:45,east:165,south:-15,north:69,count:220,tail:10,windSeconds:8000,travelSeconds:22000};
 const LS_COASTS=[
@@ -24,30 +24,31 @@ function lsTimeline(){const f=LANDSEA.formation,s=formationStages('landsea');
 function lsLevels(t){const q={};let start=0;for(const s of formationStages('landsea')){
  q[s.key]=smoothstep(clamp((t-start)/s.duration,0,1));start+=s.duration;}return q;}
 function lsResponse(t,tau){
- // Analytic relaxation for a seasonal forcing ramp of duration 4 s.
- t=Math.max(0,t);return t<=4?(t-tau*(1-Math.exp(-t/tau)))/4:
-  1-tau/4*(1-Math.exp(-4/tau))*Math.exp(-(t-4)/tau);
+ const ramp=LS_STAGE_SECONDS.heat;
+ t=Math.max(0,t);return t<=ramp?(t-tau*(1-Math.exp(-t/tau)))/ramp:
+  1-tau/ramp*(1-Math.exp(-ramp/tau))*Math.exp(-(t-ramp)/tau);
 }
+function lsHeatingTime(t){return t-LS_STAGE_SECONDS.bridge;}
 function lsTemperature(lat,lon,t){
  const land=landSeaMechanismLand(lat,lon),sign=LANDSEA.month===7?1:-1;
  return sign*Math.max(.15,Math.sin(degToRad(lat)))*
-  (24*land*lsResponse(t-3,1.1)+10*(1-land)*lsResponse(t-3,5.2));
+  (24*land*lsResponse(lsHeatingTime(t),1.1)+10*(1-land)*lsResponse(lsHeatingTime(t),5.2));
 }
 function lsPressure(lat,lon,t){
- const q=lsLevels(t),shift=(LANDSEA.month===7?5:-5)*q.bridge,a=Math.abs(lat-shift),
+ const q=lsLevels(t),shift=landSeaSeasonShift(q.bridge),a=Math.abs(lat-shift),
   g=(x,s)=>Math.exp(-.5*(x/s)**2);
  let p=1012-8*g(lat-shift,11)+9*g(a-30,12)-9*g(a-60,12)+12*g(a-90,13);
  for(const c of landSeaCenters()){
   const continental=/亚洲|北美|澳大利亚/.test(c.name);
   // Continental mass anomaly follows the delayed thermal response. Ocean dynamic forcing is independent.
-  const weight=continental?q.pressure*lsResponse(t-3,1.1):q.band,dl=((lon-c.lon+540)%360)-180;
+  const weight=continental?q.pressure*lsResponse(lsHeatingTime(t),1.1):q.band,dl=((lon-c.lon+540)%360)-180;
   p+=c.amp*weight*g(dl,c.sx)*g(lat-c.lat,c.sy);}
  return p;
 }
 function lsUpperPressure(lat,lon,t){
  const q=lsLevels(t),c=landSeaCenters()[0],dl=((lon-c.lon+540)%360)-180;
  // Thermal thickness: warming raises pressure at the same upper height; cooling lowers it.
- return 550+(LANDSEA.month===7?1:-1)*16*lsResponse(t-3,1.1)*q.column*
+ return 550+(LANDSEA.month===7?1:-1)*16*lsResponse(lsHeatingTime(t),1.1)*q.column*
   Math.exp(-.5*((dl/32)**2+((lat-c.lat)/20)**2));
 }
 function lsAcceleration(u,v,aE,aN,lat,drag,coriolis=1){
@@ -248,6 +249,12 @@ function createLandSeaMechanismVisual(){
  contours.frustumCulled=false;group.add(contours);
  landSeaMechanism={group,tempMesh,pressureMesh,points,trails,contours,surface:lsGrid(),upper:lsGrid(),particles:[],
   t:-1,month:LANDSEA.month,renderT:-1,fieldFrames:0,contourVertices:0,activeParticleIndices:[]};
+ landSeaMechanism.arrows=[];
+ for(const lat of [12,26,40])for(const lon of [80,105,130,150]){
+  const mesh=new THREE.Mesh(new THREE.BufferGeometry(),new THREE.MeshBasicMaterial({color:0xffcc8a,side:THREE.DoubleSide,transparent:true,depthWrite:false}));
+  mesh.name='landsea-field-wind-arrow';
+  mesh.frustumCulled=false;mesh.visible=false;group.add(mesh);landSeaMechanism.arrows.push({lat,lon,mesh});
+ }
  applyLandSeaParticleSettings();
  createLandSeaColumnInset();
  syncLandSeaMechanism();
@@ -260,10 +267,10 @@ function syncLandSeaMechanism(){
  const t=lsTimeline();lsStepTo(m,t);const q=lsLevels(t);
  if(t!==m.renderT&&(Math.abs(t-m.renderT)>.10||t===0||LANDSEA.formation.progress===1))lsPaint(m,t);
  lsRenderParticles(m);
- m.tempMesh.visible=STATE.showPressure&&q.heat>0&&q.pressure<1;m.tempMesh.material.opacity=.47*(1-q.pressure);
- m.pressureMesh.visible=STATE.showPressure&&q.pressure>0;m.pressureMesh.material.opacity=.30*q.pressure;
- m.contours.visible=STATE.showPressure&&q.pressure>0;m.contours.material.opacity=.33*q.pressure;
- m.points.visible=STATE.showParticles&&q.column>0;m.trails.visible=STATE.showPaths&&q.column>0;
+ // The main lesson uses two marked comparison areas and a few explanatory arrows.
+ // Numerical textures and particle integration remain available to the detailed diagrams.
+ m.tempMesh.visible=m.pressureMesh.visible=m.contours.visible=m.points.visible=m.trails.visible=false;
+ m.arrows.forEach(({mesh})=>mesh.visible=false);
  const colors=m.points.geometry.attributes.color,trailColors=m.trails.geometry.attributes.color,
   alpha=m.points.geometry.attributes.particleAlpha,trailAlpha=m.trails.geometry.attributes.particleAlpha;
  for(const i of m.activeParticleIndices){
@@ -278,15 +285,25 @@ function syncLandSeaMechanism(){
  colors.needsUpdate=true;trailColors.needsUpdate=true;alpha.needsUpdate=true;trailAlpha.needsUpdate=true;updateLandSeaFieldCopy(t,q);
  drawLandSeaColumnInset(m,q.column>0);
 }
+function syncLandSeaFieldArrows(m,q){
+ const key=[m.t,STATE.showPaths].join(':');if(m.arrowFrame===key)return;m.arrowFrame=key;
+ for(const {lat,lon,mesh}of m.arrows){
+  const velocity=lsSampleGrid(m.surface,lat,lon),speed=Math.hypot(velocity.u,velocity.v);
+  mesh.visible=STATE.showPaths&&q.wind>0&&speed>.15;if(!mesh.visible)continue;
+  const center=landSeaPoint(lat,lon,5.20),east=landSeaPoint(lat,lon+.1,5.20).sub(center).normalize(),north=landSeaPoint(lat+.1,lon,5.20).sub(center).normalize();
+  const tangent=east.multiplyScalar(velocity.u).addScaledVector(north,velocity.v).normalize(),length=.58+.22*clamp(speed/8,0,1);
+  landSeaSurfaceArrow({getPoint:t=>center.clone().addScaledVector(tangent,(t-.5)*length).setLength(5.20)},0,1,mesh.geometry);mesh.material.opacity=q.wind;
+ }
+}
 function createLandSeaColumnInset(){
  const panel=document.getElementById('landsea-formation');if(!panel)return;
  const inset=document.createElement('div');inset.id='landsea-column-inset';inset.hidden=true;
  inset.innerHTML='<div class="column-inset-title"><b>大陆局部侧视 · 垂直运动放大</b><span id="landsea-column-direction"></span></div><canvas id="landsea-column-canvas" width="720" height="220" role="img" aria-label="与地球白色粒子同步的大陆垂直运动侧视图"></canvas><small>当地竖直 = 垂直于地表；高度与时间为示意</small>';
- panel.prepend(inset);
+ panel.querySelector('.landsea-aux-content').prepend(inset);
 }
 function drawLandSeaColumnInset(m,visible){
  const inset=document.getElementById('landsea-column-inset');if(!inset)return;
- inset.hidden=!visible;inset.parentElement.classList.toggle('column-active',visible);if(!visible)return;
+ inset.hidden=!visible;document.getElementById('landsea-formation').classList.toggle('column-active',visible);if(!visible)return;
  const signature=[m.t,LANDSEA.month,STATE.showParticles,STATE.showPaths,m.activeParticleIndices.length].join(':');
  if(inset.dataset.frame===signature)return;inset.dataset.frame=signature;
  const winter=LANDSEA.month===1,canvas=document.getElementById('landsea-column-canvas'),ctx=canvas.getContext('2d');
@@ -316,15 +333,16 @@ function updateLandSeaFieldCopy(t,q){
  const el=document.getElementById('landsea-field-readout');if(!el)return;
  const winter=LANDSEA.month===1,stage=formationStages('landsea')[LANDSEA.formation.node].key;
  el.textContent={
-  bridge:'先随季节移动理想气压带，再加入海陆差异。',
+  bridge:LANDSEA.entrySeason==='equinox'?`从春秋分附近移至${LANDSEA.month}月；本节点完成后加入海陆。`:`保留${LANDSEA.month===7?'偏北的夏季':'偏南的冬季'}气压带，本节点完成后加入海陆。`,
   heat:'地表蓝色表示降温，橙色表示升温。陆地响应快，海洋响应慢。',
-  column:winter?'白色标记沿当地竖直方向下沉；局部放大侧视图同步显示向下运动。蓝色高空气流向大陆补充。':'白色标记沿当地竖直方向上升；局部放大侧视图同步显示向上运动。蓝色高空气流向外输送。',
+  column:winter?'白色标记下沉，蓝色高空气流向大陆补充 → 气柱质量增加。':'白色标记上升，蓝色高空气流向外输送 → 气柱质量减少。',
   pressure:winter?'大陆气柱质量增加，冷高压逐渐形成。':'大陆气柱质量减少，热低压逐渐形成。',
-  band:'周围海洋动力中心加入，等压线随同一个压力场重组。',
-  wind:'橙色近地面微粒受压力梯度推动，在自转和摩擦作用下逐渐转向。'
+  band:winter?'蓝色副极地低压带在大陆处逐渐中断，海洋保留低压中心。':'黄色副热带高压带在大陆处逐渐中断，海洋保留高压中心。',
+  wind:'白色虚线表示气压差推动；橙色实线表示近地面风，在自转和摩擦作用下逐渐转向。',
+  overview:'从局部机制示意归纳到大尺度气压、等压线与季风分布；过渡不表示气压中心在短时间内真实移动。'
  }[stage];
  const key=document.getElementById('landsea-field-key'),data=document.getElementById('landsea-field-values');
- if(key)key.textContent=(q.pressure>0?'地表色块：气压':'地表蓝：冷 · 地表橙：暖')+' · 蓝微粒：高空 · 白微粒：垂直调整';
+ if(key)key.textContent=q.heat===0?'参考带：蓝色为低压带，黄色为高压带':(q.pressure>0?'地表色块按右侧气压色标读取，H / L 表示局地高低压中心':'地表蓝：冷 · 橙：暖，颜色表示温度变化')+(q.column>0?'；蓝微粒：高空 · 白微粒：垂直调整':'');
  if(data)data.textContent=q.heat>0&&q.pressure<1?
   '同纬度温度变化：大陆 '+lsTemperature(35,105,t).toFixed(1)+' K · 海洋 '+lsTemperature(35,145,t).toFixed(1)+' K':
   q.pressure>0?'大陆中心 '+lsPressure(landSeaCenters()[0].lat,landSeaCenters()[0].lon,t).toFixed(1)+' hPa · 季节尺度教学示意':

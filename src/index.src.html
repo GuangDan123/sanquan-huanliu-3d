@@ -845,6 +845,8 @@ function initScene() {
   controls.addEventListener('start',()=>{CLASSROOM.focusAnimation++;viewAnimation++;});
   renderer.domElement.addEventListener('pointerdown',beginSequenceFreeView,{capture:true});
   renderer.domElement.addEventListener('wheel',beginSequenceFreeView,{capture:true,passive:true});
+  renderer.domElement.addEventListener('pointerdown',()=>{if(STATE.step===3)releaseLandSeaColumnCamera(true);},{capture:true});
+  renderer.domElement.addEventListener('wheel',()=>{if(STATE.step===3)releaseLandSeaColumnCamera(true);},{capture:true,passive:true});
 
   // 灯光
   const ambientLight = new THREE.AmbientLight(0x404060, 1.2);
@@ -2832,6 +2834,8 @@ function updateStepPanel(step) {
   tag.style.color = data.color;
   tag.style.borderColor = data.color;
   document.getElementById('sp-title').textContent = data.title;
+  // The optional diagrams live inside the teaching panel on small screens.
+  const landSeaAux=document.getElementById('landsea-formation');if(landSeaAux&&landSeaAux.parentElement!==document.body)document.body.append(landSeaAux);
   document.getElementById('sp-body').innerHTML = data.points.map(p =>
     `<div class="sp-item"><span class="sp-item-k" style="color:${data.color}">${p[0]}</span><span class="sp-item-v">${p[1]}</span></div>`
   ).join('');
@@ -3805,15 +3809,15 @@ function getSceneFraming() {
   if (compactPanel) bottom = Math.min(bottom, panel.top - 12);
   if (!uiHidden && STATE.showDiagram && w <= 768) bottom = Math.min(bottom, diagram.top - 12);
   const formationPanel=document.getElementById('landsea-formation');
-  if(!uiHidden&&STATE.step===3&&formationPanel&&!formationPanel.hidden){const r=formationPanel.getBoundingClientRect();if(w>1100){if(formationPanel.querySelector('details').open)right=Math.max(right,r.width+44);}else bottom=Math.min(bottom,r.top-12);}
+  if(!uiHidden&&STATE.step===3&&formationPanel&&!formationPanel.hidden&&w>1100){const r=formationPanel.getBoundingClientRect();if(r.width>0)right=Math.max(right,r.width+44);}
   const sceneLeft = compactPanel ? 16 : left;
   const availableW = Math.max(160, w - sceneLeft - right), availableH = Math.max(140, bottom - top);
   const earthCentered = STATE.step === 1 || STATE.step === 2;
   // 隐去太阳后，地球使用整个可用区；保留大气层外的环流与标签边距。
   const singleNarrow=STATE.step===0&&!compactPanel&&availableW<600;
-  const tangent = Math.tan(degToRad(camera.fov / 2)) * Math.min(availableW, availableH) / h * (earthCentered ? .96 : STATE.step===0&&!singleNarrow ? .85 : .78);
+  const tangent = Math.tan(degToRad(camera.fov / 2)) * Math.min(availableW, availableH) / h * (earthCentered ? .96 : STATE.step===3 ? 1.04 : STATE.step===0&&!singleNarrow ? .85 : .78);
   // 第三步高空流带沿大气层内缘展开，取景时保留高纬圈与标题栏之间的边距。
-  const distance = (singleNarrow?CONFIG.earth.atmosphereRadius+1.1:STATE.step===2?7.05:STATE.step<=1?6.5:STATE.step===3?5.7:CONFIG.earth.atmosphereRadius + 1.1) / Math.sin(Math.atan(tangent));
+  const distance = (singleNarrow?CONFIG.earth.atmosphereRadius+1.1:STATE.step===2?7.05:STATE.step<=1?6.5:STATE.step===3?7.35:CONFIG.earth.atmosphereRadius + 1.1) / Math.sin(Math.atan(tangent));
   return { w, h, left:sceneLeft, availableW, availableH, top, centerX: sceneLeft + availableW * (0.5 + (earthCentered || STATE.step===3 ? 0 : EARTH_SCREEN_BIAS)), centerY: top + availableH / 2, distance };
 }
 function frameScene(fitDistance = false) {
@@ -3827,11 +3831,12 @@ function frameScene(fitDistance = false) {
     camera.position.copy(controls.target).addScaledVector(direction, framing.distance);
   }
   camera.lookAt(controls.target);
-  controls.update();
+  if(!LS_COLUMN_CAMERA.active)controls.update();
 }
 let viewAnimation = 0;
 function setView(view) {
   if (STATE.viewLocked) return;
+  if(STATE.step===3)releaseLandSeaColumnCamera();
   if(STATE.step===2&&view==='reset'){
     resetSeasonalShift();
     earthGroup.rotation.y=0;
@@ -4737,6 +4742,7 @@ function animate() {
   }
   if (document.hidden) return;
   if (STATE.step === 4) {
+    updateCausalVisuals();
     updateMonsoonClimateAnimation(dt);
     return;
   }
@@ -4790,7 +4796,7 @@ function animate() {
     }
   }
 
-  if(!CIRCULATION_SEQUENCE.cameraActive&&!SINGLE_CIRCULATION.cameraActive)controls.update();
+  if(!CIRCULATION_SEQUENCE.cameraActive&&!SINGLE_CIRCULATION.cameraActive&&!LS_COLUMN_CAMERA.active)controls.update();
   updateSequenceCamera();
   if(STATE.step===0 || STATE.step===1){
     // Keep the single-cell model synchronized on the exact handoff frame;
@@ -4809,6 +4815,7 @@ function animate() {
   layoutThirdStepBeltLabels();
   updateSequenceAnnotations();
   updateSingleCirculationAnnotations();
+  updateCausalVisuals();
 
   // 图示回归面板：高亮闪烁时持续重绘 Canvas
   if (STATE.showDiagram && (diagramHighlightId || diagramHighlightTimer)) {

@@ -66,6 +66,16 @@ function mountClassroomControls(step,body,controlsPanel){
  }
  // Keep the teaching panel focused on the core interaction.
  const guide=document.getElementById('landsea-globe-play');if(guide)guide.textContent='连续复习形成过程';
+ if(step===3){
+  placeLandSeaAux();
+  const result=LANDSEA.formation.view==='result';
+  const formationControls=document.querySelector('#step-demo-controls .formation-controls');if(formationControls)formationControls.hidden=result;
+  for(const a of ['prev','next','replay','restart'])document.getElementById('landsea-formation-'+a).hidden=result||a!=='restart';
+  const switchView=document.createElement('button');switchView.className='btn';switchView.id='landsea-switch-view';switchView.textContent=result?'返回形成过程':'查看结果对照';
+  switchView.onclick=()=>{LANDSEA.formation.view=result?'mechanism':'result';if(result&&LANDSEA.surface!=='real'){LANDSEA.surface='real';LANDSEA.region='asia';rebuildLandSea();}STATE.playing=false;refreshFormation('landsea');};
+  dock.append(switchView);
+  if(result){const compare=document.createElement('button');compare.className='btn';compare.id='landsea-compare-month';compare.textContent=LANDSEA.month===1?'对照7月夏季':'对照1月冬季';compare.onclick=()=>setLandSeaOption('month',LANDSEA.month===1?7:1);dock.append(compare);}
+ }
 }
 function focusTeachingNode(force=false){
  if(!camera||!controls||STATE.viewLocked||STATE.step>2||(!CLASSROOM.autoFocus&&!force))return;
